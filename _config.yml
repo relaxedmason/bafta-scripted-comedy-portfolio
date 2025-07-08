@@ -1,15 +1,16 @@
-title: RelaxedMason – Data Analyst Portfolio
-description: BAFTA Scripted Comedy Awards Visualization
+# _config.yml
+title: Mason Colborn – Data Analyst Portfolio
+description: "BAFTA Scripted Comedy Awards: Winners & Nominees (2016–2025)"
 theme: minima
 
 url: "https://masoncolborn.com"
 baseurl: ""
 
-# _config.yml (append)
+# automatically apply `layout: home` to everything in the repo root
 defaults:
   - scope:
       path: ""
     values:
       layout: home
-      # this will include /assets/css/custom.css after the theme’s CSS
-      extra_head: "<link rel='stylesheet' href='assets/css/custom.css' />"
+      extra_head: "<link rel='stylesheet' href='/assets/css/custom.css' />"
+
