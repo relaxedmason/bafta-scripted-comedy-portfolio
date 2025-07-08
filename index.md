@@ -1,8 +1,3 @@
----
-layout: home
-title: "BAFTA Scripted Comedy Awards: Winners & Nominees"
----
-
 # BAFTA Scripted Comedy Awards: Winners & Nominees (2016–2025)
 
 ![Main montage]({{ "/assets/images/bafta_scripted_comedy_visualization.png" | relative_url }}){: style="max-width:100%;height:auto;" }
