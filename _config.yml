@@ -1,0 +1,9 @@
+# Site settings
+title: "RelaxedMason – Data Analyst Portfolio"
+description: "BAFTA Scripted Comedy Awards Visualization (2016–2025)"
+
+# Tell Jekyll which theme to use
+theme: minima
+
+# Optional: control permalink style
+permalink: /:title/
