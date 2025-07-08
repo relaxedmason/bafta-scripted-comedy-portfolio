@@ -5,3 +5,11 @@ theme: minima
 # tell Jekyll your project slug so "/assets/..." works
 baseurl: "/bafta-scripted-comedy-portfolio"
 
+# _config.yml (append)
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: home
+      # this will include /assets/css/custom.css after the theme’s CSS
+      extra_head: "<link rel='stylesheet' href='assets/css/custom.css' />"
