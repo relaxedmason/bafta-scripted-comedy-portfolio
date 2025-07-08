@@ -1,7 +1,4 @@
-# BAFTA Scripted Comedy Awards: Winners & Nominees (2016–2025)
-
 ![Main montage]({{ "/assets/images/bafta_scripted_comedy_visualization.png" | relative_url }}){: style="max-width:100%;height:auto;" }
-
 
 ---
 
@@ -9,16 +6,19 @@
 
 <picture>
   <!-- mobile for viewports up to 600px -->
-  <source media="(max-width: 600px)" srcset="{{ '/assets/images/bafta_mobile_final.jpg' | relative_url }}">
+  <source media="(max-width: 600px)" 
+          srcset="{{ '/assets/images/bafta_mobile_scripted_comedy_winners_final.jpg' | relative_url }}">
   <!-- HD for anything larger -->
-  <source media="(min-width: 601px)" srcset="{{ '/assets/images/bafta_scripted_two_row_montage_hires.png' | relative_url }}">
+  <source media="(min-width: 601px)" 
+          srcset="{{ '/assets/images/bafta_scripted_comedy_winner_visualization_high_resolution.png' | relative_url }}">
   <!-- fallback -->
   <img 
-    src="{{ '/assets/images/bafta_scripted_two_row_montage_hires.png' | relative_url }}"
+    src="{{ '/assets/images/bafta_scripted_comedy_winner_visualization_high_resolution.png' | relative_url }}"
     alt="BAFTA Scripted Comedy Awards Montage"
     style="max-width:100%; height:auto;" 
   />
 </picture>
+
 
 ---
 
