@@ -1,9 +1,7 @@
-# Site settings
-title: "RelaxedMason – Data Analyst Portfolio"
-description: "BAFTA Scripted Comedy Awards Visualization (2016–2025)"
-
-# Tell Jekyll which theme to use
+title: RelaxedMason – Data Analyst Portfolio
+description: BAFTA Scripted Comedy Awards Visualization
 theme: minima
 
-# Optional: control permalink style
-permalink: /:title/
+# tell Jekyll your project slug so "/assets/..." works
+baseurl: "/bafta-scripted-comedy-portfolio"
+
