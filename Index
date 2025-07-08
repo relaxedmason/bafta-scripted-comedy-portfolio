@@ -3,14 +3,29 @@ layout: home
 title: "BAFTA Scripted Comedy Awards: Winners & Nominees"
 ---
 
-![BAFTA Scripted Comedy Awards Montage](/assets/images/bafta_scripted_comedy_visualization.png){: style="max-width:100%; height:auto;" }
-
 # BAFTA Scripted Comedy Awards: Winners & Nominees (2016–2025)
+
+![Main montage](/assets/images/bafta_scripted_comedy_visualization.png){: style="max-width:100%; height:auto;" }
+
+---
+
+## 🖼️ Preview
+
+<picture>
+  <!-- mobile for viewports up to 600px -->
+  <source media="(max-width: 600px)" srcset="/assets/images/bafta_mobile_final.jpg">
+  <!-- HD for anything larger -->
+  <source media="(min-width: 601px)" srcset="/assets/images/bafta_scripted_two_row_montage_hires.png">
+  <!-- fallback -->
+  <img src="/assets/images/bafta_scripted_two_row_montage_hires.png"
+       alt="BAFTA Scripted Comedy Awards Montage"
+       style="max-width:100%; height:auto;" />
+</picture>
+
+---
 
 ## 1. Business Question  
 **Which scripted comedies have dominated the BAFTAs over the last decade?**  
-- Did the highest-rated IMDb show win each year?  
-- Which series beat *Peep Show*, a seven-time nominee?
 
 ---
 
@@ -23,20 +38,15 @@ Pull the last ten award cycles of nominees vs winners, enriched with IMDb metada
 WITH last10 AS (
   SELECT DISTINCT awardyear
   FROM bafta_comedy_awards
-  WHERE awardtitle = 'Best Scripted Comedy'
-    AND bafta_status = 'winner'
-  ORDER BY awardyear DESC
-  OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY
-),
-nominees AS (
-  SELECT
-    b.awardyear,
-    b.bafta_status,
-    b.tconst
-  FROM bafta_comedy_awards b
-  JOIN last10 l ON b.awardyear = l.awardyear
-  WHERE b.awardtitle = 'Best Scripted Comedy'
-> **Full SQL** → [last_10_Bafta_scripted_comedy_winner.sql](scripts/last_10_Bafta_scripted_comedy_winner.sql)
+  …
+)
+SELECT *
+FROM nom_with_meta
+ORDER BY awardyear DESC;
+```         
+
+> **Full SQL** → [scripts/last_10_Bafta_scripted_comedy_winner.sql](scripts/last_10_Bafta_scripted_comedy_winner.sql)
+---
 
 ## License
 
@@ -44,5 +54,8 @@ nominees AS (
 
 **Data & images:**  
 - IMDb data © IMDb  
-- Posters via TMDb API (TMDb terms apply)  
-- Wikipedia content under CC BY-SA
+- TMDb API (posters) terms apply  
+- Wikipedia content under CC BY-SA  
+
+
+
