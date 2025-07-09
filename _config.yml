@@ -4,6 +4,13 @@ theme: minima
 url: "https://masoncolborn.com"
 baseurl: ""   # no trailing slash
 
+defaults:
+  - scope:
+      path: ""    # all files in your site
+    values:
+      extra_head: "<link rel='stylesheet' href='{{ '/assets/css/custom.css' | relative_url }}' />"
+
+
 
 
 
