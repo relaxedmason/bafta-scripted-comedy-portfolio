@@ -1,3 +1,10 @@
+---
+layout: page
+title: BAFTA Scripted Comedy Awards
+permalink: /bafta-scripted-comedy/
+---
+
+
 ![Main montage]({{ "/assets/images/bafta_scripted_comedy_visualization.png" | relative_url }}){: style="max-width:100%;height:auto;" }
 
 ---
