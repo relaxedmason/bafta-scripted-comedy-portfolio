@@ -1,9 +1,8 @@
-title: ""
-
+title: "Mason Colborn"
 theme: minima
-
 url: "https://masoncolborn.com"
 baseurl: ""
+
 
 defaults:
   - scope:
