@@ -8,7 +8,8 @@ defaults:
   - scope:
       path: ""
     values:
-      extra_head: "{% include custom-head.html %}"
+      extra_head: "<link rel='stylesheet' href='{{ '/assets/css/custom.css' | relative_url }}' />"
+
 
 
 
