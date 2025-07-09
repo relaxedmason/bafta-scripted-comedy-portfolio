@@ -3,10 +3,10 @@ theme: minima
 url: "https://masoncolborn.com"
 baseurl: ""
 
-
 defaults:
   - scope:
-      path: ""
+      path: ""            # all files
     values:
-      extra_head: "<link rel='stylesheet' href='/assets/css/custom.css' />"
+      extra_head: "<link rel='stylesheet' href='{{ '/assets/css/custom.css' | relative_url }}' />"
+
 
