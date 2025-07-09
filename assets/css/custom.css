@@ -64,7 +64,7 @@ main {
 .social-links a {
   display: inline-block;
   margin: 0 .75rem;
-  font-size: 1.4rem;
+  font-size: 1.6rem;      /* increase this as needed */
   font-weight: 500;
   color: #0366d6;
   text-decoration: none;
