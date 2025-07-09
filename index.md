@@ -1,3 +1,9 @@
+---
+layout: home
+title: ""
+---
+<h1>Mason Colborn – Data Analyst Portfolio</h1>
+<p class="subtitle">SQL • Python • APIs • Dashboarding</p>
 # Mason Colborn  
 **Data Analyst** | 📊 SQL • Python • APIs • Dashboarding
 
