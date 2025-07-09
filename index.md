@@ -17,29 +17,18 @@ layout: default
   </p>
 </section>
 
-<section id="projects">
-  <h2>Projects</h2>
-  <div class="projects">
-    <!-- live project -->
-    <div class="project-card">
-      <a href="{{ "/bafta-scripted-comedy/" | relative_url }}">
-        <h3>Winners & Nominees</h3>
-        <p>(2016–2025)</p>
-      </a>
+  <section id="projects">
+    <h2>Projects</h2>
+    <div class="projects">
+      <div class="project-card">
+        <a href="{{ "/bafta-scripted-comedy/" | relative_url }}">
+          <h3>BAFTA Scripted Comedy Awards</h3>
+         
+        </a>
+      </div>
     </div>
+  </section>
 
-    <!-- coming soon placeholders -->
-    <div class="project-card coming-soon">
-      <h3>Peep Show vs the Competition</h3>
-      <p>(2016–2025) — Coming Soon</p>
-    </div>
-
-    <div class="project-card coming-soon">
-      <h3>IMDb vs BAFTA</h3>
-      <p>Rating check & analysis — Coming Soon</p>
-    </div>
-  </div>
-</section>
 <section id="contact">
   <h2>Connect</h2>
   <div class="social-links">
