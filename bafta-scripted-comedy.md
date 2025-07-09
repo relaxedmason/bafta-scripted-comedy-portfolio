@@ -1,13 +1,18 @@
 ---
-layout: page
-title: BAFTA Scripted Comedy Awards
+layout: default
+title: "BAFTA Scripted Comedy Awards: Winners & Nominees"
 permalink: /bafta-scripted-comedy/
 ---
+
+# BAFTA Scripted Comedy Awards  
+## Winners & Nominees (2016–2025)
 
 ---
 
 ## 1. Business Question  
 **Which scripted comedies have dominated the BAFTAs over the last decade?**  
+- Did the highest-rated IMDb show win each year?  
+- Which series beat *Peep Show*, a seven-time nominee?
 
 ---
 
@@ -15,48 +20,22 @@ permalink: /bafta-scripted-comedy/
 
 ### a) SQL  
 Pull the last ten award cycles of nominees vs winners, enriched with IMDb metadata:
+
 ```sql
 WITH last10 AS (
   SELECT DISTINCT awardyear
-  FROM bafta_comedy_awards
+    FROM bafta_comedy_awards
+   WHERE awardtitle = 'Best Scripted Comedy'
+     AND bafta_status = 'winner'
+   ORDER BY awardyear DESC
+   OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY
+), nominees AS (
   …
 )
 SELECT *
-FROM nom_with_meta
-ORDER BY awardyear DESC;
-```         
-
-> **Full SQL** → [scripts/last_10_Bafta_scripted_comedy_winner.sql](scripts/last_10_Bafta_scripted_comedy_winner.sql)
----
-![Main montage]({{ "/assets/images/bafta_scripted_comedy_visualization.png" | relative_url }}){: style="max-width:100%;height:auto;" }
-
-
-
-<picture>
-  <!-- mobile for viewports up to 600px -->
-  <source media="(max-width: 600px)" 
-          srcset="{{ '/assets/images/bafta_mobile_scripted_comedy_winners_final.jpg' | relative_url }}">
-  <!-- HD for anything larger -->
-  <source media="(min-width: 601px)" 
-          srcset="{{ '/assets/images/bafta_scripted_comedy_winner_visualization_high_resolution.png' | relative_url }}">
-  <!-- fallback -->
-  <img 
-    src="{{ '/assets/images/bafta_scripted_comedy_winner_visualization_high_resolution.png' | relative_url }}"
-    alt="BAFTA Scripted Comedy Awards Montage"
-    style="max-width:100%; height:auto;" 
-  />
-</picture>
-
-
----
-## License
-
-**Code & write-up:** [MIT](LICENSE)
-
-**Data & images:**  
-- IMDb data © IMDb  
-- TMDb API (posters) terms apply  
-- Wikipedia content under CC BY-SA  
-
-
-
+  FROM nom_with_meta
+ ORDER BY awardyear DESC;
+<!-- responsive montage just beneath the SQL, before the license --> <picture> <!-- Mobile (<600px) --> <source media="(max-width: 600px)" srcset="{{ '/assets/images/bafta_mobile_scripted_comedy_winners_final.jpg' | relative_url }}"> <!-- Desktop (601px+) --> <source media="(min-width: 601px)" srcset="{{ '/assets/images/bafta_scripted_comedy_visualization.png' | relative_url }}"> <!-- Fallback --> <img src="{{ '/assets/images/bafta_scripted_comedy_visualization.png' | relative_url }}" alt="BAFTA Scripted Comedy Awards montage (2016–2025)" style="max-width:100%; height:auto;" /> </picture>
+License
+Code & write-up: MIT
+Data & images: IMDb © IMDb · TMDb API (posters) · Wikipedia CC BY-SA
