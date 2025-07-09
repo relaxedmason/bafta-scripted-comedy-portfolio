@@ -12,7 +12,7 @@ layout: default
 <section id="about">
   <h2>About</h2>
   <p>
-    I’m a Pacific Northwest–based data analyst who enjoys wrangling data into
+    A Pacific Northwest–based data analyst who enjoys wrangling data into
     entertaining and informative visuals. Here are a few highlights:
   </p>
 </section>
