@@ -98,15 +98,8 @@ main {
   color: #777;
   font-size: .9rem;
 }
-/* ————————————————
-   HIDE MINIMA’S DUPLICATE TITLE/DESCRIPTION IN THE FOOTER
-   ———————————————— */
-.site-footer .site-title,
-.site-footer .site-description,
-.site-footer .site-nav {
-  display: none;
-}
-/* Hide Minima’s footer meta (site.title – site.description) */
-.site-footer .site-footer-meta {
-  display: none;
+/* Newer Minima versions */
+.site-footer .site-footer__meta,
+.site-footer .site-footer__links {
+  display: none !important;
 }
