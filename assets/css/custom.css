@@ -106,3 +106,7 @@ main {
 .site-footer .site-nav {
   display: none;
 }
+/* Hide Minima’s footer meta (site.title – site.description) */
+.site-footer .site-footer-meta {
+  display: none;
+}
