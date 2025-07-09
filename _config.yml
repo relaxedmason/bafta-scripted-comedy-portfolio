@@ -6,9 +6,10 @@ baseurl: ""   # no trailing slash
 
 defaults:
   - scope:
-      path: ""    # all files in your site
+      path: ""
     values:
-      extra_head: "<link rel='stylesheet' href='{{ '/assets/css/custom.css' | relative_url }}' />"
+      extra_head: "{% include custom-head.html %}"
+
 
 
 
