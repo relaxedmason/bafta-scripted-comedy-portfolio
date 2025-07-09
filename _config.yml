@@ -6,11 +6,59 @@ theme: minima
 url: "https://masoncolborn.com"
 baseurl: ""
 
-# automatically apply `layout: home` to everything in the repo root
-defaults:
-  - scope:
-      path: ""
-    values:
-      layout: home
-      extra_head: "<link rel='stylesheet' href='/assets/css/custom.css' />"
+/* nav */
+.site-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.site-nav a {
+  color: #0366d6;
+  font-weight: bold;
+  text-decoration: none;
+}
+.site-nav a:hover {
+  text-decoration: underline;
+}
+
+/* project grid */
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+.project-card {
+  border: 1px solid #eee;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+  transition: box-shadow .2s;
+}
+.project-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+.project-card img {
+  width: 100%;
+  display: block;
+}
+.project-card h3 {
+  margin: .75rem 1rem 0;
+  font-size: 1.25rem;
+}
+.project-card p {
+  margin: .5rem 1rem 1rem;
+  color: #555;
+}
+
+/* footer */
+.site-footer {
+  text-align: center;
+  padding: 1rem 0;
+  font-size: .85rem;
+  color: #888;
+  border-top: 1px solid #ddd;
+  margin-top: 3rem;
+}
 
