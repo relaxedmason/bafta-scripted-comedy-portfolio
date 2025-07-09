@@ -103,3 +103,10 @@ main {
 .site-footer .site-footer__links {
   display: none !important;
 }
+
+#about h2,
+#projects h2,
+#contact h2 {
+  text-decoration: underline;
+  margin-bottom: 0.5rem;
+}
