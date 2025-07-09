@@ -1,5 +1,5 @@
 ---
-layout: home
+layout: default
 title: ""
 ---
 
@@ -15,7 +15,16 @@ title: ""
 
 ## Projects
 <section class="projects">
-  <!-- BAFTA card from above -->
+  <article class="project-card">
+    <a href="{{ "/bafta-scripted-comedy/" | relative_url }}">
+      <img 
+        src="{{ '/assets/images/bafta_scripted_comedy_visualization.png' | relative_url }}"
+        alt="BAFTA Scripted Comedy Awards montage" />
+      <h3>BAFTA Scripted Comedy Awards</h3>
+      <p>Winners & Nominees (2016–2025): a two-row poster-montage built with SQL, pandas & TMDb API.</p>
+    </a>
+  </article>
+  <!-- add more project-cards here -->
 </section>
 
 <footer class="site-footer">
