@@ -4,12 +4,7 @@ theme: minima
 url: "https://masoncolborn.com"
 baseurl: ""   # no trailing slash
 
-defaults:
-  - scope:
-      path: ""  # all files
-    values:
-      # this injects a <link> into the <head> of your minima theme
-      extra_head: "<link rel='stylesheet' href='{{ '/assets/css/custom.css' | relative_url }}' />"
+
 
 
 
