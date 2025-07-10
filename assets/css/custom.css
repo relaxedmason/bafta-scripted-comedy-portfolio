@@ -55,3 +55,8 @@ main {
 .site-footer .site-footer__links {
   display: none !important;
 }
+/* hide the duplicate name on the left and tagline on the right */
+.site-footer .footer-col-1,
+.site-footer .footer-col-3 {
+  display: none !important;
+}
