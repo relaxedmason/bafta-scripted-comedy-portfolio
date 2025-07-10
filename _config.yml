@@ -2,13 +2,14 @@
 title: "Mason Colborn"
 theme: minima
 url: "https://masoncolborn.com"
-baseurl: ""   # no trailing slash
+baseurl: ""   
 
 defaults:
   - scope:
       path: ""
     values:
-      extra_head: "<link rel='stylesheet' href='{{ '/assets/css/custom.css' | relative_url }}' />"
+      extra_head: "{% include custom-head.html %}"
+
 
 
 
