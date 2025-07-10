@@ -70,3 +70,25 @@ main.page-content {
 .site-footer .site-footer__links {
   display: none !important;
 }
+/* 1. switch to a more professional sans-serif font */
+body {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+/* 2. center your “Data Analyst Portfolio” heading */
+#data-analyst-portfolio {
+  text-align: center;
+}
+
+/* 3. hide the little hamburger/check icon in the top nav */
+.site-nav .nav-trigger,
+.site-nav label[for="nav-trigger"],
+.menu-icon,
+.trigger {
+  display: none !important;
+}
+
+/* 4. (already done?) ensure footer is centered */
+.site-footer {
+  text-align: center;
+}
