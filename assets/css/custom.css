@@ -21,7 +21,13 @@ main.page-content {
   color: #666;
   margin-bottom: 1.5rem;
 }
-
+.subtitle {
+  /* ensure the “SQL • Python • APIs • Dashboarding” line is centered */
+  text-align: center;
+  display: block;
+  margin: 0.25rem auto 1.5rem;
+  font-size: 1rem;
+}
 /* simple nav styling */
 .site-nav {
   text-align: center;
