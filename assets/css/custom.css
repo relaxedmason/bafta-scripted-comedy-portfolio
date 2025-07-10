@@ -1,11 +1,15 @@
-/* global page padding */
-main {
-  padding: 2rem 1rem;
+/* wrap everything in the same 900px-wide centered container */
+.wrapper {
   max-width: 900px;
   margin: auto;
 }
 
-/* page header */
+/* comfortable padding around the main area */
+main.page-content {
+  padding: 2rem 1rem;
+}
+
+/* center your page header */
 .page-header h1 {
   text-align: center;
   font-size: 2.5rem;
@@ -18,7 +22,7 @@ main {
   margin-bottom: 1.5rem;
 }
 
-/* simple nav */
+/* simple nav styling */
 .site-nav {
   text-align: center;
   margin-bottom: 2rem;
@@ -38,25 +42,31 @@ main {
 #projects h2,
 #contact h2 {
   text-decoration: underline;
-  margin-bottom: .5rem;
+  margin-top: 2rem;
 }
 
-/* Projects grid on home */
-.projects {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+/* style your social buttons */
+.social-links {
+  text-align: center;
+  margin: 3rem 0 1rem;
 }
-/* …etc. your other .project-card and .social-links rules… */
+.social-links a {
+  display: inline-block;
+  margin: 0 .75rem;
+  padding: .5rem 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #fff;
+  background: #0366d6;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.social-links a.github  { background: #333; }
+.social-links a.twitter { background: #1DA1F2; }
+.social-links a:hover   { opacity: .85; }
 
-/* hide the extra minima footer bits */
+/* hide any leftover Minima footer bits */
 .site-footer .site-footer__meta,
 .site-footer .site-footer__links {
-  display: none !important;
-}
-/* hide the duplicate name on the left and tagline on the right */
-.site-footer .footer-col-1,
-.site-footer .footer-col-3 {
   display: none !important;
 }
