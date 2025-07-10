@@ -1,22 +1,56 @@
 <!DOCTYPE html>
 <html lang="{{ site.lang | default: "en-US" }}">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  {% seo %}
+    {% seo %}
 
-  <!-- Minima’s main CSS -->
-  <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" 
-       | append: site.github.build_revision 
-       | relative_url }}">
+    <!-- Minima’s core CSS -->
+    <link
+      rel="stylesheet"
+      href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}"
+    />
 
-  <!-- this is where extra_head goes -->
-  {{ page.extra_head }}
-</head>
-<body>
-  {{ content }}
-  <script src="{{ "/assets/js/scale.fix.js" | relative_url }}"></script>
-</body>
+    <!-- Your overrides -->
+    <link
+      rel="stylesheet"
+      href="{{ "/assets/css/custom.css" | relative_url }}"
+    />
+  </head>
+  <body>
+    <header class="site-header" role="banner">
+      <div class="wrapper">
+        <a class="site-title" href="{{ "/" | relative_url }}">{{ site.title }}</a>
+        <nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+          <label for="nav-trigger">
+            <span class="menu-icon">☰</span>
+          </label>
+          <div class="trigger">
+            <a class="page-link" href="/bafta-scripted-comedy/">BAFTA Scripted Comedy Awards</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        {{ content }}
+      </div>
+    </main>
+
+    <footer class="site-footer h-card">
+      <div class="wrapper">
+        <!-- hide the two side-columns and leave only the centered copyright -->
+        <div class="footer-col footer-col-2">
+          © {{ "now" | date: "%Y" }} Mason Colborn
+        </div>
+      </div>
+    </footer>
+
+    <script src="{{ "/assets/js/scale.fix.js" | relative_url }}"></script>
+  </body>
 </html>
+
