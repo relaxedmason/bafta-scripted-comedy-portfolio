@@ -98,3 +98,25 @@ body {
 .site-footer {
   text-align: center;
 }
+/* make the socials row use flex and never wrap */
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: nowrap;
+  overflow-x: auto;    /* allow a tiny scroll if they overflow */
+  padding: 1rem 0;
+}
+
+/* keep each button from flex-shrinking */
+.social-links a {
+  flex: 0 0 auto;
+}
+
+/* optional: slightly smaller buttons on very narrow screens */
+@media (max-width: 360px) {
+  .social-links a {
+    padding: 0.4rem 0.8rem;
+    font-size: 1rem;
+  }
+}
