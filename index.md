@@ -2,13 +2,10 @@
 layout: default
 ---
 
-<!-- Page‐specific title -->
 # Data Analyst Portfolio
 
-<!-- keep this as your subtitle -->
 <p class="subtitle">SQL • Python • APIs • Dashboarding</p>
 
-<!-- NEW About section -->
 <section id="about">
   <h2>About:</h2>
   <p>
@@ -17,17 +14,17 @@ layout: default
   </p>
 </section>
 
-  <section id="projects">
-    <h2>Projects</h2>
-    <div class="projects">
-      <div class="project-card">
-        <a href="{{ "/bafta-scripted-comedy/" | relative_url }}">
-          <h3>BAFTA Scripted Comedy Awards</h3>
-         
-        </a>
-      </div>
+<section id="projects">
+  <h2>Projects</h2>
+  <div class="projects">
+    <div class="project-card">
+      <a href="{{ "/bafta-scripted-comedy/" | relative_url }}">
+        <h3>BAFTA Scripted Comedy Data Projects</h3>
+        <p>All BAFTA comedy analyses in one place</p>
+      </a>
     </div>
-  </section>
+  </div>
+</section>
 
 <section id="contact">
   <h2>Connect</h2>
@@ -37,5 +34,6 @@ layout: default
     <a href="https://github.com/relaxedmason">💻 GitHub</a>
   </div>
 </section>
+
 
 
