@@ -18,7 +18,7 @@ layout: default
   <h2>Projects</h2>
   <div class="projects">
     <div class="project-card">
-      <a href="{{ "/bafta-scripted-comedy/" | relative_url }}">
+      <a href="{{ "/bafta-comedy-awards/" | relative_url }}">
         <h3>BAFTA Scripted Comedy Data Projects</h3>
       </a>
     </div>
