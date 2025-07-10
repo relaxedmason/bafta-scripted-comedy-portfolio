@@ -10,7 +10,7 @@ layout: default
 
 <!-- NEW About section -->
 <section id="about">
-  <h2>About</h2>
+  <h2>About:</h2>
   <p>
     A Pacific Northwest–based data analyst who enjoys wrangling data into
     entertaining and informative visuals. Here are a few highlights:
