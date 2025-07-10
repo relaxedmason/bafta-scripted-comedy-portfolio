@@ -20,7 +20,6 @@ layout: default
     <div class="project-card">
       <a href="{{ "/bafta-scripted-comedy/" | relative_url }}">
         <h3>BAFTA Scripted Comedy Data Projects</h3>
-        <p>All BAFTA comedy analyses in one place</p>
       </a>
     </div>
   </div>
