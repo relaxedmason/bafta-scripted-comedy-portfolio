@@ -1,14 +1,16 @@
-# _config.yml
+# _config.yml (at the repo root)
 title: "Mason Colborn"
 theme: minima
 url: "https://masoncolborn.com"
-baseurl: ""   
+baseurl: ""   # no trailing slash
 
 defaults:
   - scope:
       path: ""
     values:
-      extra_head: "{% include custom-head.html %}"
+      extra_head: |
+        {% include custom-head.html %}
+
 
 
 
