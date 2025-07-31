@@ -22,8 +22,11 @@ How did *Peep Show* perform at the BAFTA TV Awards for Best Scripted Comedy over
 ### a) Data Collection  
 I built an internal IMDb title database from IMDb’s non-commercial title datasets, then enriched that with BAFTA Scripted Comedy Awards data scraped from Wikipedia. Poster art and additional metadata were pulled via the TMDb API. All of this was combined to get a full picture of nominees, winners, and their context.
 
-### b) Peep Show vs Winners (SQL)  
-This query pulls each year *Peep Show* was nominated, whether it won, and who the eventual winner was:
+b) Peep Show vs Winners (SQL)  
+This query pulls each year *Peep Show* was nominated, whether it won, and who the eventual winner was.  
+
+<details>
+<summary>View excerpt of the SQL</summary>
 
 ```sql
 WITH peep_show_nominations AS (
@@ -59,13 +62,16 @@ SELECT
 FROM peep_show_nominations n
 JOIN yearly_winners w ON n.awardyear = w.awardyear
 ORDER BY n.awardyear;
-Full SQL → [Peep Show vs Field BAFTAs]({{ "/assets/Peep_show_versus_field_baftas.sql" | relative_url }})
+</details>
+[Download the full SQL script]({{ "/assets/Peep_show_versus_field_baftas.sql" | relative_url }})
 
-c) Python & Visualization
-A Python notebook ingests the SQL output, fetches corresponding poster images via the TMDb API, and lays out a sequence showing Peep Show’s nomination history alongside the winners. The visualization highlights the one year it won versus the years it was nominated but lost. Poster art is annotated with the year and winner/nominee status to keep context clear.
 
-3. Visualization
-![Peep Show at the BAFTAs montage showing nomination years and the single win]({{ "/assets/images/peep_show_bafta_with_subtitle.jpg" | relative_url }}){: style="max-width:100%; height:auto;" }
+### **Visualization (clickable to open full-size)**
+
+```markdown
+[![Peep Show at the BAFTAs montage showing nomination years and the single win]({{ "/assets/images/peep_show_bafta_with_subtitle.jpg" | relative_url }}){: style="max-width:100%; height:auto;" }]
+({{ "/assets/images/peep_show_bafta_with_subtitle.jpg" | relative_url }}){: target="_blank" rel="noopener" }
+n]({{ "/assets/images/peep_show_bafta_with_subtitle.jpg" | relative_url }}){: style="max-width:100%; height:auto;" }
 
 4. Takeaways
 Peep Show earned seven BAFTA nominations for Best Scripted Comedy but only one win, a pattern that underscores both its consistent quality and the stiff competition. In its losing years, the trophy went to shows like The Office (UK), The IT Crowd, Rev., and Peter Kay’s Car Share—all well-regarded—but it was only outscored in IMDb rating when it lost to The Thick of It (twice). In 5 of the 7 nomination years, Peep Show actually had a higher IMDb rating than the eventual winner, highlighting how narrowly contested the category was.
