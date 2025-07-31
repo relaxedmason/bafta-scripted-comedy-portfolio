@@ -44,9 +44,13 @@ I built an end-to-end pipeline in Python, SQL and APIs to go from a Wikipedia pa
 
 <div>
   <a href="{{ "/assets/images/bafta_scripted_comedy_winner_visualization_high_resolution.png" | relative_url }}" target="_blank" rel="noopener">
-    <img src="{{ "/assets/images/bafta_scripted_comedy_visualization.png" | relative_url }}" alt="BAFTA Scripted Comedy winners vs nominees visualization" style="max-width:100%; height:auto;" />
+    <img src="{{ "/assets/images/bafta_scripted_comedy_visualization.png" | relative_url }}" alt="BAFTA Scripted Comedy Awards montage (thumbnail)" style="max-width:100%; height:auto;" />
   </a>
-  <p><a href="{{ "/assets/images/bafta_scripted_comedy_winner_visualization_high_resolution.png" | relative_url }}" target="_blank" rel="noopener">View full-resolution visualization</a></p>
+  <p>
+    <a href="{{ "/assets/images/bafta_scripted_comedy_winner_visualization_high_resolution.png" | relative_url }}" target="_blank" rel="noopener">
+      View full-resolution visualization
+    </a>
+  </p>
 </div>
 
 ---
