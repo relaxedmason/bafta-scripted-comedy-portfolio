@@ -66,8 +66,11 @@ ORDER BY n.awardyear;
 [Download the full SQL script]({{ "/assets/Peep_show_versus_field_baftas.sql" | relative_url }})
 
 3. Visualization (clickable to open full-size)
-[![Peep Show montage showing nomination years and single win]({{ "/assets/images/peep_show_bafta_thumbnail.jpg" | relative_url }}){: style="max-width:100%; height:auto;" alt="Montage of Peep Show BAFTA nomination years with the winning year highlighted" }]
-({{ "/assets/images/peep_show_bafta_fullres.jpg" | relative_url }}){: target="_blank" rel="noopener" }
+<div>
+  <a href="{{ "/assets/images/peep_show_bafta_fullres.jpg" | relative_url }}" target="_blank" rel="noopener">
+    <img src="{{ "/assets/images/peep_show_bafta_thumbnail.jpg" | relative_url }}" alt="Montage of Peep Show BAFTA nomination years with the winning year highlighted" style="max-width:100%; height:auto;"/>
+  </a>
+</div>
 
 4. Takeaways
 Peep Show earned seven BAFTA nominations for Best Scripted Comedy but only one win, a pattern that underscores both its consistent quality and the stiff competition. In its losing years, the trophy went to shows like The Office (UK), The IT Crowd, Rev., and Peter Kay’s Car Share—all well-regarded—but it was only outscored in IMDb rating when it lost to The Thick of It (twice). In 5 of the 7 nomination years, Peep Show actually had a higher IMDb rating than the eventual winner, highlighting how narrowly contested the category was.
