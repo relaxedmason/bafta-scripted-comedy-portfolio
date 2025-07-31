@@ -65,8 +65,8 @@ ORDER BY n.awardyear;
 </details>
 [Download the full SQL script]({{ "/assets/Peep_show_versus_field_baftas.sql" | relative_url }})
 
-Visualization (clickable to open full-size)
-[![Peep Show montage]({{ "/assets/images/peep_show_bafta_thumbnail.jpg" | relative_url }}){: style="max-width:100%; height:auto;" }]
+3. Visualization (clickable to open full-size)
+[![Peep Show montage showing nomination years and single win]({{ "/assets/images/peep_show_bafta_thumbnail.jpg" | relative_url }}){: style="max-width:100%; height:auto;" alt="Montage of Peep Show BAFTA nomination years with the winning year highlighted" }]
 ({{ "/assets/images/peep_show_bafta_fullres.jpg" | relative_url }}){: target="_blank" rel="noopener" }
 
 4. Takeaways
