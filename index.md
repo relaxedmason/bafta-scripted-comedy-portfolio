@@ -18,9 +18,9 @@ layout: default
   <h2>Projects</h2>
 
   <div class="project-card">
-    <a href="{{ "/bafta-comedy-awards/" | relative_url }}">
+    <div>
       <h3>BAFTA Scripted Comedy Awards</h3>
-    </a>
+    </div>
     <div style="margin-top:0.5rem; padding-left:0.5rem; font-size:0.95rem;">
       <ul>
         <li><a href="{{ "/bafta-comedy-awards/winners-nominees/" | relative_url }}">Winners &amp; Nominees (2016–2025)</a></li>
