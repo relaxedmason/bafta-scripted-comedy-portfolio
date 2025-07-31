@@ -68,8 +68,9 @@ ORDER BY n.awardyear;
 3. Visualization (clickable to open full-size)
 <div>
   <a href="{{ "/assets/images/peep_show_bafta_fullres.jpg" | relative_url }}" target="_blank" rel="noopener">
-    <img src="{{ "/assets/images/peep_show_bafta_thumbnail.jpg" | relative_url }}" alt="Montage of Peep Show BAFTA nomination years with the winning year highlighted" style="max-width:100%; height:auto;"/>
+    <img src="{{ "/assets/images/peep_show_bafta_thumbnail.jpg" | relative_url }}" alt="Montage of Peep Show BAFTA nomination years with the winning year highlighted" style="max-width:100%; height:auto;" />
   </a>
+  <p><a href="{{ "/assets/images/peep_show_bafta_fullres.jpg" | relative_url }}" target="_blank" rel="noopener">Open full-resolution version</a></p>
 </div>
 
 4. Takeaways
