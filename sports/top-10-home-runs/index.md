@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Top 10 Longest Home Runs at T-Mobile Park
-permalink: /sports/top-10-home-runs/
+permalink: /sports/top-10-home-runs-at-Safeco-Field/
 ---
 
 # Top 10 Longest Home Runs at T-Mobile Park
