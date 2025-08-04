@@ -42,8 +42,8 @@ layout: default
     <div style="margin-top:0.5rem; padding-left:0.5rem; font-size:0.95rem;">
       <ul>
         <li>
-          <a href="{{ "/projects/top-10-home-runs/" | relative_url }}">
-            Visualization of the top 10 longest homers at T-Mobile Park (2015–present)
+          <a href="{{ "/sports/top-10-home-runs-at-Safeco-Field/" | relative_url }}">
+            A visualization of the top 10 longest homers at T-Mobile Park (2015–present)
           </a>
         </li>
       </ul>
