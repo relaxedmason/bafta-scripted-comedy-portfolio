@@ -1,17 +1,17 @@
 ---
 layout: default
-title: Top 10 Longest Home Runs at T-Mobile Park
+title: Statcast-Era Home Run Rankings
 permalink: /sports/top-10-home-runs-at-Safeco-Field/
 ---
 
-# Top 10 Longest Home Runs at T-Mobile Park
+# Statcast-Era Home Run Rankings
 
-_In the Statcast era (2015–present)_
+_At T-Mobile Park (Safeco Field), 2015 – present_
 
 <div style="text-align:center; margin:2rem 0;">
   <img
     src="/assets/Top_10_Home_runs_Tmobile.png"
-    alt="Top 10 Homers Table"
+    alt="Top 10 Longest Home Runs at T-Mobile Park"
     style="max-width:90%; height:auto; border:1px solid #ddd;"
   >
 </div>
@@ -21,14 +21,10 @@ _In the Statcast era (2015–present)_
 - **Source:** MLB Statcast via Python `pybaseball`  
 - **Filter:** `events == "home_run"` & `home_team == "SEA"`  
 - **Metrics:** distance & exit velocity  
-- **Top 10:** the ten longest Statcast-era homers; 10th is shared by Chris Iannetta and Cole Young (456 ft).
-
+- **Top 10:** the ten longest Statcast-era homers at Safeco and T-Mobile Park; 10th place is shared by Chris Iannetta and Cole Young (456 ft)  
 
 <div style="text-align:center; margin:2rem 0;">
-  <a
-    href="/notebooks/top10_home_runs.ipynb"
-    class="btn btn-primary"
-  >📓 View the Notebook</a>
+  <a href="/notebooks/top10_home_runs.ipynb" class="btn btn-primary">📓 View the Notebook</a>
 </div>
 
 [← Back to home](/){: .back-link}
