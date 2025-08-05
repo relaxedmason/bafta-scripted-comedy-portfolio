@@ -10,7 +10,7 @@ A data-driven look at the biggest rating gaps between BAFTA winners and their hi
 
 <div class="hover-image">
   <a href="{{ "/bafta-comedy-awards/rating-check/" | relative_url }}">
-    <img src="{{ '/assets/images/bafta_top5_ranked.png' | relative_url }}" alt="Top 5 Least Deserving Wins">
+    <img src="{{ '/assets/images/bafta_top5.png' | relative_url }}" alt="Top 5 Least Deserving Wins">
     <div class="hover-text">👀 View the full breakdown</div>
   </a>
 </div>
