@@ -9,7 +9,7 @@ layout: default
 <section id="about">
   <h2>About:</h2>
   <p>
-     A Pacific Northwest based data analyst who transforms complex datasets into clear, compelling visual stories. Here are some examples of my work:
+    A Pacific Northwest based data analyst who transforms complex datasets into clear and compelling visual stories. Here are some examples of my work:
   </p>
 </section>
 
@@ -17,15 +17,16 @@ layout: default
   <h2>Projects</h2>
 
   <div class="tabs">
-    <!-- Tab buttons -->
+    <!-- Tab selectors -->
     <input type="radio" name="tab" id="tab-tv" checked>
-    <label for="tab-tv">TV</label>
+    <label for="tab-tv">TV &amp; Movies</label>
 
-    <input type="radio" name="tab" id="tab-baseball">
-    <label for="tab-baseball">Baseball</label>
+    <input type="radio" name="tab" id="tab-sports">
+    <label for="tab-sports">Sports</label>
 
-    <!-- TV tab content -->
-    <div class="tab-content" id="content-tv">
+    <!-- TV & Movies tab -->
+    <div class="tab-content" id="tv">
+      <h3>TV</h3>
       <div class="cards">
         <div class="card">
           <h4>BAFTA Scripted Comedy Awards</h4>
@@ -38,19 +39,18 @@ layout: default
       </div>
     </div>
 
-    <!-- Baseball tab content -->
-    <div class="tab-content" id="content-baseball">
+    <!-- Sports tab -->
+    <div class="tab-content" id="sports">
+      <h3>Baseball</h3>
       <div class="cards">
         <div class="card">
-          <h4>Baseball Stats Visualizations</h4>
-          <ul>
-            <li><a href="{{ "/sports/top-10-home-runs-at-Safeco-Field" | relative_url }}">Top 10 Longest Home Runs at Safeco/T-Mobile Field</a></li>
-          </ul>
+          <h4><a href="{{ "/sports/top-10-home-runs-at-Safeco-Field" | relative_url }}">Top 10 Home Runs at Safeco Field</a></h4>
         </div>
       </div>
     </div>
   </div>
 </section>
+
 <section id="contact">
   <h2>Connect</h2>
   <div class="social-links">
