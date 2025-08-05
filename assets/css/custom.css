@@ -120,3 +120,41 @@ body {
     font-size: 1rem;
   }
 }
+.hover-image {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  border-radius: 8px;
+  max-width: 100%;
+}
+
+.hover-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.35s ease, filter 0.35s ease;
+}
+
+.hover-image:hover img {
+  transform: scale(1.05);
+  filter: brightness(85%);
+}
+
+.hover-text {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.hover-image:hover .hover-text {
+  opacity: 1;
+}
