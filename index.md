@@ -44,7 +44,7 @@ layout: default
         <div class="card">
           <h4>Top 10 Longest Home Runs at Safeco/T-Mobile Field</h4>
           <ul>
-            <li><a href="{{ "/sports/top-10-home-runs-at-Safeco-Field/" | relative_url }}">See the full table</a></li>
+            <li><a href="{{ "/sports/top-10-home-runs-at-Safeco-Field/" | relative_url }}">See the table</a></li>
           </ul>
         </div>
       </div>
