@@ -1,0 +1,44 @@
+/* Projects categories */
+.category {
+  margin-bottom: 2rem;
+}
+.category h3 {
+  margin-bottom: 1rem;
+  padding-left: 0.5rem;
+  border-left: 4px solid #00749e;   /* TV & Movies could use #C51162, Sports #00749e, etc. */
+  color: #333;
+  font-size: 1.5rem;
+}
+
+/* Card container */
+.cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Individual project “cards” */
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  padding: 1rem;
+  flex: 1 1 250px;       /* grow/shrink, min-width ~250px */
+  max-width: 350px;
+}
+
+.card h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.card ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.card li {
+  margin-bottom: 0.5rem;
+}
