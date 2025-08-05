@@ -32,7 +32,7 @@ layout: default
           <ul>
             <li><a href="{{ "/bafta-comedy-awards/winners-nominees/" | relative_url }}">Winners &amp; Nominees (2016–2025)</a></li>
             <li><a href="{{ "/bafta-comedy-awards/peep-show/"      | relative_url }}">Peep Show’s Record</a></li>
-            <li><a href="{{ "/bafta-comedy-awards/rating-check/"   | relative_url }}">IMDb vs BAFTA Ratings</a></li>
+            <li><a href="{{ "/bafta-comedy-awards/rating-check/"   | relative_url }}">The Top 5 Least Deserving Wins in BAFTA Scripted Comedy History</a></li>
           </ul>
         </div>
       </div>
