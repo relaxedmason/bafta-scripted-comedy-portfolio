@@ -107,7 +107,8 @@
 }
 
 .hover-image:hover img {
-  filter: brightness(70%);
+  transform: scale(1.03);
+  filter: brightness(85%);
 }
 
 .hover-image:hover .hover-text {
