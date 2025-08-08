@@ -8,7 +8,7 @@ permalink: /sports/baseball/bavasi/depth-chart/
 
 ⚠️ **Warning!!!** Click at your own risk — these images might induce painful baseball memories.
 
-<!-- Navigation Buttons -->
+<!-- Prev/Next Buttons -->
 <div style="text-align:center; margin-top: 20px;">
   <button onclick="changeYearBy(-1)" class="nav-button">⟵ Prev</button>
   <button onclick="changeYearBy(1)" class="nav-button">Next ⟶</button>
@@ -18,11 +18,12 @@ permalink: /sports/baseball/bavasi/depth-chart/
 <div id="depthChartContainer" style="text-align:center; margin-top:20px;">
   <img id="depthChartImage" 
        src="/assets/images/sports/bavasi/depth-chart/mariners_2003_depth_chart_final_final.png" 
-       style="max-width:100%; height:auto; border:1px solid #ccc; box-shadow:2px 2px 5px rgba(0,0,0,0.2);">
+       style="max-width:100%; height:auto; border:1px solid #ccc; box-shadow:2px 2px 5px rgba(0,0,0,0.2); cursor:pointer;"
+       onclick="openModal(this.src)">
   <p id="yearLabel"><strong>2003</strong></p>
 </div>
 
-<!-- Year Buttons (wrapped for mobile) -->
+<!-- Year Buttons -->
 <div id="yearButtons" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top: 10px;">
   <button class="year-button" onclick="changeYear(0)">2003</button>
   <button class="year-button" onclick="changeYear(1)">2004</button>
@@ -32,7 +33,13 @@ permalink: /sports/baseball/bavasi/depth-chart/
   <button class="year-button" onclick="changeYear(5)">2008</button>
 </div>
 
-<!-- Script -->
+<!-- Modal for Enlarged Image -->
+<div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center;">
+  <span onclick="closeModal()" style="position:absolute; top:20px; right:30px; color:white; font-size:30px; cursor:pointer;">&times;</span>
+  <img id="modalImage" style="max-width:90%; max-height:90%; border:4px solid white;">
+</div>
+
+<!-- JavaScript -->
 <script>
   const imageFilenames = [
     "mariners_2003_depth_chart_final_final.png",
@@ -64,9 +71,18 @@ permalink: /sports/baseball/bavasi/depth-chart/
     if (newIndex >= imageFilenames.length) newIndex = imageFilenames.length - 1;
     updateChart(newIndex);
   }
+
+  function openModal(src) {
+    document.getElementById("imageModal").style.display = "flex";
+    document.getElementById("modalImage").src = src;
+  }
+
+  function closeModal() {
+    document.getElementById("imageModal").style.display = "none";
+  }
 </script>
 
-<!-- Mobile-Friendly Styling -->
+<!-- Button Styling -->
 <style>
   .nav-button,
   .year-button {
@@ -93,5 +109,4 @@ permalink: /sports/baseball/bavasi/depth-chart/
     }
   }
 </style>
-
 
