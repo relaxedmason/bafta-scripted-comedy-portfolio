@@ -44,7 +44,7 @@ layout: default
       <h3>Baseball</h3>
       <div class="cards">
         <div class="card">
-          <h4>Mariners Projects</h4>
+          <h4>Mariner's Projects</h4>
           <ul>
             <li><a href="{{ "/sports/baseball/bavasi/depth-chart/" | relative_url }}">Bavasi’s Reign of Terror: Mariners Depth Charts (2003–2008)</a></li>
             <li><a href="{{ "/sports/top-10-home-runs-at-Safeco-Field" | relative_url }}">Top 10 Home Runs at Safeco Field</a></li>
