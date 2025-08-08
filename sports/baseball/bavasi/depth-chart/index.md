@@ -14,13 +14,14 @@ permalink: /sports/baseball/bavasi/depth-chart/
   <button onclick="changeYearBy(1)">Next ⟶</button>
 </div>
 
-<!-- Image Display -->
+<!-- Depth Chart Image -->
 <div id="depthChartContainer" style="text-align:center; margin-top:20px;">
   <img id="depthChartImage" 
        src="/assets/images/sports/bavasi/depth-chart/mariners_2003_depth_chart_final_final.png" 
-       style="max-width:100%; height:auto; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); cursor: pointer;"
-       onclick="enlargeImage()">
-  <p id="yearLabel"><strong>2003 — 93–69</strong></p>
+       alt="2003 Mariners Depth Chart"
+       style="max-width:100%; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); cursor: pointer;"
+       onclick="enlargeImage(this.src)">
+  <p id="yearLabel"><strong>2003: 93–69 Record (2nd in AL West)</strong></p>
 </div>
 
 <!-- Year Buttons -->
@@ -33,12 +34,14 @@ permalink: /sports/baseball/bavasi/depth-chart/
   <button onclick="changeYear(5)">2008</button>
 </div>
 
-<!-- Image Enlarging Modal (Hidden by Default) -->
-<div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; text-align:center;">
-  <img id="modalImage" src="" style="max-width:90%; max-height:90%; margin-top:40px;" onclick="closeModal()">
+<!-- Modal for Enlarged Image -->
+<div id="imageModal" onclick="this.style.display='none'"
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+  <img id="modalImg" style="max-width:90%; max-height:90%;" />
 </div>
 
-<!-- Scripts -->
+<!-- JavaScript -->
 <script>
   const imageFilenames = [
     "mariners_2003_depth_chart_final_final.png",
@@ -51,13 +54,22 @@ permalink: /sports/baseball/bavasi/depth-chart/
 
   const yearLabels = ["2003", "2004", "2005", "2006", "2007", "2008"];
   const records = ["93–69", "63–99", "69–93", "78–84", "88–74", "61–101"];
+  const standings = [
+    "2nd in AL West",
+    "3rd in AL West",
+    "4th in AL West",
+    "4th in AL West",
+    "2nd in AL West",
+    "4th in AL West"
+  ];
+
   let currentIndex = 0;
 
   function updateChart(index) {
     const image = document.getElementById("depthChartImage");
     const label = document.getElementById("yearLabel");
     image.src = `/assets/images/sports/bavasi/depth-chart/${imageFilenames[index]}`;
-    label.innerHTML = `<strong>${yearLabels[index]} — ${records[index]}</strong>`;
+    label.innerHTML = `<strong>${yearLabels[index]}: ${records[index]} Record (${standings[index]})</strong>`;
     currentIndex = index;
   }
 
@@ -72,34 +84,29 @@ permalink: /sports/baseball/bavasi/depth-chart/
     updateChart(newIndex);
   }
 
-  function enlargeImage() {
-    const modal = document.getElementById("modal");
-    const modalImage = document.getElementById("modalImage");
-    modalImage.src = document.getElementById("depthChartImage").src;
-    modal.style.display = "block";
-  }
-
-  function closeModal() {
-    document.getElementById("modal").style.display = "none";
+  function enlargeImage(src) {
+    const modal = document.getElementById("imageModal");
+    const modalImg = document.getElementById("modalImg");
+    modal.style.display = "flex";
+    modalImg.src = src;
   }
 </script>
 
 <style>
-  /* Ensure images shrink on small devices */
-  #depthChartImage {
-    width: 100%;
-    height: auto;
-  }
-
   @media (max-width: 600px) {
-    button {
-      margin: 5px;
-      font-size: 16px;
+    #yearButtons button, #depthChartContainer button {
+      font-size: 14px;
+      padding: 8px;
+      margin: 4px;
     }
-    #yearButtons {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+
+    #depthChartImage {
+      max-width: 100%;
+      height: auto;
+    }
+
+    #yearLabel {
+      font-size: 14px;
     }
   }
 </style>
