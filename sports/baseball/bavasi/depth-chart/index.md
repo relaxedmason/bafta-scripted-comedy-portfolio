@@ -12,7 +12,7 @@ Warning!!! Click at your own risk, this interactive slider might induce painful 
 
 <div id="depthChartContainer" style="text-align:center; margin-top:20px;">
   <img id="depthChartImage" 
-       src="/assets/images/sports/baseball/bavasi/depth-chart/mariners_2003_depth_chart_final_final.png" 
+       src="/assets/images/sports/bavasi/depth-chart/mariners_2003_depth_chart_final_final.png" 
        style="max-width:100%; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">
   <p id="yearLabel"><strong>2003</strong></p>
 </div>
@@ -37,7 +37,7 @@ Warning!!! Click at your own risk, this interactive slider might induce painful 
     const i = parseInt(this.value);
     const filename = imageFilenames[i];
     const year = yearLabels[i];
-    image.src = `/assets/images/sports/baseball/bavasi/depth-chart/${filename}`;
+    image.src = `/assets/images/sports/bavasi/depth-chart/${filename}`;
     label.innerHTML = `<strong>${year}</strong>`;
   });
 </script>
