@@ -10,36 +10,35 @@ permalink: /sports/baseball/bavasi/depth-chart/
 
 <!-- Prev/Next Buttons -->
 <div style="text-align:center; margin-top: 20px;">
-  <button onclick="changeYearBy(-1)" class="nav-button">⟵ Prev</button>
-  <button onclick="changeYearBy(1)" class="nav-button">Next ⟶</button>
+  <button onclick="changeYearBy(-1)">⟵ Prev</button>
+  <button onclick="changeYearBy(1)">Next ⟶</button>
 </div>
 
 <!-- Image Display -->
 <div id="depthChartContainer" style="text-align:center; margin-top:20px;">
   <img id="depthChartImage" 
        src="/assets/images/sports/bavasi/depth-chart/mariners_2003_depth_chart_final_final.png" 
-       style="max-width:100%; height:auto; border:1px solid #ccc; box-shadow:2px 2px 5px rgba(0,0,0,0.2); cursor:pointer;"
-       onclick="openModal(this.src)">
-  <p id="yearLabel"><strong>2003</strong></p>
+       style="max-width:100%; height:auto; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); cursor: pointer;"
+       onclick="enlargeImage()">
+  <p id="yearLabel"><strong>2003 — 93–69</strong></p>
 </div>
 
 <!-- Year Buttons -->
-<div id="yearButtons" style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top: 10px;">
-  <button class="year-button" onclick="changeYear(0)">2003</button>
-  <button class="year-button" onclick="changeYear(1)">2004</button>
-  <button class="year-button" onclick="changeYear(2)">2005</button>
-  <button class="year-button" onclick="changeYear(3)">2006</button>
-  <button class="year-button" onclick="changeYear(4)">2007</button>
-  <button class="year-button" onclick="changeYear(5)">2008</button>
+<div id="yearButtons" style="text-align:center; margin-top: 10px;">
+  <button onclick="changeYear(0)">2003</button>
+  <button onclick="changeYear(1)">2004</button>
+  <button onclick="changeYear(2)">2005</button>
+  <button onclick="changeYear(3)">2006</button>
+  <button onclick="changeYear(4)">2007</button>
+  <button onclick="changeYear(5)">2008</button>
 </div>
 
-<!-- Modal for Enlarged Image -->
-<div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center;">
-  <span onclick="closeModal()" style="position:absolute; top:20px; right:30px; color:white; font-size:30px; cursor:pointer;">&times;</span>
-  <img id="modalImage" style="max-width:90%; max-height:90%; border:4px solid white;">
+<!-- Image Enlarging Modal (Hidden by Default) -->
+<div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:1000; text-align:center;">
+  <img id="modalImage" src="" style="max-width:90%; max-height:90%; margin-top:40px;" onclick="closeModal()">
 </div>
 
-<!-- JavaScript -->
+<!-- Scripts -->
 <script>
   const imageFilenames = [
     "mariners_2003_depth_chart_final_final.png",
@@ -51,15 +50,7 @@ permalink: /sports/baseball/bavasi/depth-chart/
   ];
 
   const yearLabels = ["2003", "2004", "2005", "2006", "2007", "2008"];
-  const records = [
-    "93–69",  // 2003
-    "63–99",  // 2004
-    "69–93",  // 2005
-    "78–84",  // 2006
-    "88–74",  // 2007
-    "61–101"  // 2008
-  ];
-
+  const records = ["93–69", "63–99", "69–93", "78–84", "88–74", "61–101"];
   let currentIndex = 0;
 
   function updateChart(index) {
@@ -80,5 +71,35 @@ permalink: /sports/baseball/bavasi/depth-chart/
     if (newIndex >= imageFilenames.length) newIndex = imageFilenames.length - 1;
     updateChart(newIndex);
   }
+
+  function enlargeImage() {
+    const modal = document.getElementById("modal");
+    const modalImage = document.getElementById("modalImage");
+    modalImage.src = document.getElementById("depthChartImage").src;
+    modal.style.display = "block";
+  }
+
+  function closeModal() {
+    document.getElementById("modal").style.display = "none";
+  }
 </script>
 
+<style>
+  /* Ensure images shrink on small devices */
+  #depthChartImage {
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 600px) {
+    button {
+      margin: 5px;
+      font-size: 16px;
+    }
+    #yearButtons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+</style>
