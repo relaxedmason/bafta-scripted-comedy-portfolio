@@ -51,13 +51,22 @@ permalink: /sports/baseball/bavasi/depth-chart/
   ];
 
   const yearLabels = ["2003", "2004", "2005", "2006", "2007", "2008"];
+  const records = [
+    "93–69",  // 2003
+    "63–99",  // 2004
+    "69–93",  // 2005
+    "78–84",  // 2006
+    "88–74",  // 2007
+    "61–101"  // 2008
+  ];
+
   let currentIndex = 0;
 
   function updateChart(index) {
     const image = document.getElementById("depthChartImage");
     const label = document.getElementById("yearLabel");
     image.src = `/assets/images/sports/bavasi/depth-chart/${imageFilenames[index]}`;
-    label.innerHTML = `<strong>${yearLabels[index]}</strong>`;
+    label.innerHTML = `<strong>${yearLabels[index]} — ${records[index]}</strong>`;
     currentIndex = index;
   }
 
@@ -71,42 +80,5 @@ permalink: /sports/baseball/bavasi/depth-chart/
     if (newIndex >= imageFilenames.length) newIndex = imageFilenames.length - 1;
     updateChart(newIndex);
   }
-
-  function openModal(src) {
-    document.getElementById("imageModal").style.display = "flex";
-    document.getElementById("modalImage").src = src;
-  }
-
-  function closeModal() {
-    document.getElementById("imageModal").style.display = "none";
-  }
 </script>
-
-<!-- Button Styling -->
-<style>
-  .nav-button,
-  .year-button {
-    padding: 10px 16px;
-    font-size: 16px;
-    margin: 4px;
-    border: none;
-    background-color: #2c3e50;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .nav-button:hover,
-  .year-button:hover {
-    background-color: #34495e;
-  }
-
-  @media (max-width: 600px) {
-    .nav-button,
-    .year-button {
-      font-size: 14px;
-      padding: 8px 12px;
-    }
-  }
-</style>
 
