@@ -4,9 +4,9 @@ title: Bavasi's Reign of Terror
 permalink: /sports/baseball/bavasi/depth-chart/
 ---
 
-## - A Journey through the Seattle Mariner's Depth Charts from 2003-2008
+## - A Journey through the Seattle Mariner's Depth Charts from 2003–2008
 
-Warning!!! Click at your own risk, these images might induce painful baseball memories. 
+⚠️ **Warning!!!** Click at your own risk — these images might induce painful baseball memories.
 
 <!-- Prev/Next Buttons -->
 <div style="text-align:center; margin-top: 20px;">
@@ -32,7 +32,7 @@ Warning!!! Click at your own risk, these images might induce painful baseball me
   <button onclick="changeYear(5)">2008</button>
 </div>
 
-<!-- Script -->
+{% raw %}
 <script>
   const imageFilenames = [
     "mariners_2003_depth_chart_final_final.png",
@@ -65,5 +65,7 @@ Warning!!! Click at your own risk, these images might induce painful baseball me
     updateChart(newIndex);
   }
 </script>
+{% endraw %}
+
 
 
