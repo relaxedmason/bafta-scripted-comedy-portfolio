@@ -36,7 +36,7 @@ permalink: /sports/baseball/bavasi/depth-chart/
 
 <!-- Footnote for asterisk -->
 <p id="asteriskNote" style="text-align:center; font-size: 0.9em; color: #555; margin-top: 5px;">
-  *Bavasi became Mariners GM following the conclusion of the 2003 MLB season
+  *Bavasi became the GM of the Mariners following the conclusion of the 2003 MLB season
 </p>
 
 <!-- Modal for Enlarged Image -->
