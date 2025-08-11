@@ -21,18 +21,23 @@ permalink: /sports/baseball/bavasi/depth-chart/
        alt="2003 Mariners Depth Chart"
        style="max-width:100%; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); cursor: pointer;"
        onclick="enlargeImage(this.src)">
-  <p id="yearLabel"><strong>2003: 93–69 Record (2nd in AL West)</strong></p>
+  <p id="yearLabel"><strong>2003*: 93–69 Record (2nd in AL West)</strong></p>
 </div>
 
 <!-- Year Buttons -->
 <div id="yearButtons" style="text-align:center; margin-top: 10px;">
-  <button onclick="changeYear(0)">2003</button>
+  <button onclick="changeYear(0)">2003*</button>
   <button onclick="changeYear(1)">2004</button>
   <button onclick="changeYear(2)">2005</button>
   <button onclick="changeYear(3)">2006</button>
   <button onclick="changeYear(4)">2007</button>
   <button onclick="changeYear(5)">2008</button>
 </div>
+
+<!-- Footnote for asterisk -->
+<p id="asteriskNote" style="text-align:center; font-size: 0.9em; color: #555; margin-top: 5px;">
+  *Bavasi became Mariners GM following the conclusion of the 2003 MLB season
+</p>
 
 <!-- Modal for Enlarged Image -->
 <div id="imageModal" onclick="this.style.display='none'"
@@ -68,8 +73,19 @@ permalink: /sports/baseball/bavasi/depth-chart/
   function updateChart(index) {
     const image = document.getElementById("depthChartImage");
     const label = document.getElementById("yearLabel");
+    const asteriskNote = document.getElementById("asteriskNote");
+
     image.src = `/assets/images/sports/bavasi/depth-chart/${imageFilenames[index]}`;
-    label.innerHTML = `<strong>${yearLabels[index]}: ${records[index]} Record (${standings[index]})</strong>`;
+    
+    let yearDisplay = yearLabels[index];
+    if (index === 0) {
+      yearDisplay += "*"; // Add the asterisk for 2003
+      asteriskNote.style.display = "block";
+    } else {
+      asteriskNote.style.display = "none";
+    }
+
+    label.innerHTML = `<strong>${yearDisplay}: ${records[index]} Record (${standings[index]})</strong>`;
     currentIndex = index;
   }
 
@@ -110,3 +126,4 @@ permalink: /sports/baseball/bavasi/depth-chart/
     }
   }
 </style>
+
