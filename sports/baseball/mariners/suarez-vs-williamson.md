@@ -62,7 +62,7 @@ To provide a balanced snapshot of each player’s performance, this page uses **
   </p>
   <p style="margin:.4rem 0; color:#666;">
     *Methodology:* 2025 season stats through the trade window. League ranks reflect the player’s primary league at the time of measurement
-    (AL for Williamson, NL for Suárez before the trade). Formatting follows my standard: three-decimal AVG/OBP, BB%/K% with one decimal, and counting stats without decimals.
+    (AL for Williamson, NL for Suárez before the trade).
   </p>
 </div>
 
