@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Carlos Guillén Trade — Results"
-permalink: sports/baseball/bavasi/carlos-guillen-trade
+permalink: /sports/baseball/bavasi/carlos-guillen-trade/
 description: Results of comparing Carlos Guillén’s Tigers output against the Mariners’ shortstops post-trade, plus a Guillén vs. Ramón Santiago side-by-side.
 image: /assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png
 ---
