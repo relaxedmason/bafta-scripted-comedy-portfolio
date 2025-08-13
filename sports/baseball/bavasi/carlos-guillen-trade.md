@@ -84,10 +84,5 @@ image: /assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png
   - Mobile/vertical version: `/assets/images/sports/mariners/guillen_vs_mariners_vertical.png`
   - Guillén vs. Santiago: `/assets/images/sports/mariners/guillen_vs_santiago_comparison.png`
 
-```html
-<picture>
-  <source media="(max-width: 640px)" srcset="/assets/images/sports/mariners/guillen_vs_mariners_vertical.png">
-  <img src="/assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png"
-       alt="Carlos Guillén vs Mariners shortstops (2004–2007), weighted by PA.">
-</picture>
+
 
