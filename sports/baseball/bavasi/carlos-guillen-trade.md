@@ -3,28 +3,27 @@ layout: default
 title: "Carlos Guillén Trade — Results"
 permalink: /sports/baseball/bavasi/carlos-guillen-trade/
 description: Results of comparing Carlos Guillén’s Tigers output against the Mariners’ shortstops post-trade, plus a Guillén vs. Ramón Santiago side-by-side.
-# Note: 'image' here is just metadata for SEO/social cards if your layout uses it.
-# Most themes call {{ page.image | relative_url }} when rendering.
-image: /assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png
+image: assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png
 ---
 
 # Carlos Guillén Trade — Results
 
 **TL;DR:** The visuals below show that **Carlos Guillén’s production with Detroit** quickly outpaced what the **Mariners’ shortstops** delivered over the same window. Ramón Santiago’s Seattle stint provided limited impact relative to Guillén’s Tigers peak.
 
-[Read the methodology & logic →]({{ "/sports/baseball/bavasi/guillen-trade/logic/" | relative_url }})
+[Read the methodology & logic →](/sports/baseball/bavasi/guillen-trade/logic/)
 
 ---
 
 ## 1) Guillén vs. Mariners Shortstops (2004–2007)
 
 <figure class="image-figure">
-  <a href="{{ "/assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png" | relative_url }}" target="_blank" rel="noopener">
+  <a href="assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png" target="_blank" rel="noopener">
     <picture>
-      <source media="(max-width: 640px)" srcset="{{ "/assets/images/sports/mariners/guillen_vs_mariners_vertical.png" | relative_url }}">
-      <img src="{{ "/assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png" | relative_url }}"
-           alt="Results graphic comparing Carlos Guillén’s output with the Mariners’ shortstops across 2004–2007, weighted by plate appearances."
-           loading="lazy">
+      <source media="(max-width: 640px)" srcset="assets/images/sports/mariners/guillen_vs_mariners_vertical.png">
+      <img
+        src="assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png"
+        alt="Results graphic comparing Carlos Guillén’s output with the Mariners’ shortstops across 2004–2007, weighted by plate appearances."
+        loading="lazy">
     </picture>
   </a>
   <figcaption>Tap/click to open full-size. The mobile layout (vertical) loads automatically on small screens.</figcaption>
@@ -40,10 +39,11 @@ image: /assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png
 ## 2) Guillén vs. Ramón Santiago (Tigers vs. Mariners)
 
 <figure class="image-figure">
-  <a href="{{ "/assets/images/sports/mariners/guillen_vs_santiago_comparison.png" | relative_url }}" target="_blank" rel="noopener">
-    <img src="{{ "/assets/images/sports/mariners/guillen_vs_santiago_comparison.png" | relative_url }}"
-         alt="Side-by-side comparison of Ramón Santiago’s Seattle tenure vs. Carlos Guillén’s Detroit tenure."
-         loading="lazy">
+  <a href="assets/images/sports/mariners/guillen_vs_santiago_comparison.png" target="_blank" rel="noopener">
+    <img
+      src="assets/images/sports/mariners/guillen_vs_santiago_comparison.png"
+      alt="Side-by-side comparison of Ramón Santiago’s Seattle tenure vs. Carlos Guillén’s Detroit tenure."
+      loading="lazy">
   </a>
   <figcaption>Tap/click to open full-size. This side-by-side isolates the two principal players swapped into new roles.</figcaption>
 </figure>
@@ -77,14 +77,14 @@ image: /assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png
 ## Share & embed
 
 - **Direct links:**
-  - Full-size Guillén vs. Mariners (weighted): `{{ "/assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png" | relative_url }}`
-  - Mobile/vertical version: `{{ "/assets/images/sports/mariners/guillen_vs_mariners_vertical.png" | relative_url }}`
-  - Guillén vs. Santiago: `{{ "/assets/images/sports/mariners/guillen_vs_santiago_comparison.png" | relative_url }}`
+  - Full-size Guillén vs. Mariners (weighted): `assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png`
+  - Mobile/vertical version: `assets/images/sports/mariners/guillen_vs_mariners_vertical.png`
+  - Guillén vs. Santiago: `assets/images/sports/mariners/guillen_vs_santiago_comparison.png`
 - **Embed snippet:**
 
 ```html
 <picture>
-  <source media="(max-width: 640px)" srcset="{{ "/assets/images/sports/mariners/guillen_vs_mariners_vertical.png" | relative_url }}">
-  <img src="{{ "/assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png" | relative_url }}"
+  <source media="(max-width: 640px)" srcset="assets/images/sports/mariners/guillen_vs_mariners_vertical.png">
+  <img src="assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png"
        alt="Carlos Guillén vs Mariners shortstops (2004–2007), weighted by PA.">
 </picture>
