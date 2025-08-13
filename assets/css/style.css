@@ -114,3 +114,11 @@
 .hover-image:hover .hover-text {
   opacity: 1;
 }
+---
+---
+/* Add your styles here (can also @import your theme if needed) */
+.image-figure { margin: 1rem 0 2rem; }
+.image-figure img { width: 100%; height: auto; border-radius: 12px; box-shadow: 0 6px 24px rgba(0,0,0,0.15); }
+.image-figure figcaption { text-align: center; font-size: 0.9rem; opacity: 0.8; margin-top: 0.4rem; }
+
+  
