@@ -5,7 +5,34 @@ permalink: /sports/baseball/bavasi/carlos-guillen-trade/
 description: Results of comparing Carlos Guillén’s Tigers output against the Mariners’ shortstops post-trade, plus a Guillén vs. Ramón Santiago side-by-side.
 image: /assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png
 ---
+<style>
+/* Global cap for figures on THIS page */
+.image-figure {
+  /* Change this number to taste (px) */
+  --img-max: 1100px;
+  max-width: min(100%, var(--img-max));
+  margin: 1rem auto 2rem;
+}
+.image-figure img {
+  display: block;
+  width: 100%;    /* scales down with the figure wrapper */
+  height: auto;   /* keeps aspect ratio */
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+}
+.image-figure figcaption {
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: 0.4rem;
+}
 
+/* Optional: a narrower preset you can apply per figure with class="image-figure narrow" */
+.image-figure.narrow { --img-max: 820px; }
+
+/* Optional: super-wide preset */
+.image-figure.wide { --img-max: 1400px; }
+</style>
 # Carlos Guillén Trade — Results
 
 **TL;DR:** The visuals below show that **Carlos Guillén’s production with Detroit** quickly outpaced what the **Mariners’ shortstops** delivered over the same window. Ramón Santiago’s Seattle stint provided limited impact relative to Guillén’s Tigers peak.
