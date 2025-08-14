@@ -48,9 +48,10 @@ _At T-Mobile Park (Safeco Field), 2015 – present_
 
 
 <div style="text-align:center; margin:2rem 0;">
-  <a href="{{ '/<a href="{{ '/assets/top_10_homeruns_safeco_field.ipynb' | relative_url }}" class="btn btn-primary">📓 View the Notebook</a>
-' | relative_url }}" class="btn btn-primary">📓 View the Notebook</a>
+  <a href="{{ '/assets/top_10_homeruns_safeco_field.ipynb' | relative_url }}"
+     class="btn btn-primary">📓 View the Notebook</a>
 </div>
 
 <a href="{{ '/' | relative_url }}" class="back-link">← Back to home</a>
+
 
