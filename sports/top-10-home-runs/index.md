@@ -10,7 +10,7 @@ _At T-Mobile Park (Safeco Field), 2015 – present_
 
 <div style="text-align:center; margin:2rem 0;">
   <img
-    src="/assets/Top_10_Home_runs_Tmobile.png"
+    src="assets/images/sports/mariners/Top_10_Home_Runs_Safeco.png"
     alt="Top 10 Longest Home Runs at T-Mobile Park"
     style="max-width:90%; height:auto; border:1px solid #ddd;"
   >
