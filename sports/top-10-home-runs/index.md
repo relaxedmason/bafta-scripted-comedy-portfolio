@@ -40,7 +40,28 @@ _At T-Mobile Park (Safeco Field), 2015 – present_
   img.addEventListener('click', () => modal.showModal());
   modal.addEventListener('click', () => modal.close());
 </script>
+<hr>
 
+<h2>Watch the Homers</h2>
+
+<div id="hr-links" class="hr-links">Loading…</div>
+
+<script>
+  // Pull in the prebuilt table you uploaded at /assets/data/hr_links.html
+  fetch('{{ "/assets/data/hr_links.html" | relative_url }}')
+    .then(r => r.text())
+    .then(html => { document.getElementById('hr-links').innerHTML = html; })
+    .catch(() => { document.getElementById('hr-links').textContent = "Links failed to load."; });
+</script>
+
+<style>
+  /* Light table styling */
+  #hr-links table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  #hr-links th, #hr-links td { border: 1px solid #e5e7eb; padding: .6rem .75rem; }
+  #hr-links thead th { background:#f8fafc; text-align:left; }
+  #hr-links tbody tr:nth-child(even) { background: rgba(14,42,77,0.05); }
+  #hr-links a { text-decoration: underline; }
+</style>
 
 ## Data & Methodology
 
