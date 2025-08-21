@@ -12,7 +12,7 @@ The Seattle Mariners have historically leaned into this connection. They investe
 
 ---
 
-## Franchises powered by Venezuelan Talent”
+## Franchises powered by Venezuelan Talent
 
 <picture>
   <source 
