@@ -50,6 +50,7 @@ layout: default
             <li><a href="{{ "/sports/top-10-home-runs-at-Safeco-Field" | relative_url }}">Top 10 Home Runs at Safeco Field</a></li>
             <li><a href="{{ "/sports/baseball/mariners/suarez-vs-williamson/" | relative_url }}">Suárez vs. Williamson — 2025 First Half Comparison</a></li>
             <li><a href="{{ site.baseurl }}/sports/baseball/bavasi/carlos-guillen-trade/">The Carlos Guillén Trade</a></li>
+            <li><a href="{{ site.baseurl }}/sports/baseball/mariners/venezuelan-war/">Venezuelan WAR — Mariners Focus</a></li>
           </ul>
         </div>
       </div>
