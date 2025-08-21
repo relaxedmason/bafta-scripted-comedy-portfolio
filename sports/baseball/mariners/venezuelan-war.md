@@ -4,7 +4,7 @@ title: "Venezuelan WAR — Mariners Focus"
 permalink: /sports/baseball/mariners/venezuelan-war/
 ---
 
-# Venezuelan Talent and the Mariners Connection
+# Seattle’s Legacy of Venezuelan Talent
 
 Baseball has deep roots in Venezuela, producing a remarkable number of elite players who have left their mark on the United State's national past time. From Hall of Famers to modern stars, Venezuelan-born players have consistently delivered impact across every facet of Major League Baseball, cementing the country as one of the league’s most vital international pipelines for talent.
 
