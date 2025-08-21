@@ -1,160 +1,116 @@
-/* wrap everything in the same 900px-wide centered container */
-.wrapper {
-  max-width: 900px;
-  margin: auto;
+/* ===========================
+   THEME: Toggle button style
+   =========================== */
+.theme-btn{
+  border:1px solid #e5e7eb;
+  padding:.4rem .75rem;
+  border-radius:9999px;
+  background:transparent;
+  cursor:pointer;
+  font:inherit;
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+}
+html[data-theme="dark"] .theme-btn{
+  border-color:#475569;
+  color:#e5e7eb;
 }
 
-/* comfortable padding around the main area */
-main.page-content {
-  padding: 2rem 1rem;
+/* ====================================
+   DARK THEME OVERRIDES (site-wide)
+   ==================================== */
+html[data-theme="dark"] body{
+  background:#0f1115;   /* near-black */
+  color:#e6e6e6;
 }
 
-/* center your page header */
-.page-header h1 {
-  text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: .25rem;
+/* Links */
+html[data-theme="dark"] a{
+  color:#9ecbff;
 }
-.page-header .subtitle {
-  text-align: center;
-  font-size: 1.25rem;
-  color: #666;
-  margin-bottom: 1.5rem;
-}
-.subtitle {
-  /* ensure the “SQL • Python • APIs • Dashboarding” line is centered */
-  text-align: center;
-  display: block;
-  margin: 0.25rem auto 1.5rem;
-  font-size: 1rem;
-}
-/* simple nav styling */
-.site-nav {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-.site-nav a {
-  margin: 0 1rem;
-  color: #0366d6;
-  font-weight: 600;
-  text-decoration: none;
-}
-.site-nav a:hover {
-  text-decoration: underline;
+html[data-theme="dark"] a:hover{
+  color:#c9e2ff;
 }
 
-/* underline your section headings */
-#about h2,
-#projects h2,
-#contact h2 {
-  text-decoration: underline;
-  margin-top: 2rem;
+/* Header / nav / title */
+html[data-theme="dark"] .site-header{
+  background:#0f1115;
+  border-bottom:1px solid #20232a;
+}
+html[data-theme="dark"] .site-title,
+html[data-theme="dark"] .site-nav a,
+html[data-theme="dark"] .menu-icon{
+  color:#e6e6e6 !important;
 }
 
-/* style your social buttons */
-.social-links {
-  text-align: center;
-  margin: 3rem 0 1rem;
-}
-.social-links a {
-  display: inline-block;
-  margin: 0 .75rem;
-  padding: .5rem 1rem;
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #fff;
-  background: #0366d6;
-  border-radius: 4px;
-  text-decoration: none;
-}
-.social-links a.github  { background: #333; }
-.social-links a.twitter { background: #1DA1F2; }
-.social-links a:hover   { opacity: .85; }
-
-/* hide any leftover Minima footer bits */
-.site-footer .site-footer__meta,
-.site-footer .site-footer__links {
-  display: none !important;
-}
-/* 1. switch to a more professional sans-serif font */
-body {
-  font-family: Helvetica, Arial, sans-serif;
+/* Page header subtitle text (you set a mid-gray in light mode) */
+html[data-theme="dark"] .page-header .subtitle{
+  color:#9aa3b2;
 }
 
-/* 2. center your “Data Analyst Portfolio” heading */
-#data-analyst-portfolio {
-  text-align: center;
+/* Footer */
+html[data-theme="dark"] .site-footer{
+  background:#0f1115;
+  border-top:1px solid #20232a;
+  color:#cfd3da;
 }
 
-/* 3. hide the little hamburger/check icon in the top nav */
-.site-nav .nav-trigger,
-.site-nav label[for="nav-trigger"],
-.menu-icon,
-.trigger {
-  display: none !important;
+/* Horizontal rules */
+html[data-theme="dark"] hr{
+  border-color:#2a2f3a;
 }
 
-/* 4. (already done?) ensure footer is centered */
-.site-footer {
-  text-align: center;
+/* Code & preformatted blocks */
+html[data-theme="dark"] pre,
+html[data-theme="dark"] code{
+  background:#121521;
+  color:#d6e1ff;
 }
-/* make the socials row use flex and never wrap */
-.social-links {
-  display: flex;
-  justify-content: center;
-  gap: 0.75rem;
-  flex-wrap: nowrap;
-  overflow-x: auto;    /* allow a tiny scroll if they overflow */
-  padding: 1rem 0;
+html[data-theme="dark"] pre{
+  border:1px solid #1e2430;
 }
 
-/* keep each button from flex-shrinking */
-.social-links a {
-  flex: 0 0 auto;
+/* Tables */
+html[data-theme="dark"] table{
+  border-color:#2a2f3a;
+}
+html[data-theme="dark"] th{
+  background:#171a24;
+  color:#e6e6e6;
+}
+html[data-theme="dark"] td{
+  border-color:#2a2f3a;
 }
 
-/* optional: slightly smaller buttons on very narrow screens */
-@media (max-width: 360px) {
-  .social-links a {
-    padding: 0.4rem 0.8rem;
-    font-size: 1rem;
+/* Blockquotes */
+html[data-theme="dark"] blockquote{
+  color:#d5d9e2;
+  border-left:.25em solid #2a2f3a;
+}
+
+/* Optional: slightly lighter hover tag on images in dark */
+html[data-theme="dark"] .hover-text{
+  background-color:rgba(0,0,0,0.6);
+}
+
+/* ====================================
+   No-JS fallback: respect system dark
+   (only if user hasn't chosen "light")
+   ==================================== */
+@media (prefers-color-scheme: dark){
+  html:not([data-theme="light"]) body{
+    background:#0f1115;
+    color:#e6e6e6;
   }
-}
-.hover-image {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-  border-radius: 8px;
-  max-width: 100%;
-}
-
-.hover-image img {
-  display: block;
-  width: 100%;
-  height: auto;
-  transition: transform 0.35s ease, filter 0.35s ease;
-}
-
-.hover-image:hover img {
-  transform: scale(1.05);
-  filter: brightness(85%);
-}
-
-.hover-text {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  padding: 6px 14px;
-  border-radius: 5px;
-  font-size: 0.95rem;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  white-space: nowrap;
-}
-
-.hover-image:hover .hover-text {
-  opacity: 1;
+  html:not([data-theme="light"]) .site-header{
+    background:#0f1115;
+    border-bottom:1px solid #20232a;
+  }
+  html:not([data-theme="light"]) .site-footer{
+    background:#0f1115;
+    border-top:1px solid #20232a;
+    color:#cfd3da;
+  }
+  html:not([data-theme="light"]) a{ color:#9ecbff; }
 }
