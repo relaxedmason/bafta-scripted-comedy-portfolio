@@ -16,62 +16,39 @@ The Seattle Mariners have historically leaned into this connection. They investe
 
 ---
 
-<!-- ===== Theme toggle + Lightbox (inline, no deps) ===== -->
+<!-- ===== Page-local styles: keep centered H2s, clamp image width ===== -->
 <style>
-  .theme-switch{display:flex;justify-content:center;margin:1rem 0}
-  .theme-btn{border:1px solid #e5e7eb;padding:.4rem .75rem;border-radius:9999px;cursor:pointer;background:transparent;font:inherit}
-  [data-theme="dark"] .theme-btn{border-color:#475569;color:#e5e7eb}
-  .viz-block{margin:2rem 0}
-  .viz-title{text-align:center;margin:1rem 0 .5rem;font-weight:600}
+  /* clamp each visualization container (images will fill this box) */
+  .viz-block{
+    width:100%;
+    max-width:720px;   /* adjust to taste */
+    margin:2rem auto;  /* centers the viz within your page */
+  }
+  /* optional presets if you want different widths per viz */
+  .viz-sm{ max-width:560px; }
+  .viz-md{ max-width:720px; }
+  .viz-lg{ max-width:840px; }
+
   .viz-img{width:100%;height:auto;border-radius:12px}
   .zoomable{cursor:zoom-in}
 </style>
-<style>
-  /* …keep your existing rules… */
 
-  /* Clamp the visual’s container instead of the whole page width */
-  .viz-block{
-    width:100%;
-    max-width: 720px;     /* pick your preferred width */
-    margin: 2rem auto;    /* center it */
-  }
-
-  /* Optional quick presets so you can vary size per viz */
-  .viz-sm{ max-width: 560px; }
-  .viz-md{ max-width: 720px; }
-  .viz-lg{ max-width: 840px; }
-
-  /* Make sure the image just fills its (now smaller) container */
-  .viz-img{
-    width:100%;
-    height:auto;
-    border-radius:12px;
-  }
-</style>
-
-<div class="theme-switch">
-  <button id="themeToggle" class="theme-btn">Theme: <span id="themeLabel">Light</span></button>
-</div>
-
+<!-- ===== Theme-aware images (no button) + Lightbox ===== -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // --- Theme handling ---
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  let theme = localStorage.getItem('theme') || (prefersDark ? 'dark' : 'light');
-  const label = document.getElementById('themeLabel');
-  function applyTheme() {
-    document.documentElement.dataset.theme = theme;
-    document.querySelectorAll('img[data-src-light][data-src-dark]').forEach(img => {
+  // Swap images based on the site's current theme (set on <html data-theme="...">)
+  const imgs = document.querySelectorAll('img[data-src-light][data-src-dark]');
+  function applyThemeToImages(){
+    const theme = document.documentElement.getAttribute('data-theme') || 'light';
+    imgs.forEach(img => {
       img.src = (theme === 'dark') ? img.dataset.srcDark : img.dataset.srcLight;
     });
-    label.textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
   }
-  applyTheme();
-  document.getElementById('themeToggle').addEventListener('click', () => {
-    theme = (theme === 'dark') ? 'light' : 'dark';
-    localStorage.setItem('theme', theme);
-    applyTheme();
-  });
+  applyThemeToImages();
+
+  // If your global theme toggler changes data-theme, update images live
+  const obs = new MutationObserver(applyThemeToImages);
+  obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   // --- Lightbox (click to enlarge) ---
   const overlay = document.createElement('div');
@@ -96,9 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </div>
 
-<div class="viz-block">
-  <h3 class="viz-title">Teams that have benefited most from Venezuelan talent</h3>
-  <!-- Default src = light as a no-JS fallback; JS will swap for dark if needed -->
+<div class="viz-block viz-md">
   <img
     class="viz-img zoomable"
     src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_light.png' | relative_url }}"
@@ -115,8 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </div>
 
-<div class="viz-block">
-  <h3 class="viz-title">Mapping the Mariners’ Venezuelan greats</h3>
+<div class="viz-block viz-md">
   <img
     class="viz-img zoomable"
     src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_light.png' | relative_url }}"
@@ -124,4 +98,3 @@ document.addEventListener('DOMContentLoaded', () => {
     data-src-dark="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_dark.png' | relative_url }}"
     alt="Top 5 Mariners of Venezuelan birth (all-time), mapped">
 </div>
-
