@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ site.lang | default: 'en-US' }}" data-theme="">
+<html lang="{{ site.lang | default: "en-US" }}" data-theme="">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -19,20 +19,19 @@
       })();
     </script>
 
-    <!-- Minima CSS -->
+    <!-- Minima core -->
     <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}" />
-    <!-- Your overrides -->
-    <link rel="stylesheet" href="{{ "/assets/css/custom.css" | relative_url }}" />
+
+    <!-- Your overrides (cache-busted) -->
+    <link rel="stylesheet" href="{{ "/assets/css/custom.css" | relative_url }}?v={{ site.github.build_revision }}" />
   </head>
   <body>
     <header class="site-header" role="banner">
       <div class="wrapper" style="display:flex;align-items:center;gap:1rem;justify-content:space-between;">
         <a class="site-title" href="{{ "/" | relative_url }}">{{ site.title }}</a>
 
-        <!-- Simple nav (no hamburger) -->
-        <nav class="site-nav" style="margin-left:auto;">
-          <a class="page-link" href="{{ '/bafta-scripted-comedy/' | relative_url }}">BAFTA Scripted Comedy Awards</a>
-        </nav>
+        <!-- No nav links -->
+        <nav class="site-nav" style="margin-left:auto;"></nav>
 
         <!-- Theme toggle -->
         <button id="themeToggle" class="theme-btn" type="button" aria-label="Toggle theme">
@@ -94,5 +93,3 @@
     </script>
   </body>
 </html>
-
-
