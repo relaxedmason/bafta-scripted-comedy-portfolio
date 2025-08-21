@@ -26,6 +26,28 @@ The Seattle Mariners have historically leaned into this connection. They investe
   .viz-img{width:100%;height:auto;border-radius:12px}
   .zoomable{cursor:zoom-in}
 </style>
+<style>
+  /* …keep your existing rules… */
+
+  /* Clamp the visual’s container instead of the whole page width */
+  .viz-block{
+    width:100%;
+    max-width: 720px;     /* pick your preferred width */
+    margin: 2rem auto;    /* center it */
+  }
+
+  /* Optional quick presets so you can vary size per viz */
+  .viz-sm{ max-width: 560px; }
+  .viz-md{ max-width: 720px; }
+  .viz-lg{ max-width: 840px; }
+
+  /* Make sure the image just fills its (now smaller) container */
+  .viz-img{
+    width:100%;
+    height:auto;
+    border-radius:12px;
+  }
+</style>
 
 <div class="theme-switch">
   <button id="themeToggle" class="theme-btn">Theme: <span id="themeLabel">Light</span></button>
