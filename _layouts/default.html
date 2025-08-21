@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ site.lang | default: "en-US" }}" data-theme="">
+<html lang="{{ site.lang | default: 'en-US' }}" data-theme="">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -19,34 +19,22 @@
       })();
     </script>
 
-    <!-- Minima’s core CSS -->
-    <link
-      rel="stylesheet"
-      href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}"
-    />
-
+    <!-- Minima CSS -->
+    <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}" />
     <!-- Your overrides -->
-    <link
-      rel="stylesheet"
-      href="{{ "/assets/css/custom.css" | relative_url }}"
-    />
+    <link rel="stylesheet" href="{{ "/assets/css/custom.css" | relative_url }}" />
   </head>
   <body>
     <header class="site-header" role="banner">
       <div class="wrapper" style="display:flex;align-items:center;gap:1rem;justify-content:space-between;">
         <a class="site-title" href="{{ "/" | relative_url }}">{{ site.title }}</a>
 
+        <!-- Simple nav (no hamburger) -->
         <nav class="site-nav" style="margin-left:auto;">
-          <input type="checkbox" id="nav-trigger" class="nav-trigger" />
-          <label for="nav-trigger">
-            <span class="menu-icon">☰</span>
-          </label>
-          <div class="trigger">
-            <a class="page-link" href="/bafta-scripted-comedy/">BAFTA Scripted Comedy Awards</a>
-          </div>
+          <a class="page-link" href="{{ '/bafta-scripted-comedy/' | relative_url }}">BAFTA Scripted Comedy Awards</a>
         </nav>
 
-        <!-- Theme toggle button -->
+        <!-- Theme toggle -->
         <button id="themeToggle" class="theme-btn" type="button" aria-label="Toggle theme">
           <span class="theme-icon" aria-hidden="true">🌓</span>
           <span id="themeLabel">Light</span>
@@ -79,28 +67,21 @@
         function setLabel(theme) {
           if (label) label.textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
         }
-
         function currentTheme() {
           return document.documentElement.getAttribute('data-theme') || 'light';
         }
-
         function apply(theme) {
           document.documentElement.setAttribute('data-theme', theme);
           try { localStorage.setItem('theme', theme); } catch(e) {}
           setLabel(theme);
         }
-
-        // init label
         setLabel(currentTheme());
-
         if (btn) {
           btn.addEventListener('click', function() {
             var theme = currentTheme() === 'dark' ? 'light' : 'dark';
             apply(theme);
           });
         }
-
-        // optional: live-update if system preference changes AND user hasn't chosen manually
         try {
           var stored = localStorage.getItem('theme');
           if (!stored && window.matchMedia) {
@@ -113,4 +94,5 @@
     </script>
   </body>
 </html>
+
 
