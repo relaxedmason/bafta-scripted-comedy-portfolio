@@ -1,11 +1,23 @@
 <!DOCTYPE html>
-<html lang="{{ site.lang | default: "en-US" }}">
+<html lang="{{ site.lang | default: "en-US" }}" data-theme="">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     {% seo %}
+
+    <!-- Set theme BEFORE paint to avoid flash -->
+    <script>
+      (function() {
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = stored || (prefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch(e) {}
+      })();
+    </script>
 
     <!-- Minima’s core CSS -->
     <link
@@ -21,9 +33,10 @@
   </head>
   <body>
     <header class="site-header" role="banner">
-      <div class="wrapper">
+      <div class="wrapper" style="display:flex;align-items:center;gap:1rem;justify-content:space-between;">
         <a class="site-title" href="{{ "/" | relative_url }}">{{ site.title }}</a>
-        <nav class="site-nav">
+
+        <nav class="site-nav" style="margin-left:auto;">
           <input type="checkbox" id="nav-trigger" class="nav-trigger" />
           <label for="nav-trigger">
             <span class="menu-icon">☰</span>
@@ -32,6 +45,12 @@
             <a class="page-link" href="/bafta-scripted-comedy/">BAFTA Scripted Comedy Awards</a>
           </div>
         </nav>
+
+        <!-- Theme toggle button -->
+        <button id="themeToggle" class="theme-btn" type="button" aria-label="Toggle theme">
+          <span class="theme-icon" aria-hidden="true">🌓</span>
+          <span id="themeLabel">Light</span>
+        </button>
       </div>
     </header>
 
@@ -43,14 +62,55 @@
 
     <footer class="site-footer h-card">
       <div class="wrapper">
-        <!-- hide the two side-columns and leave only the centered copyright -->
-        <div class="footer-col footer-col-2">
-          © {{ "now" | date: "%Y" }} Mason Colborn
+        <div class="footer-col footer-col-2" style="text-align:center;width:100%">
+          © {{ site.time | date: "%Y" }} Mason Colborn
         </div>
       </div>
     </footer>
 
     <script src="{{ "/assets/js/scale.fix.js" | relative_url }}"></script>
+
+    <!-- Theme logic -->
+    <script>
+      (function() {
+        var label = document.getElementById('themeLabel');
+        var btn   = document.getElementById('themeToggle');
+
+        function setLabel(theme) {
+          if (label) label.textContent = theme.charAt(0).toUpperCase() + theme.slice(1);
+        }
+
+        function currentTheme() {
+          return document.documentElement.getAttribute('data-theme') || 'light';
+        }
+
+        function apply(theme) {
+          document.documentElement.setAttribute('data-theme', theme);
+          try { localStorage.setItem('theme', theme); } catch(e) {}
+          setLabel(theme);
+        }
+
+        // init label
+        setLabel(currentTheme());
+
+        if (btn) {
+          btn.addEventListener('click', function() {
+            var theme = currentTheme() === 'dark' ? 'light' : 'dark';
+            apply(theme);
+          });
+        }
+
+        // optional: live-update if system preference changes AND user hasn't chosen manually
+        try {
+          var stored = localStorage.getItem('theme');
+          if (!stored && window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+              apply(e.matches ? 'dark' : 'light');
+            });
+          }
+        } catch(e) {}
+      })();
+    </script>
   </body>
 </html>
 
