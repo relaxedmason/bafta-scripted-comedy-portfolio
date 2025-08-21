@@ -95,6 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
     class="viz-img zoomable"
     src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_light.png' | relative_url }}"
     data-src-light="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_light.png' | relative_url }}"
-    data-src-dark="{{ '/assets/images/sports/mariners/Top_10_MLB_Team_WAR_Venezuelans_Map_dark.png' | relative_url }}"
+    data-src-dark="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_dark.png' | relative_url }}"
     alt="Top 5 Mariners of Venezuelan birth (all-time), mapped">
 </div>
