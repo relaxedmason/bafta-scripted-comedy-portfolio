@@ -4,7 +4,7 @@ title: "Venezuelan WAR — Mariners Focus"
 permalink: /sports/baseball/mariners/venezuelan-war/
 ---
 
-<div style="text-align:center">
+<div style="text-align:center" markdown="1">
 
 ## Seattle’s Legacy of Venezuelan Talent
 
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<div style="text-align:center">
+<div style="text-align:center" markdown="1">
 
 ## Franchises powered by Venezuelan talent
 
@@ -78,13 +78,13 @@ document.addEventListener('DOMContentLoaded', () => {
     class="viz-img zoomable"
     src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_light.png' | relative_url }}"
     data-src-light="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_light.png' | relative_url }}"
-    data-src-dark="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_dark.png' | relative_url }}"
+    data-src-dark="{{ '/assets/images/sports/mariners/Top_10_MLB_Team_WAR_Venezuela_dark.png' | relative_url }}"
     alt="Top 10 MLB team WAR by Venezuelan-born players with Mariners highlighted">
 </div>
 
 ---
 
-<div style="text-align:center">
+<div style="text-align:center" markdown="1">
 
 ## Mariners legends from Venezuela
 
@@ -95,6 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
     class="viz-img zoomable"
     src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_light.png' | relative_url }}"
     data-src-light="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_light.png' | relative_url }}"
-    data-src-dark="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_dark.png' | relative_url }}"
+    data-src-dark="{{ '/assets/images/sports/mariners/Top_10_MLB_Team_WAR_Venezuelans_Map_dark.png' | relative_url }}"
     alt="Top 5 Mariners of Venezuelan birth (all-time), mapped">
 </div>
