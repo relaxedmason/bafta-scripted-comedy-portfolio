@@ -152,3 +152,37 @@ html[data-theme="dark"] .hover-text{
   margin-left: 50%;
   transform: translateX(-50%);
 }
+/* Dark theme typography (only affects html[data-theme="dark"]) */
+html[data-theme="dark"] body{
+  color:#dbe2ea;            /* main body text (not pure white) */
+}
+
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6{
+  color:#ffffff;            /* headings */
+}
+
+html[data-theme="dark"] .page-header .subtitle,
+html[data-theme="dark"] .subtitle,
+html[data-theme="dark"] small,
+html[data-theme="dark"] .muted{
+  color:#9aa3b2;            /* secondary/muted text */
+}
+
+html[data-theme="dark"] a{
+  color:#9ecbff;            /* links */
+}
+html[data-theme="dark"] a:hover{
+  color:#c8e1ff;
+}
+
+/* Optional: stronger contrast for code */
+html[data-theme="dark"] code,
+html[data-theme="dark"] pre{
+  color:#d6e1ff;
+}
+
