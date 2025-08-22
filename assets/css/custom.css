@@ -335,3 +335,52 @@ main.page-content {
   margin-top: auto;         /* <- the magic */
   padding-top: 1.5rem;      /* a little breathing room above */
 }
+/* === 1) Remove the outer panel border/background (keep only the card) === */
+.tabs .tab-content{
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  max-width: 1100px !important;      /* stretch the projects row */
+  margin: 0 auto !important;
+}
+
+/* Single centered track so the lone card sits dead center */
+.tabs .tab-content .cards{
+  display: grid !important;
+  grid-template-columns: minmax(340px, 900px) !important; /* wider card */
+  justify-content: center !important;
+  gap: 1rem;
+}
+
+/* Make the card itself the only bordered box, slightly larger */
+.tabs .tab-content .card{
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;            /* more breathing room */
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+
+/* TRUE centering + bigger link text */
+.tabs .tab-content .card ul{
+  list-style: none;
+  padding-left: 0 !important;
+  margin: .6rem auto 0 !important;
+  display: inline-block !important;   /* shrink-wrap for centering */
+  text-align: center !important;
+  font-size: 1.1rem;                  /* bump link size */
+  line-height: 1.6;
+}
+.tabs .tab-content .card li{ margin: .4rem 0; }
+.tabs .tab-content .card a{ display: inline-block; }
+
+/* === 2) (Optional) widen the whole site column a bit === */
+.site-header > .wrapper,
+.page-content  > .wrapper,
+.site-footer   > .wrapper{
+  max-width: 1100px !important;       /* was 900px */
+}
