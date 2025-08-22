@@ -3,8 +3,10 @@ layout: default
 ---
 
 # Data Analyst Portfolio
+{: #data-analyst-portfolio}
 
 <p class="subtitle">SQL • Python • APIs • Dashboarding</p>
+
 
 <section id="about">
   <h2>About:</h2>
@@ -49,8 +51,8 @@ layout: default
             <li><a href="{{ "/sports/baseball/bavasi/depth-chart/" | relative_url }}">Bavasi’s Reign of Terror: Mariners Depth Charts (2003–2008)</a></li>
             <li><a href="{{ "/sports/top-10-home-runs-at-Safeco-Field" | relative_url }}">Top 10 Home Runs at Safeco Field</a></li>
             <li><a href="{{ "/sports/baseball/mariners/suarez-vs-williamson/" | relative_url }}">Suárez vs. Williamson — 2025 First Half Comparison</a></li>
-            <li><a href="{{ site.baseurl }}/sports/baseball/bavasi/carlos-guillen-trade/">The Carlos Guillén Trade</a></li>
-            <li><a href="{{ site.baseurl }}/sports/baseball/mariners/venezuelan-war/">Venezuelan WAR — Mariners Focus</a></li>
+            <li><a href="{{ '/sports/baseball/bavasi/carlos-guillen-trade/' | relative_url }}">The Carlos Guillén Trade</a></li>
+            <li><a href="{{ '/sports/baseball/mariners/venezuelan-war/' | relative_url }}">Venezuelan WAR — Mariners Focus</a></li>
           </ul>
         </div>
       </div>
