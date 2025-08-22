@@ -271,4 +271,63 @@ html[data-theme="dark"] pre{
   font-size: 1.1rem;
   margin: .25rem 0 .5rem;
 }
+/* ===== Hero title + subtitle (top of page) ===== */
+#data-analyst-portfolio{
+  text-align: center;
+  font-size: clamp(2rem, 4vw, 2.75rem);  /* bigger, responsive */
+  margin: 0 0 .25rem 0;
+}
+.subtitle{
+  text-align: center;                    /* ensure centered */
+  max-width: 60ch;                       /* nicer line length */
+  margin: .5rem auto 1.75rem;            /* center with auto sides */
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+}
+
+/* ===== Section titles (About / Projects / Connect) ===== */
+#about h2, #projects h2, #contact h2{
+  text-align: center;
+  font-size: 2rem;
+  margin: 1.5rem 0 .75rem;
+}
+
+/* ===== Center the project links in cards ===== */
+.card{ text-align: center; }
+.card ul{
+  list-style: none;
+  padding: 0;
+  margin: .5rem 0 0;
+  text-align: center;                    /* anchor text centered */
+}
+.card li{ margin: .35rem 0; }
+.card a{ display: inline-block; }        /* keeps long links neatly centered */
+
+/* ===== Tabs (TV & Movies / Sports) bigger + centered ===== */
+.tabs{ text-align: center; }
+.tabs label{
+  font-size: 1.2rem;
+  padding: .5rem .9rem;
+}
+@media (min-width: 720px){
+  .tabs label{ font-size: 1.3rem; }
+}
+
+/* ===== Inside each tab: h3 like “TV”, “Baseball” ===== */
+.tab-content h3{
+  text-align: center;
+  font-size: 1.5rem;
+  margin: .5rem 0 .75rem;
+}
+
+/* ===== Social buttons row (Email / Twitter / GitHub) ===== */
+#contact .social-links{
+  display: flex;
+  justify-content: center;               /* center row */
+  align-items: center;
+  gap: .75rem;
+  text-align: center;                    /* belt + suspenders */
+}
+#contact .social-links a{
+  display: inline-block;                 /* tidy centering of buttons */
+}
 
