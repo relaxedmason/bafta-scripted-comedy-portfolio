@@ -1,3 +1,12 @@
+---
+layout: default
+---
+
+# Data Analyst Portfolio
+{: #data-analyst-portfolio}
+
+<p class="subtitle">SQL • Python • APIs • Data Visualization</p>
+
 <section id="projects">
   <h2>Projects</h2>
 
@@ -42,3 +51,12 @@
   </div>
 </section>
 
+<section id="contact">
+  <h2>Connect</h2>
+  <div class="social-links">
+    <a href="mailto:masoncolborn@gmail.com">✉️ Email</a>
+    <a href="https://twitter.com/relaxedmason">🐦 Twitter</a>
+    <a href="https://github.com/relaxedmason">💻 GitHub</a>
+    <a href="{{ '/about/' | relative_url }}">ℹ️ About</a>
+  </div>
+</section>
