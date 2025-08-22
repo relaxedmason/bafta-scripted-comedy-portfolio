@@ -504,53 +504,6 @@ html[data-theme="dark"] pre{
   text-decoration-thickness: .08em;
 }
 
-/* Tabs row centered + pill buttons with borders/shading */
-.tabs{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:.6rem;
-  margin:.25rem 0 .75rem;
-}
-.tabs input[type="radio"]{ display:none; }
-
-.tabs label{
-  display:inline-block;
-  font-weight:700;
-  font-size:1.15rem;
-  padding:.5rem 1rem;
-  border:2px solid var(--border);
-  border-radius:9999px;
-  background:var(--surface);
-  color:var(--text);
-  cursor:pointer;
-  transition:transform .06s ease, box-shadow .15s ease, background .15s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,.05), inset 0 1px 0 rgba(255,255,255,.35);
-}
-.tabs label:hover{ transform:translateY(-1px); }
-
-/* Active (checked) tab looks like a real button */
-#tab-tv:checked     + label,
-#tab-sports:checked + label{
-  border-color: var(--link);
-  background: var(--link);
-  color:#fff;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--link), transparent 70%);
-}
-html[data-theme="dark"] .tabs label{
-  box-shadow: 0 1px 1px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
-}
-
-/* Keep the pane full-width under the centered labels */
-.tab-content{
-  order:1;
-  flex-basis:100%;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:1rem;
-  background:var(--bg);
-}
-
 /* Panel that binds the section title to its links */
 .panel{
   border:1px solid var(--border);
@@ -589,4 +542,55 @@ html[data-theme="dark"] .tabs label{
 }
 .panel .cards .card li{ margin:.35rem 0; }
 .panel .cards .card a{ display:inline-block; }
+/* Always-visible project buttons */
+.project-pills{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:1rem;
+  flex-wrap:wrap;
+  margin:.5rem 0 1.25rem;
+}
+
+/* Pill button base */
+.pill-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:.65rem 1.15rem;
+  border:2px solid var(--border);
+  border-radius:9999px;
+  background: linear-gradient(to bottom, var(--surface), color-mix(in srgb, var(--surface), #000 4%));
+  color:var(--text);
+  text-decoration:none;
+  font-weight:700;
+  font-size:1.05rem;
+  letter-spacing:.15px;
+  transition: transform .06s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
+  /* thicker, always-on shade (ring + drop) */
+  box-shadow:
+    0 0 0 4px rgba(3,102,214,.22),      /* outer ring */
+    0 6px 16px rgba(0,0,0,.14);         /* drop shadow */
+}
+.pill-btn:hover{ transform: translateY(-1px); }
+
+/* TV = accent with link color; Sports = neutral or pick another brand */
+.pill-tv{ border-color: var(--link); }
+.pill-sports{ border-color: var(--border); }
+
+/* Optional: make TV solid-filled to stand out */
+.pill-tv:hover{
+  background: linear-gradient(to bottom, var(--link), color-mix(in srgb, var(--link), #000 8%));
+  color:#fff;
+  box-shadow:
+    0 0 0 4px rgba(3,102,214,.28),
+    0 8px 22px rgba(0,0,0,.18);
+}
+
+/* Dark-theme tweak: slightly stronger shadows/ring */
+html[data-theme="dark"] .pill-btn{
+  box-shadow:
+    0 0 0 4px rgba(158,203,255,.25),
+    0 8px 22px rgba(0,0,0,.45);
+}
 
