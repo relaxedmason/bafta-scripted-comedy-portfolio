@@ -375,4 +375,54 @@ html[data-theme="dark"] pre{
 .card ul{ list-style:none; padding:0; margin:.5rem 0 0; }
 .card li{ margin:.35rem 0; }
 .card a{ display:inline-block; }
+/* 1) Center the tab labels row under the Projects title */
+.tabs{
+  display: flex;            /* put labels on one row */
+  flex-wrap: wrap;          /* allow content to drop below */
+  justify-content: center;  /* center the labels */
+  gap: .5rem;
+  margin-top: .25rem;
+  margin-bottom: .5rem;
+}
+/* radios stay hidden */
+.tabs input[type="radio"]{ display:none; }
+
+/* labels look like tabs (you likely already have this; safe to duplicate) */
+.tabs label{
+  display: inline-block;
+  font-size: 1.2rem;
+  padding: .5rem .9rem;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* make tab panes sit on the next line and fill the width */
+.tab-content{
+  order: 1;                 /* after labels visually */
+  flex-basis: 100%;
+  border: 1px solid var(--border);
+  border-radius: 0 12px 12px 12px;
+  padding: 1rem;
+  background: var(--bg);
+}
+
+/* active label state (keeps your existing behavior) */
+#tab-tv:checked     + label{ background: var(--bg); }
+#tab-sports:checked + label{ background: var(--bg); }
+
+/* 2) Center the links inside the card lists */
+.card{ text-align: center; }           /* center everything in the card */
+.card ul{
+  list-style: none;                    /* remove bullets */
+  padding: 0;
+  margin: .5rem 0 0;
+  text-align: center;                  /* belt & suspenders */
+}
+.card li{ margin: .35rem 0; }
+.card a{ display: inline-block; }      /* keeps long links neatly centered */
 
