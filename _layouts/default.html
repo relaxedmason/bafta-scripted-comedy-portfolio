@@ -48,6 +48,8 @@
     </footer>
 
     <script src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
+
+    <!-- Theme toggle -->
     <script>
       (function() {
         var btn = document.getElementById('themeToggle');
@@ -60,6 +62,31 @@
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => apply(e.matches ? 'dark' : 'light'));
           }
         } catch(e) {}
+      })();
+    </script>
+
+    <!-- Tabs deep-linking (TV/Sports) -->
+    <script>
+      (function () {
+        // Guard so this runs harmlessly on pages without tabs
+        var tvRadio = document.getElementById('tab-tv');
+        var spRadio = document.getElementById('tab-sports');
+        var tvLabel = document.querySelector('label[for="tab-tv"]');
+        var spLabel = document.querySelector('label[for="tab-sports"]');
+        if (!tvRadio || !spRadio) return;
+
+        function selectFromHash() {
+          if (location.hash === '#sports') { spRadio.checked = true; }
+          else { tvRadio.checked = true; } // default to TV
+        }
+
+        // Open correct panel on load and when the hash changes
+        selectFromHash();
+        window.addEventListener('hashchange', selectFromHash);
+
+        // Update the URL hash when a tab is clicked so it’s shareable/bookmarkable
+        tvLabel && tvLabel.addEventListener('click', function(){ history.replaceState(null, '', '#tv'); });
+        spLabel && spLabel.addEventListener('click', function(){ history.replaceState(null, '', '#sports'); });
       })();
     </script>
   </body>
