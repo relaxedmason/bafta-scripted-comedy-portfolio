@@ -185,4 +185,48 @@ html[data-theme="dark"] code,
 html[data-theme="dark"] pre{
   color:#d6e1ff;
 }
+/* ===== Tabs (pure CSS) ===== */
+.tabs{ margin-top:1rem; }
+.tabs input[type="radio"]{ display:none; }
+
+.tabs label{
+  display:inline-block;
+  margin-right:.5rem;
+  padding:.4rem .8rem;
+  border:1px solid var(--border);
+  border-bottom:none;
+  border-radius:8px 8px 0 0;
+  background:var(--surface);
+  color:var(--text);
+  cursor:pointer;
+  font-weight:600;
+}
+
+#tab-tv:checked    + label{ background:var(--bg); }
+#tab-sports:checked+ label{ background:var(--bg); }
+
+/* Hide all tab panes by default; show the checked one */
+.tab-content{ display:none; border:1px solid var(--border); border-radius:0 12px 12px 12px; padding:1rem; background:var(--bg); }
+#tab-tv:checked    ~ #tv{ display:block; }
+#tab-sports:checked~ #sports{ display:block; }
+
+/* ===== Cards ===== */
+.cards{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:1rem;
+}
+@media (min-width: 720px){
+  .cards{ grid-template-columns: 1fr 1fr; }
+}
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1rem;
+}
+.card h4{ margin:.25rem 0 .5rem; }
+.card ul{ margin:0; padding-left:1rem; }
+.card a{ color:var(--link); }
+.card a:hover{ color:var(--link-hover); }
 
