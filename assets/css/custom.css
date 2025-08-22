@@ -229,4 +229,6 @@ html[data-theme="dark"] pre{
 .card ul{ margin:0; padding-left:1rem; }
 .card a{ color:var(--link); }
 .card a:hover{ color:var(--link-hover); }
+.tabs label{ margin-right:.5rem; }
+.tabs{ text-align:center; }
 
