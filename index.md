@@ -5,15 +5,7 @@ layout: default
 # Data Analyst Portfolio
 {: #data-analyst-portfolio}
 
-<p class="subtitle">SQL • Python • APIs • Dashboarding</p>
-
-
-<section id="about">
-  <h2>About:</h2>
-  <p>
-    A Pacific Northwest based data analyst who transforms complex datasets into clear and compelling visual stories. Here are some examples of my work:
-  </p>
-</section>
+<p class="subtitle">SQL • Python • APIs • Data Visualization</p>
 
 <section id="projects">
   <h2>Projects</h2>
@@ -26,9 +18,9 @@ layout: default
     <input type="radio" name="tab" id="tab-sports">
     <label for="tab-sports">Sports</label>
 
-    <!-- TV & Movies tab -->
+    <!-- TV tab -->
     <div class="tab-content" id="tv">
-      <h3>TV</h3>
+      <h3>British TV</h3>
       <div class="cards">
         <div class="card">
           <h4>BAFTA Scripted Comedy Awards</h4>
@@ -66,6 +58,7 @@ layout: default
     <a href="mailto:masoncolborn@gmail.com">✉️ Email</a>
     <a href="https://twitter.com/relaxedmason">🐦 Twitter</a>
     <a href="https://github.com/relaxedmason">💻 GitHub</a>
+    <a href="{{ '/about/' | relative_url }}">ℹ️ About</a>
   </div>
 </section>
 
