@@ -750,4 +750,36 @@ html[data-theme="dark"] .tabs label{
 .tab-content .card ul{ list-style:none; padding:0 !important; margin:.5rem 0 0; text-align:center; }
 .tab-content .card li{ margin:.35rem 0; }
 .tab-content .card a{ display:inline-block; }
+/* === FINAL LINK-CENTERING OVERRIDES === */
+
+/* Keep the card grid centered */
+.tab-content .cards{
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;   /* single column by default */
+  justify-items: center;        /* centers the card itself */
+}
+@media (min-width: 720px){
+  .tab-content .cards{ grid-template-columns: 1fr 1fr; }
+}
+
+/* Center everything inside each card */
+.tab-content .card{
+  text-align: center;
+  max-width: 720px;
+  width: 100%;
+}
+
+/* Make the UL shrink to its content and sit centered */
+.tab-content .card ul{
+  list-style: none;
+  padding-left: 0 !important;   /* override earlier padding-left */
+  margin: .5rem auto 0;         /* auto sides = centered */
+  display: inline-block;        /* shrink-wrap the list */
+  text-align: center;           /* center each line’s text */
+}
+
+/* Tidy spacing for items/links */
+.tab-content .card li{ margin: .35rem 0; }
+.tab-
 
