@@ -237,3 +237,77 @@ blockquote{ color: var(--text); border-left:.25em solid var(--border); padding-l
   html:not([data-theme="light"]) .site-footer{ background:#0f1115; border-top:1px solid #20232a; color:#cfd3da; }
   html:not([data-theme="light"]) a{ color:#9ecbff; }
 }
+/* ===== HARD CENTER THE LINKS PANEL (wins over earlier rules) ===== */
+
+/* 1) Keep the panel itself centered */
+.tabs .tab-content{
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* 2) Force a single centered track for the cards grid (no 2-col snap) */
+.tabs .tab-content .cards{
+  display: grid !important;
+  grid-template-columns: minmax(280px, 720px) !important; /* one centered column */
+  justify-content: center !important;                      /* center that column */
+  gap: 1rem;
+}
+
+/* 3) Make the card fill that centered track and stay centered */
+.tabs .tab-content .card{
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+}
+
+/* 4) Truly center the UL list (shrink-wrap + auto margins) */
+.tabs .tab-content .card ul{
+  list-style: none;
+  padding-left: 0 !important;
+  margin: .5rem auto 0 !important;
+  display: inline-block !important;
+  text-align: center !important;
+}
+.tabs .tab-content .card li{ margin: .35rem 0; }
+.tabs .tab-content .card a{ display: inline-block; }
+
+/* ===== SQUARE TAB BUTTONS — ALWAYS SHADED, STRONGER WHEN ACTIVE ===== */
+.tabs{
+  display:flex; flex-wrap:wrap; justify-content:center;
+  gap:.6rem; margin:.25rem 0 .75rem;
+}
+.tabs input[type="radio"]{ display:none; }
+
+.tabs label{
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:1.05rem;
+  padding:.55rem 1rem;
+  border:2px solid var(--border);
+  border-radius:6px; /* square-ish */
+  background: linear-gradient(to bottom, var(--surface), rgba(0,0,0,.08));
+  color:var(--text);
+  cursor:pointer;
+  transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+  /* always-on ring + shadow */
+  box-shadow:
+    0 0 0 6px rgba(3,102,214,.18),
+    0 12px 28px rgba(0,0,0,.18);
+}
+.tabs label:hover{ transform: translateY(-1px); }
+
+#tab-tv:checked     + label,
+#tab-sports:checked + label{
+  border-color: var(--link);
+  background: linear-gradient(to bottom, var(--link), rgba(0,0,0,.14));
+  color:#fff;
+  box-shadow:
+    0 0 0 8px rgba(3,102,214,.28), /* thicker ring */
+    0 16px 36px rgba(0,0,0,.24);   /* deeper drop */
+}
+
+html[data-theme="dark"] .tabs label{
+  box-shadow:
+    0 0 0 6px rgba(158,203,255,.22),
+    0 14px 36px rgba(0,0,0,.45);
+}
