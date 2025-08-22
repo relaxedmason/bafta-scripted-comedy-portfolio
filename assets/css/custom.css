@@ -593,4 +593,78 @@ html[data-theme="dark"] .pill-btn{
     0 0 0 4px rgba(158,203,255,.25),
     0 8px 22px rgba(0,0,0,.45);
 }
+/* --- Tabs row: centered, pill buttons with thicker permanent shading --- */
+.tabs{
+  display:flex; flex-wrap:wrap; justify-content:center;
+  gap:.6rem; margin:.25rem 0 .75rem;
+}
+.tabs input[type="radio"]{ display:none; }
+
+.tabs label{
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:1.15rem;
+  padding:.55rem 1.1rem;
+  border:2px solid var(--border);
+  border-radius:9999px;
+  background: linear-gradient(to bottom, var(--surface), color-mix(in srgb, var(--surface), #000 6%));
+  color:var(--text);
+  cursor:pointer;
+  text-decoration:none;
+  transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+  /* thicker, always-on “shade” (ring + drop) */
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--link), transparent 78%),
+    0 12px 28px rgba(0,0,0,.18);
+}
+.tabs label:hover{ transform: translateY(-1px); }
+
+/* Active (checked) tab: filled look */
+#tab-tv:checked     + label,
+#tab-sports:checked + label{
+  border-color: var(--link);
+  background: linear-gradient(to bottom, var(--link), color-mix(in srgb, var(--link), #000 10%));
+  color:#fff;
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--link), transparent 68%),
+    0 14px 32px rgba(0,0,0,.22);
+}
+html[data-theme="dark"] .tabs label{
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--link), transparent 72%),
+    0 14px 36px rgba(0,0,0,.45);
+}
+
+/* --- Tab panels: look like a panel (no extra title) --- */
+.tab-content{
+  display:none;               /* hidden until its radio is checked */
+  order:1; flex-basis:100%;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background: var(--surface);
+  padding:1rem;
+}
+/* show the chosen panel */
+#tab-tv:checked     ~ #tv{ display:block; }
+#tab-sports:checked ~ #sports{ display:block; }
+
+/* --- Center the cards and link lists --- */
+.tab-content .cards{
+  display:grid; gap:1rem;
+  grid-template-columns: 1fr;
+  justify-items:center;           /* centers single card */
+}
+@media (min-width: 720px){
+  .tab-content .cards{
+    grid-template-columns: 1fr 1fr;   /* scales to two columns if you add more cards later */
+  }
+}
+.tab-content .card{
+  max-width:720px; width:100%;
+  text-align:center;
+}
+.tab-content .card ul{
+  list-style:none; padding:0; margin:.5rem 0 0; text-align:center;
+}
+.tab-content .card li{ margin:.35rem 0; }
+.tab-content .card a{ display:inline-block; }
 
