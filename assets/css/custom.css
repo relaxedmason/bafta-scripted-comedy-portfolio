@@ -330,4 +330,49 @@ html[data-theme="dark"] pre{
 #contact .social-links a{
   display: inline-block;                 /* tidy centering of buttons */
 }
+/* Center the tab label row and keep content below it */
+.tabs{
+  display: flex;
+  flex-wrap: wrap;           /* allows content to drop to the next line */
+  justify-content: center;   /* centers the labels row */
+  gap: .5rem;
+  margin-bottom: .5rem;
+}
+
+/* hide radios (you already do this elsewhere; harmless if duplicated) */
+.tabs input[type="radio"]{ display:none; }
+
+/* labels look like tabs */
+.tabs label{
+  display: inline-block;
+  font-size: 1.2rem;         /* bigger labels */
+  padding: .5rem .9rem;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* put tab panes on a new row under the labels */
+.tab-content{
+  order: 1;                  /* make sure panes come after labels visually */
+  flex-basis: 100%;          /* take full width below the label row */
+  border:1px solid var(--border);
+  border-radius: 0 12px 12px 12px;
+  padding: 1rem;
+  background: var(--bg);
+}
+
+/* active label state (keeps using your input+label adjacency) */
+#tab-tv:checked     + label{ background: var(--bg); }
+#tab-sports:checked + label{ background: var(--bg); }
+
+/* center the lists inside cards as well (project links) */
+.card{ text-align: center; }
+.card ul{ list-style:none; padding:0; margin:.5rem 0 0; }
+.card li{ margin:.35rem 0; }
+.card a{ display:inline-block; }
 
