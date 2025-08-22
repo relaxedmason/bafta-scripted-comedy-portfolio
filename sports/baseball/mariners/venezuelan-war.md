@@ -76,10 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class="viz-block viz-md">
   <img
     class="viz-img zoomable"
-    src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_light.png' | relative_url }}"
-    data-src-light="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_light.png' | relative_url }}"
-    data-src-dark="{{ '/assets/images/sports/mariners/Top_10_MLB_Team_WAR_Venezuela_dark.png' | relative_url }}"
-    alt="Top 10 MLB team WAR by Venezuelan-born players with Mariners highlighted">
+    src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_light.png' | relative_url }}?v={{ site.github.build_revision }}"
+    data-src-light="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_light.png' | relative_url }}?v={{ site.github.build_revision }}"
+    data-src-dark="{{ '/assets/images/sports/mariners/Top_10_MLB_Team_WAR_Venezuela_dark.png'  | relative_url }}?v={{ site.github.build_revision }}"
+    alt="Top 10 MLB team WAR by Venezuelan-born players with Mariners highlighted"
+    onerror="this.onerror=null;this.src=this.dataset.srcLight;"
+  >
 </div>
 
 ---
@@ -93,8 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class="viz-block viz-md">
   <img
     class="viz-img zoomable"
-    src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_light.png' | relative_url }}"
-    data-src-light="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_light.png' | relative_url }}"
-    data-src-dark="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_dark.png' | relative_url }}"
-    alt="Top 5 Mariners of Venezuelan birth (all-time), mapped">
+    src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_light.png' | relative_url }}?v={{ site.github.build_revision }}"
+    data-src-light="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_light.png' | relative_url }}?v={{ site.github.build_revision }}"
+    data-src-dark="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuelans_Map_dark.png'  | relative_url }}?v={{ site.github.build_revision }}"
+    alt="Top 5 Mariners of Venezuelan birth (all-time), mapped"
+    onerror="this.onerror=null;this.src=this.dataset.srcLight;"
+  >
 </div>
