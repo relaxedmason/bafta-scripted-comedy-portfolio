@@ -475,4 +475,24 @@ html[data-theme="dark"] pre{
   text-underline-offset: .15em;
   text-decoration-thickness: .08em;
 }
+/* Group title + links inside a single bordered panel */
+.panel{
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--surface);
+  margin:1rem auto;
+  padding:0;                 /* title handles its own padding */
+  max-width:900px;
+}
+.panel-title{
+  font-weight:800;
+  text-align:center;
+  padding:.75rem 1rem;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+  border-radius:12px 12px 0 0;
+}
+.panel .cards{
+  padding:1rem;
+}
 
