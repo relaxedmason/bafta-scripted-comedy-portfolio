@@ -1,8 +1,94 @@
-/* ===========================
-   THEME: Toggle button style
-   =========================== */
+/* =========================
+   0) Color tokens
+   ========================= */
+:root{
+  --bg:            #ffffff;
+  --text:          #111111;
+  --muted:         #666666;
+  --link:          #0366d6;
+  --link-hover:    #024ea6;
+
+  --surface:       #fafafa;   /* cards / subtle panels */
+  --border:        #e5e7eb;
+
+  --header-bg:     #ffffff;
+  --footer-bg:     #ffffff;
+
+  --code-bg:       #f6f8fa;
+  --code-text:     #0b1220;
+
+  --overlay:       rgba(0,0,0,.75);
+}
+
+html[data-theme="dark"]{
+  --bg:            #0f1115;
+  --text:          #dbe2ea;
+  --muted:         #9aa3b2;
+  --link:          #9ecbff;
+  --link-hover:    #c8e1ff;
+
+  --surface:       #12141a;
+  --border:        #20232a;
+
+  --header-bg:     #0f1115;
+  --footer-bg:     #0f1115;
+
+  --code-bg:       #121521;
+  --code-text:     #d6e1ff;
+
+  --overlay:       rgba(0,0,0,.65);
+}
+
+/* =========================
+   1) Base layout & typography
+   ========================= */
+html, body{ background: var(--bg); color: var(--text); }
+a{ color: var(--link); text-decoration: none; }
+a:hover{ color: var(--link-hover); text-decoration: underline; }
+
+.site-header{ background: var(--header-bg); border-bottom: 1px solid var(--border); }
+.site-footer{ background: var(--footer-bg); border-top: 1px solid var(--border); color: var(--muted); text-align:center; }
+
+.site-header > .wrapper,
+.page-content  > .wrapper,
+.site-footer > .wrapper{
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 1rem;
+}
+
+#data-analyst-portfolio{
+  text-align: center;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  margin: 0 0 .25rem 0;
+  text-decoration: underline;
+  text-underline-offset: .15em;
+  text-decoration-thickness: .08em;
+}
+
+.subtitle{
+  text-align:center;
+  max-width: 60ch;
+  margin: .5rem auto 1.75rem;
+  color: var(--muted);
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+}
+
+/* keep images tidy in the content column */
+.page-content .wrapper img,
+.page-content .wrapper picture,
+.page-content .wrapper svg,
+.page-content .wrapper canvas{
+  display:block; height:auto; max-width:100%; margin: 0 auto;
+}
+
+/* =========================
+   2) Theme toggle button (unchanged visual)
+   ========================= */
 .theme-btn{
-  border:1px solid #e5e7eb;
+  border:1px solid var(--border);
   padding:.4rem .75rem;
   border-radius:9999px;
   background:transparent;
@@ -12,774 +98,142 @@
   align-items:center;
   gap:.5rem;
 }
-html[data-theme="dark"] .theme-btn{
-  border-color:#475569;
-  color:#e5e7eb;
-}
 
-/* ====================================
-   DARK THEME OVERRIDES (site-wide)
-   ==================================== */
-html[data-theme="dark"] body{
-  background:#0f1115;   /* near-black */
-  color:#e6e6e6;
-}
-
-/* Links */
-html[data-theme="dark"] a{
-  color:#9ecbff;
-}
-html[data-theme="dark"] a:hover{
-  color:#c9e2ff;
-}
-
-/* Header / nav / title */
-html[data-theme="dark"] .site-header{
-  background:#0f1115;
-  border-bottom:1px solid #20232a;
-}
-html[data-theme="dark"] .site-title,
-html[data-theme="dark"] .site-nav a,
-html[data-theme="dark"] .menu-icon{
-  color:#e6e6e6 !important;
-}
-
-/* Page header subtitle text (you set a mid-gray in light mode) */
-html[data-theme="dark"] .page-header .subtitle{
-  color:#9aa3b2;
-}
-
-/* Footer */
-html[data-theme="dark"] .site-footer{
-  background:#0f1115;
-  border-top:1px solid #20232a;
-  color:#cfd3da;
-}
-
-/* Horizontal rules */
-html[data-theme="dark"] hr{
-  border-color:#2a2f3a;
-}
-
-/* Code & preformatted blocks */
-html[data-theme="dark"] pre,
-html[data-theme="dark"] code{
-  background:#121521;
-  color:#d6e1ff;
-}
-html[data-theme="dark"] pre{
-  border:1px solid #1e2430;
-}
-
-/* Tables */
-html[data-theme="dark"] table{
-  border-color:#2a2f3a;
-}
-html[data-theme="dark"] th{
-  background:#171a24;
-  color:#e6e6e6;
-}
-html[data-theme="dark"] td{
-  border-color:#2a2f3a;
-}
-
-/* Blockquotes */
-html[data-theme="dark"] blockquote{
-  color:#d5d9e2;
-  border-left:.25em solid #2a2f3a;
-}
-
-/* Optional: slightly lighter hover tag on images in dark */
-html[data-theme="dark"] .hover-text{
-  background-color:rgba(0,0,0,0.6);
-}
-
-/* ====================================
-   No-JS fallback: respect system dark
-   (only if user hasn't chosen "light")
-   ==================================== */
-@media (prefers-color-scheme: dark){
-  html:not([data-theme="light"]) body{
-    background:#0f1115;
-    color:#e6e6e6;
-  }
-  html:not([data-theme="light"]) .site-header{
-    background:#0f1115;
-    border-bottom:1px solid #20232a;
-  }
-  html:not([data-theme="light"]) .site-footer{
-    background:#0f1115;
-    border-top:1px solid #20232a;
-    color:#cfd3da;
-  }
-  html:not([data-theme="light"]) a{ color:#9ecbff; }
-}
-/* Strongly clamp the site containers and center them */
-.site-header > .wrapper,
-.page-content  > .wrapper,
-.site-footer > .wrapper {
-  max-width: 900px;      /* your preferred width */
-  margin-left: auto;
-  margin-right: auto;
-  width: 100%;
-  box-sizing: border-box;
-  padding-left: 1rem;    /* comfy side padding */
-  padding-right: 1rem;
-}
-
-/* Center typical page titles/sections when you want it */
-.page-header h1,
-.page-header .subtitle {
-  text-align: center;
-}
-
-/* Keep images nicely sized within the content column */
-.page-content .wrapper img,
-.page-content .wrapper picture,
-.page-content .wrapper svg,
-.page-content .wrapper canvas {
-  display: block;
-  height: auto;
-  max-width: 100%;
-  margin-left: auto;
-  margin-right: auto;    /* centers images that aren't full width */
-}
-
-/* Optional: only full-bleed when you explicitly ask for it */
-.full-bleed {
-  width: 100vw;
-  max-width: 100vw;
-  margin-left: 50%;
-  transform: translateX(-50%);
-}
-/* Dark theme typography (only affects html[data-theme="dark"]) */
-html[data-theme="dark"] body{
-  color:#dbe2ea;            /* main body text (not pure white) */
-}
-
-html[data-theme="dark"] h1,
-html[data-theme="dark"] h2,
-html[data-theme="dark"] h3,
-html[data-theme="dark"] h4,
-html[data-theme="dark"] h5,
-html[data-theme="dark"] h6{
-  color:#ffffff;            /* headings */
-}
-
-html[data-theme="dark"] .page-header .subtitle,
-html[data-theme="dark"] .subtitle,
-html[data-theme="dark"] small,
-html[data-theme="dark"] .muted{
-  color:#9aa3b2;            /* secondary/muted text */
-}
-
-html[data-theme="dark"] a{
-  color:#9ecbff;            /* links */
-}
-html[data-theme="dark"] a:hover{
-  color:#c8e1ff;
-}
-
-/* Optional: stronger contrast for code */
-html[data-theme="dark"] code,
-html[data-theme="dark"] pre{
-  color:#d6e1ff;
-}
-/* ===== Tabs (pure CSS) ===== */
-.tabs{ margin-top:1rem; }
-.tabs input[type="radio"]{ display:none; }
-
-.tabs label{
-  display:inline-block;
-  margin-right:.5rem;
-  padding:.4rem .8rem;
-  border:1px solid var(--border);
-  border-bottom:none;
-  border-radius:8px 8px 0 0;
-  background:var(--surface);
-  color:var(--text);
-  cursor:pointer;
-  font-weight:600;
-}
-
-#tab-tv:checked    + label{ background:var(--bg); }
-#tab-sports:checked+ label{ background:var(--bg); }
-
-/* Hide all tab panes by default; show the checked one */
-.tab-content{ display:none; border:1px solid var(--border); border-radius:0 12px 12px 12px; padding:1rem; background:var(--bg); }
-#tab-tv:checked    ~ #tv{ display:block; }
-#tab-sports:checked~ #sports{ display:block; }
-
-/* ===== Cards ===== */
-.cards{
-  display:grid;
-  grid-template-columns: 1fr;
-  gap:1rem;
-}
-@media (min-width: 720px){
-  .cards{ grid-template-columns: 1fr 1fr; }
-}
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:1rem;
-}
-.card h4{ margin:.25rem 0 .5rem; }
-.card ul{ margin:0; padding-left:1rem; }
-.card a{ color:var(--link); }
-.card a:hover{ color:var(--link-hover); }
-.tabs label{ margin-right:.5rem; }
-.tabs{ text-align:center; }
-/* ---- Center all your section titles ---- */
-#about h2,
-#projects h2,
-#contact h2{
-  text-align: center;
-  font-size: 2rem;         /* bump size */
-  margin: 1.5rem 0 .75rem;
-}
-
-/* ---- Center the project links inside cards ---- */
-.card{ text-align: center; }
-.card ul{
-  list-style: none;         /* remove bullets so centering looks clean */
-  padding: 0;
-  margin: .5rem 0 0;
-}
-.card li{ margin: .35rem 0; }
-
-/* ---- Make the tab labels (TV & Movies / Sports) bigger & centered ---- */
-.tabs{ text-align: center; }
-.tabs label{
-  font-size: 1.1rem;        /* larger labels */
-  padding: .5rem .9rem;     /* a touch taller */
-}
-@media (min-width: 720px){
-  .tabs label{ font-size: 1.2rem; }
-}
-
-/* ---- Make the subhead inside each tab bigger & centered (TV / Baseball) ---- */
-.tab-content h3{
-  text-align: center;
-  font-size: 1.5rem;
-  margin: .5rem 0 .75rem;
-}
-
-/* (Optional) Slightly larger card titles */
-.card h4{
-  font-size: 1.1rem;
-  margin: .25rem 0 .5rem;
-}
-/* ===== Hero title + subtitle (top of page) ===== */
-#data-analyst-portfolio{
-  text-align: center;
-  font-size: clamp(2rem, 4vw, 2.75rem);  /* bigger, responsive */
-  margin: 0 0 .25rem 0;
-}
-.subtitle{
-  text-align: center;                    /* ensure centered */
-  max-width: 60ch;                       /* nicer line length */
-  margin: .5rem auto 1.75rem;            /* center with auto sides */
-  font-size: clamp(1rem, 2.2vw, 1.25rem);
-}
-
-/* ===== Section titles (About / Projects / Connect) ===== */
+/* =========================
+   3) Section titles
+   ========================= */
 #about h2, #projects h2, #contact h2{
-  text-align: center;
+  text-align:center;
   font-size: 2rem;
   margin: 1.5rem 0 .75rem;
 }
 
-/* ===== Center the project links in cards ===== */
-.card{ text-align: center; }
-.card ul{
-  list-style: none;
-  padding: 0;
-  margin: .5rem 0 0;
-  text-align: center;                    /* anchor text centered */
-}
-.card li{ margin: .35rem 0; }
-.card a{ display: inline-block; }        /* keeps long links neatly centered */
-
-/* ===== Tabs (TV & Movies / Sports) bigger + centered ===== */
-.tabs{ text-align: center; }
-.tabs label{
-  font-size: 1.2rem;
-  padding: .5rem .9rem;
-}
-@media (min-width: 720px){
-  .tabs label{ font-size: 1.3rem; }
-}
-
-/* ===== Inside each tab: h3 like “TV”, “Baseball” ===== */
-.tab-content h3{
-  text-align: center;
-  font-size: 1.5rem;
-  margin: .5rem 0 .75rem;
-}
-
-/* ===== Social buttons row (Email / Twitter / GitHub) ===== */
+/* =========================
+   4) Social row
+   ========================= */
 #contact .social-links{
-  display: flex;
-  justify-content: center;               /* center row */
-  align-items: center;
-  gap: .75rem;
-  text-align: center;                    /* belt + suspenders */
+  display:flex; justify-content:center; align-items:center; gap:.75rem;
 }
-#contact .social-links a{
-  display: inline-block;                 /* tidy centering of buttons */
-}
-/* Center the tab label row and keep content below it */
-.tabs{
-  display: flex;
-  flex-wrap: wrap;           /* allows content to drop to the next line */
-  justify-content: center;   /* centers the labels row */
-  gap: .5rem;
-  margin-bottom: .5rem;
-}
+#contact .social-links a{ display:inline-block; }
 
-/* hide radios (you already do this elsewhere; harmless if duplicated) */
-.tabs input[type="radio"]{ display:none; }
-
-/* labels look like tabs */
-.tabs label{
-  display: inline-block;
-  font-size: 1.2rem;         /* bigger labels */
-  padding: .5rem .9rem;
-  border: 1px solid var(--border);
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
-  background: var(--surface);
-  color: var(--text);
-  cursor: pointer;
-  font-weight: 600;
-}
-
-/* put tab panes on a new row under the labels */
-.tab-content{
-  order: 1;                  /* make sure panes come after labels visually */
-  flex-basis: 100%;          /* take full width below the label row */
-  border:1px solid var(--border);
-  border-radius: 0 12px 12px 12px;
-  padding: 1rem;
-  background: var(--bg);
-}
-
-/* active label state (keeps using your input+label adjacency) */
-#tab-tv:checked     + label{ background: var(--bg); }
-#tab-sports:checked + label{ background: var(--bg); }
-
-/* center the lists inside cards as well (project links) */
-.card{ text-align: center; }
-.card ul{ list-style:none; padding:0; margin:.5rem 0 0; }
-.card li{ margin:.35rem 0; }
-.card a{ display:inline-block; }
-/* 1) Center the tab labels row under the Projects title */
-.tabs{
-  display: flex;            /* put labels on one row */
-  flex-wrap: wrap;          /* allow content to drop below */
-  justify-content: center;  /* center the labels */
-  gap: .5rem;
-  margin-top: .25rem;
-  margin-bottom: .5rem;
-}
-/* radios stay hidden */
-.tabs input[type="radio"]{ display:none; }
-
-/* labels look like tabs (you likely already have this; safe to duplicate) */
-.tabs label{
-  display: inline-block;
-  font-size: 1.2rem;
-  padding: .5rem .9rem;
-  border: 1px solid var(--border);
-  border-bottom: none;
-  border-radius: 8px 8px 0 0;
-  background: var(--surface);
-  color: var(--text);
-  cursor: pointer;
-  font-weight: 600;
-}
-
-/* make tab panes sit on the next line and fill the width */
-.tab-content{
-  order: 1;                 /* after labels visually */
-  flex-basis: 100%;
-  border: 1px solid var(--border);
-  border-radius: 0 12px 12px 12px;
-  padding: 1rem;
-  background: var(--bg);
-}
-
-/* active label state (keeps your existing behavior) */
-#tab-tv:checked     + label{ background: var(--bg); }
-#tab-sports:checked + label{ background: var(--bg); }
-
-/* 2) Center the links inside the card lists */
-.card{ text-align: center; }           /* center everything in the card */
-.card ul{
-  list-style: none;                    /* remove bullets */
-  padding: 0;
-  margin: .5rem 0 0;
-  text-align: center;                  /* belt & suspenders */
-}
-.card li{ margin: .35rem 0; }
-.card a{ display: inline-block; }      /* keeps long links neatly centered */
-/* Center the tab labels row */
-.tabs{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:.5rem;
-  margin:.25rem 0 .75rem;
-}
-.tabs input[type="radio"]{ display:none; }
-
-/* Make labels look like buttons with borders */
-.tabs label{
-  display:inline-block;
-  font-weight:700;
-  padding:.45rem 1rem;
-  border:2px solid var(--border);
-  border-radius:9999px;        /* pill shape */
-  background:var(--surface);
-  color:var(--text);
-  cursor:pointer;
-  transition:transform .05s ease, background .2s ease;
-}
-.tabs label:hover{ transform:translateY(-1px); }
-#tab-tv:checked     + label,
-#tab-sports:checked + label{
-  background:var(--bg);
-  box-shadow:0 1px 0 0 var(--border) inset;
-}
-
-/* Tab panel stays full-width under the centered labels */
-.tab-content{
-  order:1;
-  flex-basis:100%;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:1rem;
-  background:var(--bg);
-}
-
-/* Center project links inside the cards */
-.card{ text-align:center; }
-.card ul{ list-style:none; padding:0; margin:.5rem 0 0; text-align:center; }
-.card li{ margin:.35rem 0; }
-.card a{ display:inline-block; }
-/* Underline the H1 nicely */
-#data-analyst-portfolio{
-  text-decoration: underline;
-  text-underline-offset: .15em;
-  text-decoration-thickness: .08em;
-}
-/* Group title + links inside a single bordered panel */
-.panel{
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:var(--surface);
-  margin:1rem auto;
-  padding:0;                 /* title handles its own padding */
-  max-width:900px;
-}
-.panel-title{
-  font-weight:800;
-  text-align:center;
-  padding:.75rem 1rem;
-  border-bottom:1px solid var(--border);
-  background:var(--bg);
-  border-radius:12px 12px 0 0;
-}
-.panel .cards{
-  padding:1rem;
-}
-/* ===== FINAL OVERRIDES (put at end of custom.css) ===== */
-
-/* Underline the H1 */
-#data-analyst-portfolio{
-  text-decoration: underline;
-  text-underline-offset: .15em;
-  text-decoration-thickness: .08em;
-}
-
-/* Panel that binds the section title to its links */
-.panel{
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:var(--surface);
-  margin:1rem auto;
-  max-width:900px;
-}
-.panel-title{
-  font-weight:800;
-  text-align:center;
-  padding:.75rem 1rem;
-  border-bottom:1px solid var(--border);
-  background:var(--bg);
-  border-radius:12px 12px 0 0;
-}
-
-/* Center the cards and link lists inside the panel */
-.panel .cards{
-  padding:1rem;
-  display:grid;
-  gap:1rem;
-  /* centers a single card and flows to 2+ columns when needed */
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  justify-content:center;
-}
-.panel .cards .card{
-  justify-self:center;            /* keeps odd cards centered */
-  text-align:center;
-}
-.panel .cards .card ul{
-  list-style:none;
-  padding:0 !important;           /* kill any left padding from earlier rules */
-  margin:.5rem 0 0;
-  text-align:center;
-}
-.panel .cards .card li{ margin:.35rem 0; }
-.panel .cards .card a{ display:inline-block; }
-/* Always-visible project buttons */
-.project-pills{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:1rem;
-  flex-wrap:wrap;
-  margin:.5rem 0 1.25rem;
-}
-
-/* Pill button base */
-.pill-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:.65rem 1.15rem;
-  border:2px solid var(--border);
-  border-radius:9999px;
-  background: linear-gradient(to bottom, var(--surface), color-mix(in srgb, var(--surface), #000 4%));
-  color:var(--text);
-  text-decoration:none;
-  font-weight:700;
-  font-size:1.05rem;
-  letter-spacing:.15px;
-  transition: transform .06s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
-  /* thicker, always-on shade (ring + drop) */
-  box-shadow:
-    0 0 0 4px rgba(3,102,214,.22),      /* outer ring */
-    0 6px 16px rgba(0,0,0,.14);         /* drop shadow */
-}
-.pill-btn:hover{ transform: translateY(-1px); }
-
-/* TV = accent with link color; Sports = neutral or pick another brand */
-.pill-tv{ border-color: var(--link); }
-.pill-sports{ border-color: var(--border); }
-
-/* Optional: make TV solid-filled to stand out */
-.pill-tv:hover{
-  background: linear-gradient(to bottom, var(--link), color-mix(in srgb, var(--link), #000 8%));
-  color:#fff;
-  box-shadow:
-    0 0 0 4px rgba(3,102,214,.28),
-    0 8px 22px rgba(0,0,0,.18);
-}
-
-/* Dark-theme tweak: slightly stronger shadows/ring */
-html[data-theme="dark"] .pill-btn{
-  box-shadow:
-    0 0 0 4px rgba(158,203,255,.25),
-    0 8px 22px rgba(0,0,0,.45);
-}
-/* --- Tabs row: centered, pill buttons with thicker permanent shading --- */
+/* =========================
+   5) TABS: square buttons with ALWAYS-ON shading
+   ========================= */
 .tabs{
   display:flex; flex-wrap:wrap; justify-content:center;
   gap:.6rem; margin:.25rem 0 .75rem;
 }
 .tabs input[type="radio"]{ display:none; }
 
-.tabs label{
-  display:inline-flex; align-items:center; justify-content:center;
-  font-weight:700; font-size:1.15rem;
-  padding:.55rem 1.1rem;
-  border:2px solid var(--border);
-  border-radius:9999px;
-  background: linear-gradient(to bottom, var(--surface), color-mix(in srgb, var(--surface), #000 6%));
-  color:var(--text);
-  cursor:pointer;
-  text-decoration:none;
-  transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
-  /* thicker, always-on “shade” (ring + drop) */
-  box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--link), transparent 78%),
-    0 12px 28px rgba(0,0,0,.18);
-}
-.tabs label:hover{ transform: translateY(-1px); }
-
-/* Active (checked) tab: filled look */
-#tab-tv:checked     + label,
-#tab-sports:checked + label{
-  border-color: var(--link);
-  background: linear-gradient(to bottom, var(--link), color-mix(in srgb, var(--link), #000 10%));
-  color:#fff;
-  box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--link), transparent 68%),
-    0 14px 32px rgba(0,0,0,.22);
-}
-html[data-theme="dark"] .tabs label{
-  box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--link), transparent 72%),
-    0 14px 36px rgba(0,0,0,.45);
-}
-
-/* --- Tab panels: look like a panel (no extra title) --- */
-.tab-content{
-  display:none;               /* hidden until its radio is checked */
-  order:1; flex-basis:100%;
-  border:1px solid var(--border);
-  border-radius:12px;
-  background: var(--surface);
-  padding:1rem;
-}
-/* show the chosen panel */
-#tab-tv:checked     ~ #tv{ display:block; }
-#tab-sports:checked ~ #sports{ display:block; }
-
-/* --- Center the cards and link lists --- */
-.tab-content .cards{
-  display:grid; gap:1rem;
-  grid-template-columns: 1fr;
-  justify-items:center;           /* centers single card */
-}
-@media (min-width: 720px){
-  .tab-content .cards{
-    grid-template-columns: 1fr 1fr;   /* scales to two columns if you add more cards later */
-  }
-}
-.tab-content .card{
-  max-width:720px; width:100%;
-  text-align:center;
-}
-.tab-content .card ul{
-  list-style:none; padding:0; margin:.5rem 0 0; text-align:center;
-}
-.tab-content .card li{ margin:.35rem 0; }
-.tab-content .card a{ display:inline-block; }
-/* ===== Square tab buttons (override pills) ===== */
-.tabs{
-  display:flex; flex-wrap:wrap; justify-content:center;
-  gap:.6rem; margin:.25rem 0 .75rem;
-}
-.tabs input[type="radio"]{ display:none; }
-
-/* Square button look */
 .tabs label{
   display:inline-flex; align-items:center; justify-content:center;
   font-weight:700; font-size:1.05rem;
   padding:.55rem 1rem;
   border:2px solid var(--border);
-  border-radius:6px !important;                 /* <-- square, overrides earlier pill */
+  border-radius:6px;               /* square-ish corners */
   background: linear-gradient(
     to bottom,
     var(--surface),
-    color-mix(in srgb, var(--surface), #000 8%)
+    rgba(0,0,0,.06)                /* subtle depth without color-mix */
   );
   color:var(--text);
   cursor:pointer;
-  text-decoration:none;
-  transition:
-    transform .06s ease,
-    background .15s ease,
-    border-color .15s ease,
-    box-shadow .15s ease;
-  /* thicker, always-on shade */
+  transition: transform .06s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+  /* ALWAYS-ON ring + shadow */
   box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--link), transparent 78%),
+    0 0 0 6px rgba(3,102,214,.14),
     0 12px 28px rgba(0,0,0,.18);
 }
 .tabs label:hover{ transform: translateY(-1px); }
-.tabs label:focus-visible{
-  outline:2px solid var(--link);
-  outline-offset:2px;
-}
+.tabs label:focus-visible{ outline:2px solid var(--link); outline-offset:2px; }
 
-/* Active (checked) tab gets a solid fill */
+/* Active (checked) = filled & stronger shade */
 #tab-tv:checked     + label,
 #tab-sports:checked + label{
   border-color: var(--link);
   background: linear-gradient(
     to bottom,
     var(--link),
-    color-mix(in srgb, var(--link), #000 12%)
+    rgba(0,0,0,.12)
   );
   color:#fff;
   box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--link), transparent 68%),
-    0 14px 32px rgba(0,0,0,.22);
+    0 0 0 8px rgba(3,102,214,.24),  /* thicker ring */
+    0 16px 36px rgba(0,0,0,.24);    /* deeper drop */
 }
 
-/* Dark-theme tweak: stronger shadows */
+/* Dark theme tweak for button shadows */
 html[data-theme="dark"] .tabs label{
   box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--link), transparent 72%),
+    0 0 0 6px rgba(158,203,255,.20),
     0 14px 36px rgba(0,0,0,.45);
 }
 
-/* Keep panel + links centered (unchanged but here for completeness) */
+/* =========================
+   6) Tab panels
+   ========================= */
 .tab-content{
-  display:none; order:1; flex-basis:100%;
+  display:none;
+  order:1; flex-basis:100%;
   border:1px solid var(--border);
   border-radius:12px;
   background: var(--surface);
   padding:1rem;
+  max-width:900px;
+  margin:0 auto;
 }
 #tab-tv:checked     ~ #tv{ display:block; }
 #tab-sports:checked ~ #sports{ display:block; }
 
+/* =========================
+   7) Cards + centered link lists
+   ========================= */
 .tab-content .cards{
   display:grid; gap:1rem;
-  grid-template-columns: 1fr;
-  justify-items:center;
+  grid-template-columns: 1fr;      /* you currently have one card per tab */
+  justify-items:center;            /* centers the card */
 }
 @media (min-width: 720px){
   .tab-content .cards{ grid-template-columns: 1fr 1fr; }
 }
-.tab-content .card{ max-width:720px; width:100%; text-align:center; }
-.tab-content .card ul{ list-style:none; padding:0 !important; margin:.5rem 0 0; text-align:center; }
-.tab-content .card li{ margin:.35rem 0; }
-.tab-content .card a{ display:inline-block; }
-/* === FINAL LINK-CENTERING OVERRIDES === */
-
-/* Keep the card grid centered */
-.tab-content .cards{
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr;   /* single column by default */
-  justify-items: center;        /* centers the card itself */
-}
-@media (min-width: 720px){
-  .tab-content .cards{ grid-template-columns: 1fr 1fr; }
-}
-
-/* Center everything inside each card */
 .tab-content .card{
-  text-align: center;
-  max-width: 720px;
-  width: 100%;
+  width:100%; max-width:720px;
+  text-align:center;
+  background: var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:1rem;
 }
+.tab-content .card h4{ margin:.25rem 0 .5rem; }
 
-/* Make the UL shrink to its content and sit centered */
+/* TRUE centering of the link list */
 .tab-content .card ul{
-  list-style: none;
-  padding-left: 0 !important;   /* override earlier padding-left */
-  margin: .5rem auto 0;         /* auto sides = centered */
-  display: inline-block;        /* shrink-wrap the list */
-  text-align: center;           /* center each line’s text */
+  list-style:none;
+  padding-left:0 !important;       /* kills Minima's left padding */
+  margin:.5rem auto 0 !important;  /* auto sides = centered */
+  display:inline-block;            /* shrink-wrap so centering works */
+  text-align:center !important;
 }
+.tab-content .card li{ margin:.35rem 0; }
+.tab-content .card a{
+  display:inline-block;
+  color:var(--link);
+}
+.tab-content .card a:hover{ color:var(--link-hover); }
 
-/* Tidy spacing for items/links */
-.tab-content .card li{ margin: .35rem 0; }
-.tab-
+/* =========================
+   8) Code/blockquote/table polish
+   ========================= */
+pre, code{ background: var(--code-bg); color: var(--code-text); }
+pre{ border:1px solid var(--border); padding:.75rem 1rem; overflow:auto; }
+blockquote{ color: var(--text); border-left:.25em solid var(--border); padding-left:1em; margin-left:0; }
 
+/* =========================
+   9) System-prefers-dark fallback (only if no manual theme)
+   ========================= */
+@media (prefers-color-scheme: dark){
+  html:not([data-theme="light"]) body{ background:#0f1115; color:#dbe2ea; }
+  html:not([data-theme="light"]) .site-header{ background:#0f1115; border-bottom:1px solid #20232a; }
+  html:not([data-theme="light"]) .site-footer{ background:#0f1115; border-top:1px solid #20232a; color:#cfd3da; }
+  html:not([data-theme="light"]) a{ color:#9ecbff; }
+}
