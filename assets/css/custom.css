@@ -311,3 +311,27 @@ html[data-theme="dark"] .tabs label{
     0 0 0 6px rgba(158,203,255,.22),
     0 14px 36px rgba(0,0,0,.45);
 }
+/* Make the page fill the viewport and pin #contact to the bottom */
+html, body { height: 100%; }
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;   /* header | main | footer */
+}
+
+main.page-content {
+  flex: 1 0 auto;           /* main stretches between header & footer */
+  display: flex;
+}
+
+.page-content > .wrapper {
+  flex: 1 0 auto;           /* wrapper fills the main area */
+  display: flex;
+  flex-direction: column;   /* stack sections vertically */
+}
+
+/* Push the Connect section to the bottom of the wrapper */
+#contact {
+  margin-top: auto;         /* <- the magic */
+  padding-top: 1.5rem;      /* a little breathing room above */
+}
