@@ -477,4 +477,51 @@ section#projects .tab-content .cards{
     margin-inline: auto;
   }
 }
+/* === Force 3-up with comfy gutters and a visible white sliver between cards === */
+
+/* Base: 1 col */
+section#projects .tab-content .cards{
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 1.2rem !important;               /* real space between cards */
+}
+
+/* ≥640px: 2 cols */
+@media (min-width: 640px){
+  section#projects .tab-content .cards{
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1.4rem !important;
+  }
+}
+
+/* ≥1024px: lock to 3 cols */
+@media (min-width: 1024px){
+  section#projects .tab-content .cards{
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 1.6rem !important;             /* adjust if you want more/less */
+    max-width: 1100px;                  /* keeps each card a nice width */
+    margin-inline: auto;
+  }
+}
+
+/* Card: add a subtle white halo so borders never visually touch */
+section#projects .tab-content .card{
+  position: relative !important;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 8px 22px rgba(0,0,0,.08);
+  overflow: hidden;                     /* keep rounded corners crisp */
+}
+
+/* The halo is a pseudo-element placed behind the card */
+section#projects .tab-content .card::before{
+  content: "";
+  position: absolute;
+  inset: -6px;                          /* this is the "sliver" thickness */
+  background: var(--bg);                /* same as page background (white/dark) */
+  border-radius: 14px;                  /* 12px + 2px to match the curve */
+  z-index: -1;                          /* sits behind the card */
+}
 
