@@ -308,3 +308,15 @@ main.page-content > .wrapper > h1#data-analyst-portfolio + p.subtitle{
   margin-top: .5rem !important;
   margin-bottom: 1.25rem !important;
 }
+/* --- Make subtitle center under H1, regardless of Minima wrappers --- */
+.page-content .wrapper .post-content p.subtitle,
+.page-content .wrapper > p.subtitle,
+.page-content .wrapper #data-analyst-portfolio ~ p.subtitle {
+  text-align: center !important;
+  display: block !important;
+  max-width: 60ch !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: .5rem !important;
+  margin-bottom: 1.25rem !important;
+}
