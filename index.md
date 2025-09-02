@@ -4,9 +4,9 @@ title: Mason Colborn — Data Analyst Portfolio
 description: SQL • Python • APIs • Data Visualization
 ---
 
-<header class="hero" role="banner">
-  <h1 class="hero__title" id="data-analyst-portfolio">Data Analyst Portfolio</h1>
-  <p class="hero__subtitle">SQL • Python • APIs • Data Visualization</p>
+<header class="hero">
+  <h1 id="data-analyst-portfolio">Data Analyst Portfolio</h1>
+  <p class="subtitle">SQL • Python • APIs • Data Visualization</p>
 </header>
 
 <section id="projects" aria-labelledby="projects-title">
