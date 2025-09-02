@@ -297,3 +297,14 @@ main.page-content { flex: 1 0 auto; display: flex; }
   margin-top: .5rem;
   margin-bottom: 1.25rem;
 }
+/* Center the subtitle line under the H1 on the homepage, no matter what Minima does */
+main.page-content > .wrapper > h1#data-analyst-portfolio + p.subtitle{
+  text-align: center !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 60ch;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: .5rem !important;
+  margin-bottom: 1.25rem !important;
+}
