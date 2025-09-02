@@ -320,3 +320,23 @@ main.page-content { flex: 1 0 auto; display: flex; }
   .page-content > .wrapper{ max-width: none; padding: 0; }
   a[href]:after{ content:" (" attr(href) ")"; font-size:.9em; color:var(--muted); }
 }
+/* Center the card content (title, blurb, and links) */
+section#projects .tab-content .card{
+  text-align: center !important;
+  align-items: center;              /* since the card is display:flex; flex-direction:column */
+}
+
+/* Keep blurbs readable but centered */
+section#projects .tab-content .card .card__blurb{
+  max-width: 60ch;
+  margin: 0 auto .7rem;
+}
+
+/* Center the link row; make multiple links sit neatly */
+section#projects .tab-content .card .card__links{
+  text-align: center;
+}
+section#projects .tab-content .card .card__links li{
+  display: inline-block;
+  margin: 0 .4rem;
+}
