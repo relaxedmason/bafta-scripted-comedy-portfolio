@@ -383,4 +383,19 @@ main.page-content > .wrapper > h1#data-analyst-portfolio + p.subtitle{
 @media (min-width: 1024px){
   .tab-content .cards{ gap: 1.75rem; }
 }
+/* Give cards more breathing room and prevent narrow columns */
+section#projects .tab-content .cards{
+  /* bigger gutters */
+  gap: 2rem !important;                /* was ~1rem */
+  /* make each card wider so fewer columns fit = more space */
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
+  padding-inline: .25rem;              /* tiny left/right buffer */
+}
+
+/* Optional: add a tiny outer margin per card (in addition to gap) */
+section#projects .tab-content .card{
+  margin: .1rem !important;            /* micro spacing around each card */
+  padding: 1.25rem 1.6rem !important;  /* a bit more inner air */
+  box-shadow: 0 8px 22px rgba(0,0,0,.08); /* softer; reduces “crowding” feel */
+}
 
