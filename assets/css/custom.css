@@ -363,3 +363,24 @@ main.page-content > .wrapper > h1#data-analyst-portfolio + p.subtitle{
 .card__blurb{ margin: 0 0 .6rem; color: var(--muted); font-size: .98rem; }
 .card__links{ list-style: none; padding: 0; margin: .25rem 0 0; }
 .card__links li + li{ margin-top: .25rem; }
+/* Roomier spacing between cards */
+.tab-content .cards{
+  /* wider gutters on larger screens, sensible on mobile */
+  gap: clamp(1rem, 2.5vw, 1.6rem);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Slightly more breathing room inside each card */
+.card{
+  padding: 1.25rem 1.6rem;
+}
+
+/* Tighten internal rhythm a hair */
+.card__title{ margin: 0 0 .35rem; }
+.card__blurb{ margin: 0 0 .7rem; }
+
+/* Optional: add even more space only on desktop */
+@media (min-width: 1024px){
+  .tab-content .cards{ gap: 1.75rem; }
+}
+
