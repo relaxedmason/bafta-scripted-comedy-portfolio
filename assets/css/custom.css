@@ -320,3 +320,13 @@ main.page-content > .wrapper > h1#data-analyst-portfolio + p.subtitle{
   margin-top: .5rem !important;
   margin-bottom: 1.25rem !important;
 }
+.hero{
+  display: grid !important;
+  place-items: center !important;
+  text-align: center !important;
+  gap: .25rem;
+}
+.hero > .subtitle{
+  max-width: 60ch;
+  margin: .5rem 0 1.25rem;
+}
