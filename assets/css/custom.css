@@ -416,7 +416,7 @@ section#projects .tab-content .card{
 }
 
 /* Optional: tighten even more on small screens */
-@media (max-width: 420px){
+@media (max-width: 320px){
   section#projects .tab-content .cards{
     grid-template-columns: 1fr;     /* one per row on very small phones */
     gap: 1.1rem;
