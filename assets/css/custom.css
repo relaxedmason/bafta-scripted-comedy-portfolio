@@ -398,4 +398,28 @@ section#projects .tab-content .card{
   padding: 1.25rem 1.6rem !important;  /* a bit more inner air */
   box-shadow: 0 8px 22px rgba(0,0,0,.08); /* softer; reduces “crowding” feel */
 }
+/* Tidy card sizing: consistent width + comfy gaps */
+section#projects .tab-content .cards{
+  display: grid;
+  /* each card stays between 260–320px wide, doesn't stretch wider */
+  grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
+  justify-content: center;          /* center the grid when there's extra room */
+  gap: 1.4rem;                      /* space between cards */
+  padding-inline: .25rem;
+}
+
+/* Slightly leaner padding so they feel smaller overall */
+section#projects .tab-content .card{
+  padding: 1rem 1.25rem;
+  margin: 0;                        /* rely on gap for separation */
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+/* Optional: tighten even more on small screens */
+@media (max-width: 420px){
+  section#projects .tab-content .cards{
+    grid-template-columns: 1fr;     /* one per row on very small phones */
+    gap: 1.1rem;
+  }
+}
 
