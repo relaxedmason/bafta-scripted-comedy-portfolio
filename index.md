@@ -20,49 +20,56 @@ description: SQL • Python • APIs • Data Visualization
     <input type="radio" name="tab" id="tab-sports" class="tabs__input">
     <label for="tab-sports" id="tab-sports-label" class="tabs__label" role="tab" aria-controls="sports" aria-selected="false" tabindex="-1">Sports</label>
 
-    <!-- TV tab -->
+    <!-- TV tab (three separate BAFTA projects) -->
     <div class="tab-content" id="tv" role="tabpanel" aria-labelledby="tab-tv-label">
       <div class="cards">
-
-        <!-- BAFTA Scripted Comedy Awards -->
+        <!-- BAFTA: Winners & Nominees -->
         <article class="card">
           <img
             class="card__thumb"
             src="{{ '/assets/images/bafta_scripted_comedy_visualization.png' | relative_url }}"
             alt="BAFTA Scripted Comedy — winners and nominees visualization"
             width="1280" height="720" loading="lazy" decoding="async">
-          <h3 class="card__title">BAFTA Scripted Comedy Awards</h3>
-          <p class="card__blurb">IMDb/TMDb enrichment to analyze BAFTA nominations vs. wins (2016–2025).</p>
+          <h3 class="card__title">BAFTA Scripted Comedy — Winners & Nominees (2016–2025)</h3>
+          <p class="card__blurb">Dataset and visuals quantifying nomination-to-win patterns across a decade.</p>
           <ul class="card__links">
-            <li><a class="link" href="{{ '/bafta-comedy-awards/winners-nominees/' | relative_url }}">Winners &amp; Nominees (2016–2025)</a></li>
-            <li><a class="link" href="{{ '/bafta-comedy-awards/peep-show/'         | relative_url }}">Peep Show’s Record</a></li>
-            <li><a class="link" href="{{ '/bafta-comedy-awards/rating-check/'      | relative_url }}">Top 5 Least Deserving Wins</a></li>
+            <li><a class="link" href="{{ '/bafta-comedy-awards/winners-nominees/' | relative_url }}">View project</a></li>
           </ul>
         </article>
 
-        <!-- Optional: you can swap the image above to this Peep Show thumb if you prefer that look -->
-        <!--
-        <img class="card__thumb"
-             src="{{ '/assets/images/peep_show_bafta_thumbnail.jpg' | relative_url }}"
-             alt="Peep Show at the BAFTAs thumbnail"
-             width="1280" height="720" loading="lazy" decoding="async">
-        -->
-        <!--
-        Or use the 'Least deserving wins' visual:
-        <img class="card__thumb"
-             src="{{ '/assets/images/bafta_top5.png' | relative_url }}"
-             alt="Top 5 least deserving BAFTA winners thumbnail"
-             width="1280" height="720" loading="lazy" decoding="async">
-        -->
+        <!-- BAFTA: Peep Show’s Record -->
+        <article class="card">
+          <img
+            class="card__thumb"
+            src="{{ '/assets/images/peep_show_bafta_thumbnail.jpg' | relative_url }}"
+            alt="Peep Show at the BAFTAs thumbnail"
+            width="1280" height="720" loading="lazy" decoding="async">
+          <h3 class="card__title">Peep Show’s Record at the BAFTAs</h3>
+          <p class="card__blurb">Title-level analysis of nominations vs. wins and how it stacks against peers.</p>
+          <ul class="card__links">
+            <li><a class="link" href="{{ '/bafta-comedy-awards/peep-show/' | relative_url }}">View project</a></li>
+          </ul>
+        </article>
 
+        <!-- BAFTA: Least Deserving Wins -->
+        <article class="card">
+          <img
+            class="card__thumb"
+            src="{{ '/assets/images/bafta_top5.png' | relative_url }}"
+            alt="Top 5 least deserving BAFTA winners thumbnail"
+            width="1280" height="720" loading="lazy" decoding="async">
+          <h3 class="card__title">Top 5 Least Deserving BAFTA Wins</h3>
+          <p class="card__blurb">A rating-check methodology to surface outliers and debate-worthy results.</p>
+          <ul class="card__links">
+            <li><a class="link" href="{{ '/bafta-comedy-awards/rating-check/' | relative_url }}">View project</a></li>
+          </ul>
+        </article>
       </div>
     </div>
 
-    <!-- Sports tab -->
+    <!-- Sports tab (unchanged) -->
     <div class="tab-content" id="sports" role="tabpanel" aria-labelledby="tab-sports-label" hidden>
       <div class="cards">
-
-        <!-- Mariners Depth Charts (2003–2008) -->
         <article class="card">
           <img
             class="card__thumb"
@@ -76,7 +83,6 @@ description: SQL • Python • APIs • Data Visualization
           </ul>
         </article>
 
-        <!-- Longest HRs at Safeco Field -->
         <article class="card">
           <img
             class="card__thumb"
@@ -90,7 +96,6 @@ description: SQL • Python • APIs • Data Visualization
           </ul>
         </article>
 
-        <!-- Suárez vs. Williamson — 2025 First Half -->
         <article class="card">
           <img
             class="card__thumb"
@@ -104,7 +109,6 @@ description: SQL • Python • APIs • Data Visualization
           </ul>
         </article>
 
-        <!-- Carlos Guillén Trade -->
         <article class="card">
           <img
             class="card__thumb"
@@ -118,14 +122,11 @@ description: SQL • Python • APIs • Data Visualization
           </ul>
         </article>
 
-        <!-- Venezuelan WAR — prefers-color-scheme switch -->
         <article class="card">
           <picture>
-            <!-- Prefer dark image if user is in dark mode -->
             <source
               srcset="{{ '/assets/images/sports/mariners/Top_10_MLB_Team_WAR_Venezuela_dark.png' | relative_url }}"
               media="(prefers-color-scheme: dark)">
-            <!-- Light image otherwise -->
             <img
               class="card__thumb"
               src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_light.png' | relative_url }}"
@@ -138,7 +139,6 @@ description: SQL • Python • APIs • Data Visualization
             <li><a class="link" href="{{ '/sports/baseball/mariners/venezuelan-war/' | relative_url }}">View project</a></li>
           </ul>
         </article>
-
       </div>
     </div>
   </div>
