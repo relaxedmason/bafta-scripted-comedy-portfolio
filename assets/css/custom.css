@@ -5,7 +5,7 @@
   --bg:            #ffffff;
   --text:          #111111;
   --muted:         #666666;
-  --link:          #4f46e5; /* calmer indigo */
+  --link:          #4f46e5; /* indigo */
   --link-hover:    #3730a3;
 
   --surface:       #fafafa;   /* cards / subtle panels */
@@ -22,7 +22,7 @@ html[data-theme="dark"]{
   --bg:            #0f1115;
   --text:          #dbe2ea;
   --muted:         #9aa3b2;
-  --link:          #60a5fa; /* sky-400 */
+  --link:          #60a5fa;   /* sky-400 */
   --link-hover:    #93c5fd;
 
   --surface:       #12141a;
@@ -48,38 +48,41 @@ a:hover{ color: var(--link-hover); text-decoration: underline; }
 .site-header > .wrapper,
 .page-content  > .wrapper,
 .site-footer   > .wrapper{
-  max-width: 1000px;               /* comfy line-length */
+  max-width: 1000px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
   padding: 0 1rem;
 }
 
-/* Headline */
-#data-analyst-portfolio{
+/* Hero */
+.hero{
+  display: grid;
+  place-items: center;
   text-align: center;
+  gap: .25rem;
+  margin-top: .25rem;
+}
+#data-analyst-portfolio{
   font-size: clamp(2rem, 4vw, 2.75rem);
   margin: 0 0 .25rem 0;
   letter-spacing: -.02em;
-  text-decoration: none; /* removed underline for a cleaner, editorial look */
 }
-
 .subtitle{
-  text-align:center;
   max-width: 60ch;
-  margin: .5rem auto 1.25rem;
+  margin: .5rem 0 1.25rem;
   color: var(--muted);
   font-size: clamp(1rem, 2.2vw, 1.2rem);
 }
 
-/* Subtle divider after hero to anchor the page */
+/* Divider before Projects */
 .page-content > .wrapper > #projects{
   border-top: 1px solid var(--border);
   padding-top: 1rem;
   margin-top: .75rem;
 }
 
-/* keep images tidy in the content column */
+/* Media elements tidy */
 .page-content .wrapper img,
 .page-content .wrapper picture,
 .page-content .wrapper svg,
@@ -133,7 +136,7 @@ a:hover{ color: var(--link-hover); text-decoration: underline; }
 }
 
 /* =========================
-   5) TABS: calmer professional style
+   5) Tabs
    ========================= */
 .tabs{
   display:flex; flex-wrap:wrap; justify-content:center;
@@ -156,7 +159,7 @@ a:hover{ color: var(--link-hover); text-decoration: underline; }
 .tabs label:hover{ transform: translateY(-1px); }
 .tabs label:focus-visible{ outline:3px solid var(--link); outline-offset:3px; }
 
-/* Active (checked) = filled accent with light shadow */
+/* Active (checked) */
 #tab-tv:checked     + label,
 #tab-sports:checked + label{
   border-color: var(--link);
@@ -165,11 +168,10 @@ a:hover{ color: var(--link-hover); text-decoration: underline; }
   box-shadow: 0 4px 14px rgba(0,0,0,.15);
 }
 
-/* Dark theme tweak for button shadow */
 html[data-theme="dark"] .tabs label{ box-shadow: 0 6px 18px rgba(0,0,0,.35); }
 
 /* =========================
-   6) Tab panels (clean, no outer border)
+   6) Tab panels
    ========================= */
 .tab-content{
   display:none;
@@ -177,49 +179,81 @@ html[data-theme="dark"] .tabs label{ box-shadow: 0 6px 18px rgba(0,0,0,.35); }
   border:0;
   background: transparent;
   padding:0;
-  max-width:1000px;
-  margin:0 auto;
+  max-width: 1200px;          /* allow 3 cols + gaps comfortably */
+  margin: 0 auto;
 }
 #tab-tv:checked     ~ #tv{ display:block; }
 #tab-sports:checked ~ #sports{ display:block; }
 
 /* =========================
-   7) Cards + centered link lists
+   7) Cards grid (FINAL)
    ========================= */
-.tab-content .cards{
+/* Phones: 1 col */
+section#projects .tab-content .cards{
   display: grid;
-  grid-template-columns: minmax(420px, 980px); /* single centered track */
-  justify-content: center;
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 1.4rem;                 /* real sliver between cards */
+  padding-inline: .25rem;
 }
-.tab-content .card{
-  width:100%;
-  margin:0 auto;
-  text-align:center;
+
+/* ≥600px: 2 cols */
+@media (min-width: 600px){
+  section#projects .tab-content .cards{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ≥900px: 3 cols */
+@media (min-width: 900px){
+  section#projects .tab-content .cards{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.6rem;               /* a touch more air on desktop */
+  }
+}
+
+/* Card */
+section#projects .tab-content .card{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
   background: var(--surface);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:1.25rem 1.5rem;
-  box-shadow: 0 6px 16px rgba(0,0,0,.07);
-}
-.tab-content .card h4{
-  margin:.25rem 0 .25rem;
-  font-size:1.125rem;
-  letter-spacing:-.01em;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  overflow: hidden;            /* keep rounded corners crisp */
 }
 
-/* TRUE centering of the link list + refined links */
-.tab-content .card ul{
-  list-style:none;
-  padding-left:0;
-  margin:.5rem auto 0;
-  display:inline-block;             /* shrink-wrap for centering */
-  text-align:center;
-  font-size:1.1rem;
-  line-height:1.6;
+/* Optional halo: guarantees a visible white sliver even with shadows */
+section#projects .tab-content .card::before{
+  content: "";
+  position: absolute;
+  inset: -4px;                 /* thickness of the "sliver" */
+  background: var(--bg);       /* page background (white/dark) */
+  border-radius: 14px;
+  z-index: -1;
 }
-.tab-content .card li{ margin:.35rem 0; }
 
+/* Thumbnail: uniform 16:9 crop */
+.card__thumb{
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 10px;
+  margin-bottom: .75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+/* Card text rhythm */
+.card__title{ margin: 0 0 .3rem; font-size: 1.1rem; font-weight: 700; letter-spacing: -.01em; }
+.card__blurb{ margin: 0 0 .7rem; color: var(--muted); font-size: .98rem; }
+.card__links{ list-style: none; padding: 0; margin: .25rem 0 0; }
+.card__links li + li{ margin-top: .25rem; }
+
+/* Links inside cards */
 .tab-content .card a{
   color: var(--text);
   text-decoration: none;
@@ -240,13 +274,13 @@ pre{ border:1px solid var(--border); padding:.75rem 1rem; overflow:auto; }
 blockquote{ color: var(--text); border-left:.25em solid var(--border); padding-left:1em; margin-left:0; }
 
 /* =========================
-   9) Fill viewport & pin #contact to bottom
+   9) Layout fill & footer pin
    ========================= */
 html, body { height: 100%; }
 body {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;   /* header | main | footer */
+  flex-direction: column;
 }
 main.page-content { flex: 1 0 auto; display: flex; }
 .page-content > .wrapper {
@@ -279,249 +313,10 @@ main.page-content { flex: 1 0 auto; display: flex; }
 }
 
 /* =========================
-   12) Print styles (for reviewers)
+   12) Print styles
    ========================= */
 @media print{
   header, footer, .theme-btn, .tabs label{ display:none !important; }
   .page-content > .wrapper{ max-width: none; padding: 0; }
   a[href]:after{ content:" (" attr(href) ")"; font-size:.9em; color:var(--muted); }
 }
-
-/* Force-center the subtitle under the main H1 on the homepage */
-.page-content > .wrapper .subtitle{
-  text-align: center !important;
-  display: block;
-  max-width: 60ch;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  margin-top: .5rem;
-  margin-bottom: 1.25rem;
-}
-/* Center the subtitle line under the H1 on the homepage, no matter what Minima does */
-main.page-content > .wrapper > h1#data-analyst-portfolio + p.subtitle{
-  text-align: center !important;
-  display: block !important;
-  width: 100% !important;
-  max-width: 60ch;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  margin-top: .5rem !important;
-  margin-bottom: 1.25rem !important;
-}
-/* --- Make subtitle center under H1, regardless of Minima wrappers --- */
-.page-content .wrapper .post-content p.subtitle,
-.page-content .wrapper > p.subtitle,
-.page-content .wrapper #data-analyst-portfolio ~ p.subtitle {
-  text-align: center !important;
-  display: block !important;
-  max-width: 60ch !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  margin-top: .5rem !important;
-  margin-bottom: 1.25rem !important;
-}
-.hero{
-  display: grid !important;
-  place-items: center !important;
-  text-align: center !important;
-  gap: .25rem;
-}
-.hero > .subtitle{
-  max-width: 60ch;
-  margin: .5rem 0 1.25rem;
-}
-/* Uniform thumbnails */
-.card__thumb{
-  width: 100%;
-  aspect-ratio: 16 / 9;     /* consistent frame */
-  object-fit: cover;         /* smart crop to fill */
-  object-position: center;   /* adjust per-image if needed */
-  border-radius: 10px;
-  margin-bottom: .75rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-}
-
-/* Optional: two-up/three-up grid with thumbnails */
-.tab-content .cards{
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem;
-  align-items: stretch;
-}
-.card{
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.1rem 1.25rem;
-  box-shadow: 0 6px 16px rgba(0,0,0,.07);
-}
-.card__title{ margin: 0 0 .25rem; font-size: 1.1rem; font-weight: 700; letter-spacing: -.01em; }
-.card__blurb{ margin: 0 0 .6rem; color: var(--muted); font-size: .98rem; }
-.card__links{ list-style: none; padding: 0; margin: .25rem 0 0; }
-.card__links li + li{ margin-top: .25rem; }
-/* Roomier spacing between cards */
-.tab-content .cards{
-  /* wider gutters on larger screens, sensible on mobile */
-  gap: clamp(1rem, 2.5vw, 1.6rem);
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
-/* Slightly more breathing room inside each card */
-.card{
-  padding: 1.25rem 1.6rem;
-}
-
-/* Tighten internal rhythm a hair */
-.card__title{ margin: 0 0 .35rem; }
-.card__blurb{ margin: 0 0 .7rem; }
-
-/* Optional: add even more space only on desktop */
-@media (min-width: 1024px){
-  .tab-content .cards{ gap: 1.75rem; }
-}
-/* Give cards more breathing room and prevent narrow columns */
-section#projects .tab-content .cards{
-  /* bigger gutters */
-  gap: 2rem !important;                /* was ~1rem */
-  /* make each card wider so fewer columns fit = more space */
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
-  padding-inline: .25rem;              /* tiny left/right buffer */
-}
-
-/* Optional: add a tiny outer margin per card (in addition to gap) */
-section#projects .tab-content .card{
-  margin: .1rem !important;            /* micro spacing around each card */
-  padding: 1.25rem 1.6rem !important;  /* a bit more inner air */
-  box-shadow: 0 8px 22px rgba(0,0,0,.08); /* softer; reduces “crowding” feel */
-}
-/* Tidy card sizing: consistent width + comfy gaps */
-section#projects .tab-content .cards{
-  display: grid;
-  /* each card stays between 260–320px wide, doesn't stretch wider */
-  grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
-  justify-content: center;          /* center the grid when there's extra room */
-  gap: 1.4rem;                      /* space between cards */
-  padding-inline: .25rem;
-}
-
-/* Slightly leaner padding so they feel smaller overall */
-section#projects .tab-content .card{
-  padding: 1rem 1.25rem;
-  margin: 0;                        /* rely on gap for separation */
-  box-shadow: 0 6px 18px rgba(0,0,0,.08);
-}
-
-/* Optional: tighten even more on small screens */
-@media (max-width: 280px){
-  section#projects .tab-content .cards{
-    grid-template-columns: 1fr;     /* one per row on very small phones */
-    gap: 1.1rem;
-  }
-}
-/* Base: 1 column with nice gap */
-section#projects .tab-content .cards{
-  display: grid;
-  gap: 1.4rem;                 /* space between cards */
-  grid-template-columns: 1fr;  /* mobile */
-}
-
-/* >= 640px: 2 columns */
-@media (min-width: 640px){
-  section#projects .tab-content .cards{
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-}
-
-/* >= 1024px: lock to 3 columns (your “three across” look) */
-@media (min-width: 1024px){
-  section#projects .tab-content .cards{
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    max-width: 1100px;      /* keeps cards from getting too wide */
-    margin-inline: auto;    /* center the 3-col grid in the page */
-    gap: 1.6rem;            /* a bit more breathing room on desktop */
-  }
-}
-
-/* keep cards lean so 3 per row feels right */
-section#projects .tab-content .card{
-  padding: 1rem 1.25rem;
-}
-/* Base: 1 col */
-section#projects .tab-content .cards{
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: 1.2rem !important;
-  column-gap: 1.2rem !important;
-}
-
-/* ≥640px: 2 cols */
-@media (min-width: 640px){
-  section#projects .tab-content .cards{
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    row-gap: 1.3rem !important;
-    column-gap: 1.3rem !important;
-  }
-}
-
-/* ≥1024px: 3 cols with comfy gutters */
-@media (min-width: 1024px){
-  section#projects .tab-content .cards{
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    row-gap: 1.6rem !important;
-    column-gap: 1.6rem !important;
-    max-width: 1100px;
-    margin-inline: auto;
-  }
-}
-/* === Force 3-up with comfy gutters and a visible white sliver between cards === */
-
-/* Base: 1 col */
-section#projects .tab-content .cards{
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  gap: 1.2rem !important;               /* real space between cards */
-}
-
-/* ≥640px: 2 cols */
-@media (min-width: 640px){
-  section#projects .tab-content .cards{
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 1.4rem !important;
-  }
-}
-
-/* ≥1024px: lock to 3 cols */
-@media (min-width: 1024px){
-  section#projects .tab-content .cards{
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 1.6rem !important;             /* adjust if you want more/less */
-    max-width: 1100px;                  /* keeps each card a nice width */
-    margin-inline: auto;
-  }
-}
-
-/* Card: add a subtle white halo so borders never visually touch */
-section#projects .tab-content .card{
-  position: relative !important;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  box-shadow: 0 8px 22px rgba(0,0,0,.08);
-  overflow: hidden;                     /* keep rounded corners crisp */
-}
-
-/* The halo is a pseudo-element placed behind the card */
-section#projects .tab-content .card::before{
-  content: "";
-  position: absolute;
-  inset: -6px;                          /* this is the "sliver" thickness */
-  background: var(--bg);                /* same as page background (white/dark) */
-  border-radius: 14px;                  /* 12px + 2px to match the curve */
-  z-index: -1;                          /* sits behind the card */
-}
-
