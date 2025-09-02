@@ -450,4 +450,31 @@ section#projects .tab-content .cards{
 section#projects .tab-content .card{
   padding: 1rem 1.25rem;
 }
+/* Base: 1 col */
+section#projects .tab-content .cards{
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: 1.2rem !important;
+  column-gap: 1.2rem !important;
+}
+
+/* ≥640px: 2 cols */
+@media (min-width: 640px){
+  section#projects .tab-content .cards{
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    row-gap: 1.3rem !important;
+    column-gap: 1.3rem !important;
+  }
+}
+
+/* ≥1024px: 3 cols with comfy gutters */
+@media (min-width: 1024px){
+  section#projects .tab-content .cards{
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    row-gap: 1.6rem !important;
+    column-gap: 1.6rem !important;
+    max-width: 1100px;
+    margin-inline: auto;
+  }
+}
 
