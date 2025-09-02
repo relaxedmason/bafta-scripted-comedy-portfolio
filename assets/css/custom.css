@@ -330,3 +330,36 @@ main.page-content > .wrapper > h1#data-analyst-portfolio + p.subtitle{
   max-width: 60ch;
   margin: .5rem 0 1.25rem;
 }
+/* Uniform thumbnails */
+.card__thumb{
+  width: 100%;
+  aspect-ratio: 16 / 9;     /* consistent frame */
+  object-fit: cover;         /* smart crop to fill */
+  object-position: center;   /* adjust per-image if needed */
+  border-radius: 10px;
+  margin-bottom: .75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+/* Optional: two-up/three-up grid with thumbnails */
+.tab-content .cards{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+}
+.card{
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 6px 16px rgba(0,0,0,.07);
+}
+.card__title{ margin: 0 0 .25rem; font-size: 1.1rem; font-weight: 700; letter-spacing: -.01em; }
+.card__blurb{ margin: 0 0 .6rem; color: var(--muted); font-size: .98rem; }
+.card__links{ list-style: none; padding: 0; margin: .25rem 0 0; }
+.card__links li + li{ margin-top: .25rem; }
