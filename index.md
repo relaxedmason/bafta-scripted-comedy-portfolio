@@ -20,108 +20,116 @@ description: SQL • Python • APIs • Data Visualization
     <input type="radio" name="tab" id="tab-sports" class="tabs__input">
     <label for="tab-sports" id="tab-sports-label" class="tabs__label" role="tab" aria-controls="sports" aria-selected="false" tabindex="-1">Sports</label>
 
-    <!-- TV tab (three separate BAFTA projects) -->
+    <!-- TV tab -->
     <div class="tab-content" id="tv" role="tabpanel" aria-labelledby="tab-tv-label">
       <div class="cards">
-        <!-- BAFTA: Winners & Nominees -->
+
+        <!-- BAFTA 10 Years -->
         <article class="card">
           <img
             class="card__thumb"
             src="{{ '/assets/images/bafta_scripted_comedy_visualization.png' | relative_url }}"
-            alt="BAFTA Scripted Comedy — winners and nominees visualization"
+            alt="BAFTA Scripted Comedy visualization"
             width="1280" height="720" loading="lazy" decoding="async">
-          <h3 class="card__title">BAFTA Scripted Comedy — Winners & Nominees (2016–2025)</h3>
-          <p class="card__blurb">Dataset and visuals quantifying nomination-to-win patterns across a decade.</p>
+          <h3 class="card__title">The Last Ten Years of the BAFTA Scripted Comedy Awards</h3>
+          <p class="card__blurb">Visual record of nominees and winners from the most recent decade.</p>
           <ul class="card__links">
             <li><a class="link" href="{{ '/bafta-comedy-awards/winners-nominees/' | relative_url }}">View project</a></li>
           </ul>
         </article>
 
-        <!-- BAFTA: Peep Show’s Record -->
+        <!-- Peep Show -->
         <article class="card">
           <img
             class="card__thumb"
             src="{{ '/assets/images/peep_show_bafta_thumbnail.jpg' | relative_url }}"
-            alt="Peep Show at the BAFTAs thumbnail"
+            alt="Peep Show BAFTA thumbnail"
             width="1280" height="720" loading="lazy" decoding="async">
-          <h3 class="card__title">Peep Show’s Record at the BAFTAs</h3>
-          <p class="card__blurb">Title-level analysis of nominations vs. wins and how it stacks against peers.</p>
+          <h3 class="card__title">Peep Show’s BAFTA Record</h3>
+          <p class="card__blurb">How the series performed at the BAFTAs across nominations and wins.</p>
           <ul class="card__links">
             <li><a class="link" href="{{ '/bafta-comedy-awards/peep-show/' | relative_url }}">View project</a></li>
           </ul>
         </article>
 
-        <!-- BAFTA: Least Deserving Wins -->
+        <!-- Controversial Wins -->
         <article class="card">
           <img
             class="card__thumb"
             src="{{ '/assets/images/bafta_top5.png' | relative_url }}"
-            alt="Top 5 least deserving BAFTA winners thumbnail"
+            alt="BAFTA controversial wins thumbnail"
             width="1280" height="720" loading="lazy" decoding="async">
-          <h3 class="card__title">Top 5 Least Deserving BAFTA Wins</h3>
-          <p class="card__blurb">A rating-check methodology to surface outliers and debate-worthy results.</p>
+          <h3 class="card__title">Five Controversial BAFTA Scripted Comedy Wins</h3>
+          <p class="card__blurb">Highlighting outliers where results diverged from ratings and consensus.</p>
           <ul class="card__links">
             <li><a class="link" href="{{ '/bafta-comedy-awards/rating-check/' | relative_url }}">View project</a></li>
           </ul>
         </article>
+
       </div>
     </div>
 
-    <!-- Sports tab (unchanged) -->
+    <!-- Sports tab -->
     <div class="tab-content" id="sports" role="tabpanel" aria-labelledby="tab-sports-label" hidden>
       <div class="cards">
+
+        <!-- Depth Charts -->
         <article class="card">
           <img
             class="card__thumb"
             src="{{ '/assets/images/sports/bavasi/depth-chart/mariners_2003_depth_chart_final_final.png' | relative_url }}"
-            alt="Mariners 2003 depth chart visualization"
+            alt="Mariners depth chart visualization"
             width="1280" height="720" loading="lazy" decoding="async">
-          <h3 class="card__title">Mariners Depth Charts (2003–2008)</h3>
-          <p class="card__blurb">Visual depth charts and roster churn during the Bavasi era.</p>
+          <h3 class="card__title">Seattle Mariners Depth Charts, 2003–2008</h3>
+          <p class="card__blurb">Season-by-season visuals of roster construction during the Bavasi era.</p>
           <ul class="card__links">
             <li><a class="link" href="{{ '/sports/baseball/bavasi/depth-chart/' | relative_url }}">View project</a></li>
           </ul>
         </article>
 
+        <!-- Home Run Leaders -->
         <article class="card">
           <img
             class="card__thumb"
             src="{{ '/assets/images/sports/mariners/top_10_home_run_safeco_field.png' | relative_url }}"
-            alt="Top 10 longest home runs at Safeco Field visualization"
+            alt="Safeco Field longest home runs"
             width="1280" height="720" loading="lazy" decoding="async">
-          <h3 class="card__title">The 10 Longest Home Runs at Safeco Field</h3>
-          <p class="card__blurb">Distance leaderboard with context and visuals.</p>
+          <h3 class="card__title">Safeco Field: Home Run Distance Leaders</h3>
+          <p class="card__blurb">Top-10 ranking of the park’s most powerful blasts.</p>
           <ul class="card__links">
             <li><a class="link" href="{{ '/sports/top-10-home-runs-at-Safeco-Field/' | relative_url }}">View project</a></li>
           </ul>
         </article>
 
+        <!-- Suarez vs Williamson -->
         <article class="card">
           <img
             class="card__thumb"
             src="{{ '/assets/images/sports/mariners/suarez_williamson_desktop.png' | relative_url }}"
-            alt="Suárez vs. Williamson 2025 first half comparison"
+            alt="Suarez vs Williamson comparison"
             width="1280" height="720" loading="lazy" decoding="async">
-          <h3 class="card__title">Suárez vs. Williamson — 2025 First Half</h3>
-          <p class="card__blurb">Compact stat comparison (wRC+, DRS, BsR, WAR) with clear layout.</p>
+          <h3 class="card__title">Suárez vs. Williamson — First Half 2025</h3>
+          <p class="card__blurb">Side-by-side stat comparison across wRC+, DRS, BsR, and WAR.</p>
           <ul class="card__links">
             <li><a class="link" href="{{ '/sports/baseball/mariners/suarez-vs-williamson/' | relative_url }}">View project</a></li>
           </ul>
         </article>
 
+        <!-- Guillen Trade -->
         <article class="card">
           <img
             class="card__thumb"
             src="{{ '/assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png' | relative_url }}"
-            alt="Carlos Guillén trade impact visualization"
+            alt="Carlos Guillen trade visualization"
             width="1280" height="720" loading="lazy" decoding="async">
           <h3 class="card__title">The Carlos Guillén Trade</h3>
-          <p class="card__blurb">Trade tree + outcomes and WAR impact for Seattle.</p>
+          <p class="card__blurb">Assessing the downstream outcomes and WAR impact of the deal for Seattle.</p>
           <ul class="card__links">
             <li><a class="link" href="{{ '/sports/baseball/bavasi/carlos-guillen-trade/' | relative_url }}">View project</a></li>
           </ul>
         </article>
 
+        <!-- Venezuelan WAR -->
         <article class="card">
           <picture>
             <source
@@ -130,15 +138,16 @@ description: SQL • Python • APIs • Data Visualization
             <img
               class="card__thumb"
               src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_light.png' | relative_url }}"
-              alt="Top 10 MLB Team WAR (Venezuelan players) visualization"
+              alt="Venezuelan WAR visualization"
               width="1280" height="720" loading="lazy" decoding="async">
           </picture>
-          <h3 class="card__title">Venezuelan WAR — Mariners Focus</h3>
-          <p class="card__blurb">Contribution by Venezuelan players across Mariners history.</p>
+          <h3 class="card__title">Venezuelan WAR Contributions to the Mariners</h3>
+          <p class="card__blurb">Quantifying the franchise-level impact of Venezuelan players over time.</p>
           <ul class="card__links">
             <li><a class="link" href="{{ '/sports/baseball/mariners/venezuelan-war/' | relative_url }}">View project</a></li>
           </ul>
         </article>
+
       </div>
     </div>
   </div>
