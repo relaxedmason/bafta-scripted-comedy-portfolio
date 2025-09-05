@@ -2,8 +2,6 @@ name: Update Cal Raleigh HR Data
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '5 9 * * *'  # daily at 09:05 UTC
 
 jobs:
   update:
