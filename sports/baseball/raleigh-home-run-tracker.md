@@ -17,7 +17,10 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   <a class="chip" href="{{ '/assets/data/raleigh_hr.csv' | relative_url }}" download>⬇️ Download CSV</a>
 </div>
 
-<canvas id="hrTimeline" width="900" height="360" aria-label="Cumulative home runs over time"></canvas>
+<!-- Make the chart responsive by sizing its container; Chart.js fills it -->
+<div class="chart-wrap">
+  <canvas id="hrTimeline" aria-label="Cumulative home runs over time"></canvas>
+</div>
 
 <h2 style="margin-top:1.25rem;">Home Runs (compact table)</h2>
 <div class="table-wrap">
@@ -57,16 +60,16 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
       'beforebegin',
       '<p style="color:var(--muted)">No data available yet. Try again after the next update.</p>'
     );
-    document.getElementById('hrCountLine').textContent = '0 HR this season';
+    document.getElementById('hrCountLine').textContent = '0 HR';
     return;
   }
 
   if (!Array.isArray(data) || data.length === 0) {
     document.getElementById('hrTimeline').insertAdjacentHTML(
       'beforebegin',
-      '<p style="color:var(--muted)">No regular-season home runs found for the current season.</p>'
+      '<p style="color:var(--muted)">No regular-season home runs found.</p>'
     );
-    document.getElementById('hrCountLine').textContent = '0 HR this season';
+    document.getElementById('hrCountLine').textContent = '0 HR';
     return;
   }
 
@@ -87,10 +90,10 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     };
   }).filter(r => r.game_date instanceof Date && !isNaN(r.game_date));
 
-  // Big subtitle (season total)
+  // Big subtitle: just the count (no "this season")
   const total = rows.length;
   const countEl = document.getElementById('hrCountLine');
-  if (countEl) countEl.textContent = `${total} HR this season`;
+  if (countEl) countEl.textContent = `${total} HR`;
 
   // -------- Populate ballpark filter --------
   const sel = document.getElementById('venueFilter');
@@ -101,7 +104,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   const ascAll  = rows.slice().sort((a,b)=> a.game_date - b.game_date);
   const descAll = rows.slice().sort((a,b)=> b.game_date - a.game_date);
 
-  // -------- Cumulative line chart (by date) --------
+  // -------- Cumulative line chart (by date; stepped; daily spacing) --------
   const ctx = document.getElementById('hrTimeline').getContext('2d');
   let chart;
 
@@ -112,6 +115,11 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
   function buildChart(dataset){
     const pts = toCumulative(dataset);
+
+    // Bounds to spread the x-axis: min a few days before first HR, max a few after last HR
+    const minDate = pts.length ? new Date(pts[0].x.getTime() - 3*24*3600*1000) : undefined;
+    const maxDate = pts.length ? new Date(pts[pts.length-1].x.getTime() + 3*24*3600*1000) : undefined;
+
     if (chart) chart.destroy();
     chart = new Chart(ctx, {
       type: 'line',
@@ -119,20 +127,42 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
         datasets: [{
           label: 'Cumulative HR',
           data: pts,
-          tension: 0.25,
-          pointRadius: 2,
+          stepped: true,        // clean stair-steps per HR
+          tension: 0,           // straight steps
+          pointRadius: 1.5,     // tiny dots to avoid clutter
           fill: false
         }]
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,       // fill the .chart-wrap height
         parsing: false,
         scales: {
-          x: { type: 'time', time: { unit: 'week' }, title: { display:true, text:'Game date' } },
-          y: { title: { display:true, text:'Cumulative HR' }, beginAtZero: true, ticks: { precision: 0 } }
+          x: {
+            type: 'time',
+            time: { unit: 'day', round: 'day' },   // daily spacing
+            adapters: {},                           // uses date-fns
+            min: minDate,
+            max: maxDate,
+            offset: true,                           // a little padding left/right
+            ticks: {
+              source: 'auto',
+              autoSkip: true,
+              maxRotation: 0
+            },
+            title: { display:true, text:'Game date' }
+          },
+          y: {
+            title: { display:true, text:'Cumulative HR' },
+            beginAtZero: true,
+            ticks: { precision: 0 }
+          }
         },
         plugins: {
           legend: { display: false },
           tooltip: {
+            intersect: false,
+            mode: 'nearest',
             callbacks: {
               label: c => {
                 const d = c.raw;
@@ -142,7 +172,8 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
               }
             }
           }
-        }
+        },
+        elements: { line: { borderWidth: 2 } }
       }
     });
   }
@@ -193,10 +224,9 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   sel.addEventListener('change', () => {
     buildChart(filteredAsc());
     renderRows(filteredDesc(), true);
-
-    // If you want the subtitle to show the FILTERED count instead of season total, uncomment:
+    // If you want the subtitle to reflect the FILTERED total, uncomment:
     // const n = filteredAsc().length;
-    // countEl.textContent = `${n} HR${sel.value==='all'?' this season':''}`;
+    // countEl.textContent = `${n} HR`;
   });
 
   document.getElementById('showMore').addEventListener('click', () => {
@@ -206,12 +236,19 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 </script>
 
 <style>
-/* Large subtitle count */
+/* Big, clean count in the subtitle line */
 .bigcount{
-  font-size: clamp(2.25rem, 6.5vw, 3.5rem);
+  font-size: clamp(2.5rem, 7vw, 3.75rem);
   font-weight: 800;
   letter-spacing: -0.02em;
   margin: .35rem auto 1rem;
+}
+
+/* Chart container controls final height; canvas fills it */
+.chart-wrap{
+  width: 100%;
+  height: 420px;              /* tweak to taste */
+  margin: .5rem 0 1rem;
 }
 
 /* compact table styling (move to custom.css if you prefer) */
