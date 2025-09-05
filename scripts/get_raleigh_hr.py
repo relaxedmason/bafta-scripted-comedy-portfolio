@@ -17,13 +17,9 @@ def current_season_range(today: date):
     return start, end
 
 def get_range():
-    """
-    Use START_DATE / END_DATE (YYYY-MM-DD) if set; otherwise current season.
-    Always return ISO strings for pybaseball.
-    """
+    """Use START_DATE / END_DATE (YYYY-MM-DD) if set; otherwise current season. Return ISO strings."""
     today = date.today()
     default_start, default_end = current_season_range(today)
-
     sd = os.getenv("START_DATE", "")
     ed = os.getenv("END_DATE", "")
     try:
@@ -34,8 +30,6 @@ def get_range():
         end = datetime.strptime(ed, "%Y-%m-%d").date() if ed else default_end
     except Exception:
         end = default_end
-
-    # pybaseball prefers strings
     return start.isoformat(), end.isoformat()
 
 def venue_name(game_pk: int, cache: dict) -> str:
@@ -90,15 +84,31 @@ def main():
     else:
         print(f"[info] Statcast rows: {len(raw)}")
         # Filter to home runs (defensive vs None)
-        hr = raw[raw["events"].astype(str).str.lower().eq("home_run")].copy()
+        ev_col = "events"
+        if ev_col not in raw.columns:
+            print(f"[warn] '{ev_col}' column missing; no HR filter possible")
+            hr = raw.copy()
+        else:
+            hr = raw[raw[ev_col].astype(str).str.lower().eq("home_run")].copy()
+
         print(f"[info] Home run rows after filter: {len(hr)}")
 
         if hr.empty:
             df = tidy_empty_df()
         else:
             # Normalize types
-            hr["game_date"] = pd.to_datetime(hr["game_date"], errors="coerce").dt.date
-            hr["home"] = (hr["home_team"] == hr["team"]).fillna(False)
+            hr["game_date"] = pd.to_datetime(hr.get("game_date"), errors="coerce").dt.date
+
+            # Determine if batter's team was the home team
+            if "bat_team" in hr.columns:
+                hr["home"] = (hr["home_team"] == hr["bat_team"]).fillna(False)
+                print("[info] Computed 'home' using 'bat_team' vs 'home_team'")
+            elif "team" in hr.columns:
+                hr["home"] = (hr["home_team"] == hr["team"]).fillna(False)
+                print("[info] Computed 'home' using 'team' vs 'home_team'")
+            else:
+                hr["home"] = False
+                print("[warn] Neither 'bat_team' nor 'team' present; defaulting 'home' to False")
 
             # Venue enrichment (best-effort)
             cache = {}
@@ -114,7 +124,11 @@ def main():
                 "hc_x","hc_y","pitch_type","release_speed","p_throws",
                 "player_name","pitcher","game_pk"
             ]
-            df = hr.reindex(columns=keep).sort_values("game_date", ascending=False)
+            # Some columns might be missing in rare cases; reindex with fill
+            for c in keep:
+                if c not in hr.columns:
+                    hr[c] = pd.NA
+            df = hr[keep].sort_values("game_date", ascending=False)
 
     df.to_json(OUT_JSON, orient="records", date_format="iso")
     df.to_csv(OUT_CSV, index=False)
