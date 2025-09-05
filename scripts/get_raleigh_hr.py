@@ -11,13 +11,13 @@ OUT_JSON = OUT_DIR / "raleigh_hr.json"
 OUT_CSV  = OUT_DIR / "raleigh_hr.csv"
 
 def current_season_range(today: date):
-    """Default to current MLB season window (Mar 1 → Nov 30 of this year)."""
-    start = date(today.year, 3, 1)
+    """Regular season window: Mar 27 → Nov 30 (this year)."""
+    start = date(today.year, 3, 27)  # Opening Day
     end   = min(today, date(today.year, 11, 30))
     return start, end
 
 def get_range():
-    """Use START_DATE / END_DATE (YYYY-MM-DD) if set; otherwise current season. Return ISO strings."""
+    """Use START_DATE/END_DATE (YYYY-MM-DD) if set; otherwise current season. Return ISO strings."""
     today = date.today()
     default_start, default_end = current_season_range(today)
     sd = os.getenv("START_DATE", "")
@@ -57,7 +57,6 @@ def main():
     start_str, end_str = get_range()
     print(f"[info] Querying Statcast for Cal Raleigh from {start_str} to {end_str}")
 
-    # MLBAM id
     try:
         pid = int(playerid_lookup('Raleigh', 'Cal')["key_mlbam"].iloc[0])
         print(f"[info] MLBAM id = {pid}")
@@ -68,38 +67,39 @@ def main():
         df.to_csv(OUT_CSV, index=False)
         return
 
-    # Pull data
     try:
         raw = statcast_batter(start_str, end_str, pid)
     except Exception as e:
         print("[error] Statcast call failed:", e)
         raw = None
 
-    if raw is None:
+    if raw is None or raw.empty:
         print("[warn] No Statcast data returned")
-        df = tidy_empty_df()
-    elif raw.empty:
-        print("[warn] Statcast returned 0 rows in that range")
         df = tidy_empty_df()
     else:
         print(f"[info] Statcast rows: {len(raw)}")
-        # Filter to home runs (defensive vs None)
         ev_col = "events"
-        if ev_col not in raw.columns:
-            print(f"[warn] '{ev_col}' column missing; no HR filter possible")
-            hr = raw.copy()
-        else:
-            hr = raw[raw[ev_col].astype(str).str.lower().eq("home_run")].copy()
-
+        hr = raw[raw[ev_col].astype(str).str.lower().eq("home_run")] if ev_col in raw.columns else raw.copy()
         print(f"[info] Home run rows after filter: {len(hr)}")
 
         if hr.empty:
             df = tidy_empty_df()
         else:
-            # Normalize types
+            # Regular-season only
+            opening_day = datetime.strptime(start_str, "%Y-%m-%d").date()
+            if "game_type" in hr.columns:
+                before = len(hr)
+                hr = hr[hr["game_type"].astype(str).str.upper().eq("R")].copy()
+                print(f"[info] Filtered to regular season via game_type: {before} -> {len(hr)} rows")
+            else:
+                before = len(hr)
+                hr["game_date"] = pd.to_datetime(hr.get("game_date"), errors="coerce").dt.date
+                hr = hr[hr["game_date"] >= opening_day].copy()
+                print(f"[info] Filtered to dates >= {opening_day}: {before} -> {len(hr)} rows")
+
+            # Normalize types / columns
             hr["game_date"] = pd.to_datetime(hr.get("game_date"), errors="coerce").dt.date
 
-            # Determine if batter's team was the home team
             if "bat_team" in hr.columns:
                 hr["home"] = (hr["home_team"] == hr["bat_team"]).fillna(False)
                 print("[info] Computed 'home' using 'bat_team' vs 'home_team'")
@@ -110,7 +110,6 @@ def main():
                 hr["home"] = False
                 print("[warn] Neither 'bat_team' nor 'team' present; defaulting 'home' to False")
 
-            # Venue enrichment (best-effort)
             cache = {}
             try:
                 hr["venue_name"] = hr["game_pk"].apply(lambda pk: venue_name(int(pk), cache))
@@ -124,7 +123,6 @@ def main():
                 "hc_x","hc_y","pitch_type","release_speed","p_throws",
                 "player_name","pitcher","game_pk"
             ]
-            # Some columns might be missing in rare cases; reindex with fill
             for c in keep:
                 if c not in hr.columns:
                     hr[c] = pd.NA
