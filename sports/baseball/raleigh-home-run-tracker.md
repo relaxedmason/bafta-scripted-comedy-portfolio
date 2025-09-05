@@ -46,128 +46,61 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
 <script>
 (async function(){
-  // Cache-bust to avoid stale GitHub Pages/CDN
-  const url = '{{ "/assets/data/raleigh_hr.json" | relative_url }}?v={{ site.github.build_revision }}';
+  // 1. Fetch JSON, build rows[] ...
+  // (this part stays as you already have)
 
-  // -------- Fetch & validate --------
-  let data = [];
-  try {
-    const res = await fetch(url, { cache: 'no-store' });
-    if (!res.ok) throw new Error('fetch ' + res.status);
-    data = await res.json();
-  } catch (e) {
-    console.error('Could not load JSON:', e);
-    document.getElementById('hrTimeline').insertAdjacentHTML(
-      'beforebegin',
-      '<p style="color:var(--muted)">No data available yet. Try again after the next update.</p>'
-    );
-    return;
-  }
-  if (!Array.isArray(data) || data.length === 0) {
-    document.getElementById('hrTimeline').insertAdjacentHTML(
-      'beforebegin',
-      '<p style="color:var(--muted)">No regular-season home runs found for the current season.</p>'
-    );
-    document.getElementById('hrTotal').textContent = '0';
-    return;
-  }
+  // 2. KPI number
+  // (stays the same)
 
-  // -------- Normalize/derive fields --------
-  const rows = data.map(d => ({
-    game_date: d.game_date ? new Date(d.game_date) : null,
-    venue_name: d.venue_name || '—',
-    home: !!d.home,
-    home_team: d.home_team || '—',
-    away_team: d.away_team || '—',
-    opp: (d.home ? (d.away_team || '—') : (d.home_team || '—')),
-    dist: (d.hit_distance_sc != null ? Number(d.hit_distance_sc) : null),
-    ev: (d.launch_speed != null ? Number(d.launch_speed) : null),
-    la: (d.launch_angle != null ? Number(d.launch_angle) : null),
-    pitcher: d.pitcher || '—',
-    game_pk: d.game_pk || null
-  })).filter(r => r.game_date instanceof Date && !isNaN(r.game_date));
-
-  // KPI (big number)
-  const total = rows.length;
-  const kpiEl = document.getElementById('hrTotal');
-  if (kpiEl) kpiEl.innerHTML = `${total} <small>HR this season</small>`;
-
-  // Sort by date ASC for chart, DESC for table
-  const ascByDate  = rows.slice().sort((a,b)=> a.game_date - b.game_date);
-  const descByDate = rows.slice().sort((a,b)=> b.game_date - a.game_date);
-
-  // -------- Ballpark filter options --------
-  const sel = document.getElementById('venueFilter');
-  const venues = Array.from(new Set(rows.map(r => r.venue_name).filter(Boolean))).sort();
-  venues.forEach(v => sel.append(new Option(v, v)));
-
-  // -------- Chart --------
+  // 3. Chart code (REPLACE with the cumulative line version I gave you)
   const ctx = document.getElementById('hrTimeline').getContext('2d');
   let chart;
+
+  function toCumulative(dataset){
+    const sorted = dataset.slice().sort((a,b)=> a.game_date - b.game_date);
+    return sorted.map((r, i) => ({ x: r.game_date, y: i + 1, venue: r.venue_name, opp: r.opp }));
+  }
+
   function buildChart(dataset){
-    const pts = dataset
-      .filter(r => r.dist != null)
-      .map(r => ({ x: r.game_date, y: r.dist, venue: r.venue_name }));
+    const pts = toCumulative(dataset);
     if (chart) chart.destroy();
     chart = new Chart(ctx, {
-      type: 'scatter',
-      data: { datasets: [{ label: 'HR Distance (ft)', data: pts }] },
+      type: 'line',
+      data: { datasets: [{ label: 'Cumulative HR', data: pts, tension: 0.25, pointRadius: 2 }] },
       options: {
         parsing: false,
         scales: {
           x: { type: 'time', time: { unit: 'week' }, title: { display:true, text:'Game date' } },
-          y: { title: { display:true, text:'Distance (ft)' }, suggestedMin: 300, suggestedMax: 500 }
+          y: { title: { display:true, text:'Cumulative HR' }, beginAtZero:true, ticks:{precision:0} }
         },
-        plugins: { tooltip: { callbacks: {
-          label: c => `${Math.round(c.raw.y)} ft — ${c.raw.venue || 'Unknown park'}`
-        }}}
+        plugins: { legend: { display:false } }
       }
     });
   }
 
-  // -------- Table --------
-  const tbody = document.querySelector('#hrTable tbody');
-  const BTN_BATCH = 10;
-  let shown = 0;
-  function fmt(n, d=0){ return (n==null || isNaN(n)) ? '—' : Number(n).toFixed(d); }
-  function renderRows(dataset, reset=false){
-    if (reset){ tbody.innerHTML = ''; shown = 0; }
-    const slice = dataset.slice(shown, shown + BTN_BATCH);
-    slice.forEach(r => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${r.game_date.toLocaleDateString()}</td>
-        <td>${r.opp}</td>
-        <td>${r.venue_name}</td>
-        <td>${fmt(r.dist,0)}</td>
-        <td>${fmt(r.ev,0)}</td>
-        <td>${fmt(r.la,0)}</td>
-        <td>${r.pitcher}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-    shown += slice.length;
-    document.getElementById('showMore').disabled = shown >= dataset.length;
-  }
+  // 4. Table rendering
+  // (keep your renderRows() etc.)
 
-  // -------- Filtering wiring --------
+  // 5. Filtering wiring (REPLACE just this small part)
   function filteredRows(){
-    const v = sel.value;
-    return (v === 'all') ? descByDate : descByDate.filter(r => r.venue_name === v);
+    const v = document.getElementById('venueFilter').value;
+    return (v === 'all')
+      ? rows.slice().sort((a,b)=> b.game_date - a.game_date)
+      : rows.filter(r => r.venue_name === v).sort((a,b)=> b.game_date - a.game_date);
   }
 
   // Initial render
-  buildChart(ascByDate);
-  renderRows(descByDate, true);
+  buildChart(rows);
+  renderRows(filteredRows(), true);
 
-  sel.addEventListener('change', () => {
-    const v = sel.value;
-    const fAsc  = (v === 'all') ? ascByDate  : ascByDate.filter(r => r.venue_name === v);
-    const fDesc = filteredRows();
-    buildChart(fAsc);
-    renderRows(fDesc, true);
-    // Update KPI to reflect filtered count (optional; comment out if you want season total only)
-    // if (kpiEl) kpiEl.innerHTML = `${fDesc.length} <small>HR${v==='all'?' this season':''}</small>`;
+  document.getElementById('venueFilter').addEventListener('change', () => {
+    const v = document.getElementById('venueFilter').value;
+    const asc = (v === 'all')
+      ? rows.slice().sort((a,b)=> a.game_date - b.game_date)
+      : rows.filter(r => r.venue_name === v).sort((a,b)=> a.game_date - b.game_date);
+
+    buildChart(asc);
+    renderRows(filteredRows(), true);
   });
 
   document.getElementById('showMore').addEventListener('click', () => {
