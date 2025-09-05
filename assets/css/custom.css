@@ -358,3 +358,23 @@ section#projects .tab-content .card:hover{
   box-shadow: 0 12px 28px rgba(0,0,0,.12);
   transition: transform .2s ease, box-shadow .2s ease;
 }
+/* Bigger, responsive chart area */
+.chart-wrap{
+  width: 100%;
+  max-width: 1100px;          /* match your content width */
+  margin: .5rem auto 1.25rem;
+  height: 640px;              /* make it tall */
+}
+@media (min-width: 1024px){
+  .chart-wrap{ height: 720px; }   /* taller on desktop */
+}
+@media (min-width: 1400px){
+  .chart-wrap{ height: 800px; }   /* optional: even taller on very wide screens */
+}
+
+/* Make Chart.js canvas fill the container (overrides any global canvas rules) */
+.chart-wrap > canvas#hrTimeline{
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
