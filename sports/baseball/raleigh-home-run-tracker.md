@@ -2,7 +2,9 @@
 layout: default
 title: Cal Raleigh Home Run Tracker
 description: Auto-updating record of Cal Raleigh home runs with distance, EV, LA, and ballpark filter.
+permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 ---
+
 
 <h1>Cal Raleigh Home Run Tracker</h1>
 <p class="subtitle">Auto-updating via GitHub Actions · Filter by ballpark · Download CSV</p>
