@@ -110,7 +110,7 @@ description: SQL • Python • APIs • Data Visualization
         <article class="card">
           <img
             class="card__thumb"
-            src="{{ '/assets/images/sports/mariners/raleigh_hr_tracker.png' | relative_url }}"
+            src="{{ '/assets/images/sports/mariners/Cal_raleigh.jpg' | relative_url }}"
             alt="Cal Raleigh Home Run Tracker thumbnail"
             width="1280" height="720"
             loading="lazy" decoding="async">
