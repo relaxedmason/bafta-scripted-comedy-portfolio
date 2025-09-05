@@ -378,3 +378,11 @@ section#projects .tab-content .card:hover{
   width: 100% !important;
   height: 100% !important;
 }
+/* Center the page title */
+#data-analyst-portfolio,
+h1,
+h1#data-analyst-portfolio,
+h1#page-title {
+  text-align: center !important;
+  margin: 0 auto 0.5rem auto;
+}
