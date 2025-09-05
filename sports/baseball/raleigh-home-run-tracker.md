@@ -1,14 +1,12 @@
 ---
 layout: default
 title: Cal Raleigh Home Run Tracker
-description: Auto-updating record of Cal Raleigh home runs with distance, EV, LA, and ballpark filter.
+description: Auto-updating record of Cal Raleigh home runs with venue filter and cumulative chart.
 permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 ---
 
-
 <h1>Cal Raleigh Home Run Tracker</h1>
-<p class="subtitle">Auto-updating via GitHub Actions · Filter by ballpark · Download CSV</p>
-<div id="hrTotal" class="kpi" aria-live="polite">—</div>
+<p id="hrCountLine" class="subtitle bigcount" aria-live="polite">—</p>
 
 <label for="venueFilter" class="sr-only">Filter by ballpark</label>
 <select id="venueFilter" style="margin:0 0 1rem 0;">
@@ -19,7 +17,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   <a class="chip" href="{{ '/assets/data/raleigh_hr.csv' | relative_url }}" download>⬇️ Download CSV</a>
 </div>
 
-<canvas id="hrTimeline" width="900" height="360" aria-label="Home run distance over time"></canvas>
+<canvas id="hrTimeline" width="900" height="360" aria-label="Cumulative home runs over time"></canvas>
 
 <h2 style="margin-top:1.25rem;">Home Runs (compact table)</h2>
 <div class="table-wrap">
@@ -46,13 +44,64 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
 <script>
 (async function(){
-  // 1. Fetch JSON, build rows[] ...
-  // (this part stays as you already have)
+  // -------- Fetch JSON (cache-busted) --------
+  const url = '{{ "/assets/data/raleigh_hr.json" | relative_url }}?v={{ site.github.build_revision }}';
+  let data = [];
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('fetch ' + res.status);
+    data = await res.json();
+  } catch (e) {
+    console.error('Could not load JSON:', e);
+    document.getElementById('hrTimeline').insertAdjacentHTML(
+      'beforebegin',
+      '<p style="color:var(--muted)">No data available yet. Try again after the next update.</p>'
+    );
+    document.getElementById('hrCountLine').textContent = '0 HR this season';
+    return;
+  }
 
-  // 2. KPI number
-  // (stays the same)
+  if (!Array.isArray(data) || data.length === 0) {
+    document.getElementById('hrTimeline').insertAdjacentHTML(
+      'beforebegin',
+      '<p style="color:var(--muted)">No regular-season home runs found for the current season.</p>'
+    );
+    document.getElementById('hrCountLine').textContent = '0 HR this season';
+    return;
+  }
 
-  // 3. Chart code (REPLACE with the cumulative line version I gave you)
+  // -------- Normalize to rows[] we control --------
+  const rows = data.map(d => {
+    const gd = d.game_date ? new Date(d.game_date) : null;
+    return {
+      game_date: gd && !isNaN(gd) ? gd : null,
+      venue_name: d.venue_name || '—',
+      home: !!d.home,
+      home_team: d.home_team || '—',
+      away_team: d.away_team || '—',
+      opp: d.home ? (d.away_team || '—') : (d.home_team || '—'),
+      dist: (d.hit_distance_sc != null ? Number(d.hit_distance_sc) : null),
+      ev:   (d.launch_speed    != null ? Number(d.launch_speed)    : null),
+      la:   (d.launch_angle    != null ? Number(d.launch_angle)    : null),
+      pitcher: d.pitcher || '—'
+    };
+  }).filter(r => r.game_date instanceof Date && !isNaN(r.game_date));
+
+  // Big subtitle (season total)
+  const total = rows.length;
+  const countEl = document.getElementById('hrCountLine');
+  if (countEl) countEl.textContent = `${total} HR this season`;
+
+  // -------- Populate ballpark filter --------
+  const sel = document.getElementById('venueFilter');
+  const venues = Array.from(new Set(rows.map(r => r.venue_name).filter(Boolean))).sort();
+  venues.forEach(v => sel.append(new Option(v, v)));
+
+  // Sorted views
+  const ascAll  = rows.slice().sort((a,b)=> a.game_date - b.game_date);
+  const descAll = rows.slice().sort((a,b)=> b.game_date - a.game_date);
+
+  // -------- Cumulative line chart (by date) --------
   const ctx = document.getElementById('hrTimeline').getContext('2d');
   let chart;
 
@@ -66,53 +115,106 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     if (chart) chart.destroy();
     chart = new Chart(ctx, {
       type: 'line',
-      data: { datasets: [{ label: 'Cumulative HR', data: pts, tension: 0.25, pointRadius: 2 }] },
+      data: {
+        datasets: [{
+          label: 'Cumulative HR',
+          data: pts,
+          tension: 0.25,
+          pointRadius: 2,
+          fill: false
+        }]
+      },
       options: {
         parsing: false,
         scales: {
           x: { type: 'time', time: { unit: 'week' }, title: { display:true, text:'Game date' } },
-          y: { title: { display:true, text:'Cumulative HR' }, beginAtZero:true, ticks:{precision:0} }
+          y: { title: { display:true, text:'Cumulative HR' }, beginAtZero: true, ticks: { precision: 0 } }
         },
-        plugins: { legend: { display:false } }
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: c => {
+                const d = c.raw;
+                const n = c.parsed.y;
+                const date = new Date(d.x).toLocaleDateString();
+                return `#${n} on ${date} — ${d.venue || 'Unknown park'} vs ${d.opp || '?'}`;
+              }
+            }
+          }
+        }
       }
     });
   }
 
-  // 4. Table rendering
-  // (keep your renderRows() etc.)
+  // -------- Compact table --------
+  const tbody = document.querySelector('#hrTable tbody');
+  const BTN_BATCH = 10;
+  let shown = 0;
 
-  // 5. Filtering wiring (REPLACE just this small part)
-  function filteredRows(){
-    const v = document.getElementById('venueFilter').value;
-    return (v === 'all')
-      ? rows.slice().sort((a,b)=> b.game_date - a.game_date)
-      : rows.filter(r => r.venue_name === v).sort((a,b)=> b.game_date - a.game_date);
+  function fmt(n, d=0){ return (n==null || isNaN(n)) ? '—' : Number(n).toFixed(d); }
+
+  function renderRows(dataset, reset=false){
+    if (reset){ tbody.innerHTML = ''; shown = 0; }
+    const slice = dataset.slice(shown, shown + BTN_BATCH);
+    slice.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.game_date.toLocaleDateString()}</td>
+        <td>${r.opp}</td>
+        <td>${r.venue_name}</td>
+        <td>${fmt(r.dist,0)}</td>
+        <td>${fmt(r.ev,0)}</td>
+        <td>${fmt(r.la,0)}</td>
+        <td>${r.pitcher}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    shown += slice.length;
+    document.getElementById('showMore').disabled = shown >= dataset.length;
+  }
+
+  // -------- Filtering wiring --------
+  function filteredDesc(){
+    const v = sel.value;
+    return (v === 'all') ? descAll
+                         : rows.filter(r => r.venue_name === v).sort((a,b)=> b.game_date - a.game_date);
+  }
+  function filteredAsc(){
+    const v = sel.value;
+    return (v === 'all') ? ascAll
+                         : rows.filter(r => r.venue_name === v).sort((a,b)=> a.game_date - b.game_date);
   }
 
   // Initial render
-  buildChart(rows);
-  renderRows(filteredRows(), true);
+  buildChart(ascAll);
+  renderRows(descAll, true);
 
-  document.getElementById('venueFilter').addEventListener('change', () => {
-    const v = document.getElementById('venueFilter').value;
-    const asc = (v === 'all')
-      ? rows.slice().sort((a,b)=> a.game_date - b.game_date)
-      : rows.filter(r => r.venue_name === v).sort((a,b)=> a.game_date - b.game_date);
+  sel.addEventListener('change', () => {
+    buildChart(filteredAsc());
+    renderRows(filteredDesc(), true);
 
-    buildChart(asc);
-    renderRows(filteredRows(), true);
+    // If you want the subtitle to show the FILTERED count instead of season total, uncomment:
+    // const n = filteredAsc().length;
+    // countEl.textContent = `${n} HR${sel.value==='all'?' this season':''}`;
   });
 
   document.getElementById('showMore').addEventListener('click', () => {
-    renderRows(filteredRows(), false);
+    renderRows(filteredDesc(), false);
   });
 })();
 </script>
 
-
-
 <style>
-/* compact table styling (feel free to move into custom.css) */
+/* Large subtitle count */
+.bigcount{
+  font-size: clamp(2.25rem, 6.5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: .35rem auto 1rem;
+}
+
+/* compact table styling (move to custom.css if you prefer) */
 .table-wrap{ overflow:auto; border:1px solid var(--border); border-radius:8px; }
 table.compact{ width:100%; border-collapse: collapse; font-size:.95rem; }
 table.compact thead th{
@@ -122,3 +224,4 @@ table.compact thead th{
 table.compact tbody td{ padding:.45rem .6rem; border-bottom:1px solid var(--border); white-space:nowrap; }
 table.compact tbody tr:hover{ background: rgba(0,0,0,.03); }
 </style>
+
