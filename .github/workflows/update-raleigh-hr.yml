@@ -8,7 +8,7 @@ on:
     paths:
       - 'scripts/get_raleigh_hr.py'
       - '.github/workflows/update-raleigh-hr.yml'
-      - 'bafta-scripted-comedy-shows/requirements.txt'
+      - 'bafta-scripted-comedy-portfolio/requirements.txt'
 
 jobs:
   update:
