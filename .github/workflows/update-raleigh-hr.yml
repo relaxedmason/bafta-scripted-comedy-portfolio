@@ -2,28 +2,42 @@ name: Update Cal Raleigh HR Data
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '5 9 * * *'  # daily at 09:05 UTC
 
 jobs:
   update:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Upgrade pip
         run: python -m pip install --upgrade pip
+
+      # If your requirements are NOT at repo root, change the path below accordingly
       - name: Install deps
         run: pip install -r requirements.txt
-      - name: Run fetch script
+
+      # Script defaults to current MLB season (Mar 1 → Nov 30 of this year)
+      - name: Run fetch script (current season)
         run: python scripts/get_raleigh_hr.py
-      - name: Show generated files
+
+      - name: Show generated files (optional)
         run: ls -la assets/data || true
+
       - name: Commit changes (if any)
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: 'chore(data): update Cal Raleigh HRs [auto]'
           file_pattern: "assets/data/raleigh_hr.json assets/data/raleigh_hr.csv"
+
 
