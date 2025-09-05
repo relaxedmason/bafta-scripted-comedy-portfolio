@@ -2,14 +2,13 @@ name: Update Cal Raleigh HR Data
 
 on:
   schedule:
-    # every day at 09:05 UTC (02:05 PT). Adjust as you like.
     - cron: "5 9 * * *"
   workflow_dispatch: {}
   push:
     paths:
       - scripts/get_raleigh_hr.py
       - .github/workflows/update-raleigh-hr.yml
-      - requirements.txt
+      - bafta-scripted-comedy-shows/requirements.txt   # ← (1) track changes here
 
 jobs:
   update:
@@ -20,14 +19,26 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v4
 
+      - name: Debug: list files
+        run: |
+          pwd
+          echo "=== repo root ==="
+          ls -la
+          echo "=== scripts ==="
+          ls -la scripts || true
+          echo "=== bafta-scripted-comedy-shows ==="
+          ls -la bafta-scripted-comedy-shows || true
+          echo "=== .github/workflows ==="
+          ls -la .github/workflows || true
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: "pip"
+          # no cache while debugging; add cache later if you want
 
       - name: Install deps
-        run: pip install -r requirements.txt
+        run: pip install -r bafta-scripted-comedy-shows/requirements.txt   # ← (2) exact path
 
       - name: Run fetch script
         run: python scripts/get_raleigh_hr.py
@@ -39,3 +50,4 @@ jobs:
           file_pattern: |
             assets/data/raleigh_hr.json
             assets/data/raleigh_hr.csv
+
