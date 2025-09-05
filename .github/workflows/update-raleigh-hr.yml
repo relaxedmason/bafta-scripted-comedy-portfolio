@@ -1,0 +1,41 @@
+name: Update Cal Raleigh HR Data
+
+on:
+  schedule:
+    # every day at 09:05 UTC (02:05 PT). Adjust as you like.
+    - cron: "5 9 * * *"
+  workflow_dispatch: {}
+  push:
+    paths:
+      - scripts/get_raleigh_hr.py
+      - .github/workflows/update-raleigh-hr.yml
+      - requirements.txt
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Run fetch script
+        run: python scripts/get_raleigh_hr.py
+
+      - name: Commit changes (if any)
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(data): update Cal Raleigh HRs [auto]"
+          file_pattern: |
+            assets/data/raleigh_hr.json
+            assets/data/raleigh_hr.csv
