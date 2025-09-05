@@ -30,7 +30,8 @@ description: SQL • Python • APIs • Data Visualization
             class="card__thumb"
             src="{{ '/assets/images/bafta_scripted_comedy_visualization.png' | relative_url }}"
             alt="BAFTA Scripted Comedy visualization"
-            width="1280" height="720" loading="lazy" decoding="async">
+            width="1280" height="720"
+            loading="lazy" decoding="async">
           <h3 class="card__title">The Last Ten Years of the BAFTA Scripted Comedy Awards</h3>
           <p class="card__blurb">Visual record of nominees and winners from the most recent decade.</p>
           <ul class="card__links">
@@ -44,7 +45,8 @@ description: SQL • Python • APIs • Data Visualization
             class="card__thumb"
             src="{{ '/assets/images/peep_show_bafta_thumbnail.jpg' | relative_url }}"
             alt="Peep Show BAFTA thumbnail"
-            width="1280" height="720" loading="lazy" decoding="async">
+            width="1280" height="720"
+            loading="lazy" decoding="async">
           <h3 class="card__title">Peep Show’s BAFTA Record</h3>
           <p class="card__blurb">How the series performed at the BAFTAs across nominations and wins.</p>
           <ul class="card__links">
@@ -58,7 +60,8 @@ description: SQL • Python • APIs • Data Visualization
             class="card__thumb"
             src="{{ '/assets/images/bafta_top5.png' | relative_url }}"
             alt="BAFTA controversial wins thumbnail"
-            width="1280" height="720" loading="lazy" decoding="async">
+            width="1280" height="720"
+            loading="lazy" decoding="async">
           <h3 class="card__title">Five Controversial BAFTA Scripted Comedy Wins</h3>
           <p class="card__blurb">Highlighting outliers where results diverged from ratings and consensus.</p>
           <ul class="card__links">
@@ -79,7 +82,8 @@ description: SQL • Python • APIs • Data Visualization
             class="card__thumb"
             src="{{ '/assets/images/sports/bavasi/depth-chart/mariners_2003_depth_chart_final_final.png' | relative_url }}"
             alt="Mariners depth chart visualization"
-            width="1280" height="720" loading="lazy" decoding="async">
+            width="1280" height="720"
+            loading="lazy" decoding="async">
           <h3 class="card__title">Seattle Mariners Depth Charts, 2003–2008</h3>
           <p class="card__blurb">Season-by-season visuals of roster construction during the Bavasi era.</p>
           <ul class="card__links">
@@ -93,11 +97,27 @@ description: SQL • Python • APIs • Data Visualization
             class="card__thumb"
             src="{{ '/assets/images/sports/mariners/top_10_home_run_safeco_field.png' | relative_url }}"
             alt="Safeco Field longest home runs"
-            width="1280" height="720" loading="lazy" decoding="async">
+            width="1280" height="720"
+            loading="lazy" decoding="async">
           <h3 class="card__title">Safeco Field: Home Run Distance Leaders</h3>
           <p class="card__blurb">Top-10 ranking of the park’s most powerful blasts.</p>
           <ul class="card__links">
             <li><a class="link" href="{{ '/sports/top-10-home-runs-at-Safeco-Field/' | relative_url }}">View project</a></li>
+          </ul>
+        </article>
+
+        <!-- Cal Raleigh HR Tracker -->
+        <article class="card">
+          <img
+            class="card__thumb"
+            src="{{ '/assets/images/sports/mariners/raleigh_hr_tracker.png' | relative_url }}"
+            alt="Cal Raleigh Home Run Tracker thumbnail"
+            width="1280" height="720"
+            loading="lazy" decoding="async">
+          <h3 class="card__title">Cal Raleigh Home Run Tracker</h3>
+          <p class="card__blurb">Park-aware record of each home run with distance, EV, LA, and a downloadable CSV.</p>
+          <ul class="card__links">
+            <li><a class="link" href="{{ '/sports/baseball/mariners/raleigh-home-run-tracker/' | relative_url }}">View project</a></li>
           </ul>
         </article>
 
@@ -107,7 +127,8 @@ description: SQL • Python • APIs • Data Visualization
             class="card__thumb"
             src="{{ '/assets/images/sports/mariners/suarez_williamson_desktop.png' | relative_url }}"
             alt="Suarez vs Williamson comparison"
-            width="1280" height="720" loading="lazy" decoding="async">
+            width="1280" height="720"
+            loading="lazy" decoding="async">
           <h3 class="card__title">Suárez vs. Williamson — First Half 2025</h3>
           <p class="card__blurb">Side-by-side stat comparison across wRC+, DRS, BsR, and WAR.</p>
           <ul class="card__links">
@@ -121,7 +142,8 @@ description: SQL • Python • APIs • Data Visualization
             class="card__thumb"
             src="{{ '/assets/images/sports/mariners/guillen_vs_mariners_weighted_FINAL.png' | relative_url }}"
             alt="Carlos Guillen trade visualization"
-            width="1280" height="720" loading="lazy" decoding="async">
+            width="1280" height="720"
+            loading="lazy" decoding="async">
           <h3 class="card__title">The Carlos Guillén Trade</h3>
           <p class="card__blurb">Assessing the downstream outcomes and WAR impact of the deal for Seattle.</p>
           <ul class="card__links">
@@ -139,7 +161,8 @@ description: SQL • Python • APIs • Data Visualization
               class="card__thumb"
               src="{{ '/assets/images/sports/mariners/top_10_MLB_Team_WAR_Venezuela_light.png' | relative_url }}"
               alt="Venezuelan WAR visualization"
-              width="1280" height="720" loading="lazy" decoding="async">
+              width="1280" height="720"
+              loading="lazy" decoding="async">
           </picture>
           <h3 class="card__title">Venezuelan WAR Contributions to the Mariners</h3>
           <p class="card__blurb">Quantifying the franchise-level impact of Venezuelan players over time.</p>
@@ -162,3 +185,4 @@ description: SQL • Python • APIs • Data Visualization
     <a class="chip" href="{{ '/about/' | relative_url }}">ℹ️ About</a>
   </nav>
 </section>
+
