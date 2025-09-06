@@ -27,8 +27,8 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   <a class="chip" href="{{ '/assets/data/raleigh_hr.csv' | relative_url }}" download>⬇️ Download CSV</a>
 </div>
 
-<!-- Single chart container -->
-<div class="chart-wrap">
+<!-- Make the chart FULL-BLEED (edge-to-edge) so it's wide enough -->
+<div class="chart-wrap fullbleed">
   <canvas id="hrChart" aria-label="Home runs chart"></canvas>
 </div>
 
@@ -91,7 +91,6 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
                       : (d.hit_distance_sc != null && d.hit_distance_sc !== '' ? Number(d.hit_distance_sc) : null);
     const homeTeam = d.home_team || '—';
     const awayTeam = d.away_team || '—';
-    // Best effort home/away if not explicitly present
     const isHome   = (d.home === true) || (String(d.inning_topbot || '').toLowerCase() === 'bot');
     return {
       game_date: gd && !isNaN(gd) ? gd : null,
@@ -160,12 +159,19 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
           }]
         },
         options: {
-          responsive: true, maintainAspectRatio: false, parsing: false,
+          responsive: true,
+          maintainAspectRatio: false,   // let the parent control height/width
+          parsing: false,
+          layout: { padding: { right: 8, left: 8 } }, // a touch of breathing room on full-bleed
           scales: {
             x: {
               type: 'time', time: { unit: 'day', round: 'day' },
               min: minDate, max: maxDate, offset: true,
-              ticks: { autoSkip: true, maxRotation: 0 },
+              ticks: {
+                autoSkip: true,
+                maxTicksLimit: 14,  // avoid overcrowding on super-wide rows
+                maxRotation: 0
+              },
               title: { display: true, text: 'Game date' }
             },
             y: { beginAtZero: true, ticks: { precision: 0 }, title: { display: true, text: 'Cumulative HR' } }
@@ -197,7 +203,9 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
         type: 'bar',
         data: { labels, datasets: [{ data: values }] },
         options: {
-          responsive: true, maintainAspectRatio: false,
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { right: 8, left: 8 } },
           scales: {
             x: { display: false },
             y: { beginAtZero: true, title: { display: true, text: 'Feet' } }
@@ -229,7 +237,6 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   function fmt(n, d=0){ return (n==null || isNaN(n)) ? '—' : Number(n).toFixed(d); }
 
   function currentTableDataDesc(){
-    // Keep table aligned to venue filter (both modes)
     if (currentVenue === '__ALL__') return descAll;
     return rows.filter(r => r.venue_name === currentVenue).sort((a,b)=> b.game_date - a.game_date);
   }
@@ -259,7 +266,6 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   const btnDist = document.getElementById('mode-dist');
 
   function updateBigNumber(){
-    // By default show season total; if Distance mode + venue selected, show filtered total
     if (mode === 'distance' && currentVenue !== '__ALL__') {
       countEl.textContent = `${seriesByDistance(currentVenue).length} HR`;
     } else {
@@ -278,7 +284,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     // Show venue dropdown only for Distance mode
     venueWrap.style.display = isDate ? 'none' : 'inline-flex';
     if (isDate) {
-      currentVenue = '__ALL__';    // Date mode is always all parks
+      currentVenue = '__ALL__';
       sel.value = '__ALL__';
     }
     renderChart();
@@ -300,7 +306,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   });
 
   // Initial paint
-  setMode('date'); // starts in Date mode, total HR shown
+  setMode('date');
 })();
 </script>
 
@@ -312,6 +318,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   margin: .35rem auto 1rem;
 }
 
+/* Controls */
 .controls{
   display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; margin:.25rem 0 1rem 0;
 }
@@ -326,12 +333,33 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 }
 .chip.active{ background: var(--surface-2, rgba(0,0,0,.05)); }
 
+/* FULL-BLEED CHART: stretches to viewport width, not just the article column */
 .chart-wrap{
+  position: relative;
   width: 100%;
-  height: 420px;
   margin: .5rem 0 1rem;
 }
+.chart-wrap.fullbleed{
+  width: 100vw;                /* span the entire viewport width */
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;          /* pull out of the centered content column */
+  margin-right: -50vw;
+  transform: translateX(0);    /* ensure proper centering across browsers */
+}
+.chart-wrap canvas{
+  display:block;               /* important for correct sizing */
+  width: 100% !important;      /* let Chart.js fill parent width */
+  height: 480px !important;    /* control height here; Chart.js maintainAspectRatio=false */
+}
 
+/* Optional: cap the max-width on very large screens
+   (comment these two lines if you want truly edge-to-edge at any size) */
+@media (min-width: 1600px){
+  .chart-wrap.fullbleed{ max-width: 1500px; margin-left: calc(50% - 750px); margin-right: calc(50% - 750px); }
+}
+
+/* Table */
 .table-wrap{ overflow:auto; border:1px solid var(--border); border-radius:8px; }
 table.compact{ width:100%; border-collapse: collapse; font-size:.95rem; }
 table.compact thead th{
@@ -341,3 +369,4 @@ table.compact thead th{
 table.compact tbody td{ padding:.45rem .6rem; border-bottom:1px solid var(--border); white-space:nowrap; }
 table.compact tbody tr:hover{ background: rgba(0,0,0,.03); }
 </style>
+
