@@ -133,19 +133,14 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     return arr;
   }
 
-  // Force x-axis to show ALL months from season start → season end
+  // Force x-axis to show ALL months from first → last HR month (so it always shows months)
   function monthBoundsAndTicks(dataset) {
     if (!dataset.length) return {};
-    // Use first/last HR to set a season window, then expand to whole months
     const first = new Date(dataset[0].x);
     const last  = new Date(dataset[dataset.length - 1].x);
-
-    // Start at the first day of the month of the first HR (or March if earlier)
     const start = new Date(first.getFullYear(), first.getMonth(), 1);
-    // End at the last day of the month of the last HR
-    const end = new Date(last.getFullYear(), last.getMonth() + 1, 0);
+    const end   = new Date(last.getFullYear(),  last.getMonth() + 1, 0);
 
-    // Generate monthly tick dates inclusive
     const ticks = [];
     const cur = new Date(start);
     while (cur <= end) {
@@ -166,9 +161,11 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
       chart = new Chart(ctx, {
         type: 'line',
         data: {
+          labels: ticks || [], // ensures all months appear
           datasets: [{
             label: 'Cumulative HR',
             data: pts,
+            parsing: false,
             stepped: true,
             tension: 0,
             pointRadius: 1.5,
@@ -182,23 +179,10 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
           scales: {
             x: {
               type: 'time',
-              time: {
-                unit: 'month',
-                displayFormats: { month: 'MMM' }
-              },
+              time: { unit: 'month', displayFormats: { month: 'MMM' } },
               min: start,
               max: end,
-              ticks: {
-                source: 'labels',        // we will provide monthly ticks explicitly
-                callback: (v, i, all) => {
-                  // Display the month short name
-                  const d = all[i].value;
-                  const dt = new Date(d);
-                  return dt.toLocaleString(undefined, { month: 'short' });
-                },
-                autoSkip: false,
-                maxRotation: 0
-              }
+              ticks: { autoSkip: false, maxRotation: 0 }
             },
             y: {
               beginAtZero: true,
@@ -222,18 +206,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
             }
           },
           elements: { line: { borderWidth: 2 } }
-        },
-        plugins: [{
-          // Plugin to inject explicit monthly ticks so all months show
-          id: 'monthTicks',
-          beforeInit: (ch) => {
-            const scale = ch.options.scales.x;
-            // Create labels array from ticks
-            if (ticks && ticks.length) {
-              ch.data.labels = ticks;
-            }
-          }
-        }]
+        }
       });
     } else {
       const arr = seriesByDistance(currentVenue);
@@ -322,17 +295,84 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 </script>
 
 <style>
-.bigcount{font-size:clamp(2.5rem,7vw,3.75rem);font-weight:800;letter-spacing:-0.02em;margin:.35rem auto 1rem;}
-.controls{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin:.25rem 0 1rem 0;}
-.controls .modes{display:flex;gap:.5rem;}
-.controls .venue select{margin-left:.4rem;padding:.35rem .5rem;border:1px solid var(--border, #ccc);border-radius:8px;}
-.chip{display:inline-block;padding:.35rem .75rem;border:1px solid var(--border, #ccc);border-radius:999px;text-decoration:none;}
-.chip.active{background:var(--surface-2, rgba(0,0,0,.05));}
-.chart-wrap{width:100%;height:420px;margin:.5rem 0 1rem;}
-#hrChart{display:block;width:100% !important;height:100% !important;max-width:none;}
-.table-wrap{overflow:auto;border:1px solid var(--border, #ddd);border-radius:8px;}
-table.compact{width:100%;border-collapse:collapse;font-size:.95rem;}
-table.compact thead th{position:sticky;top:0;text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--border, #ddd);}
-table.compact tbody td{padding:.45rem .6rem;border-bottom:1px solid var(--border, #eee);white-space:nowrap;}
-table.compact tbody tr:hover{background:var(--surface-2, rgba(0,0,0,.03));}
+/* Big count */
+.bigcount{
+  font-size: clamp(2.5rem, 7vw, 3.75rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: .35rem auto 1rem;
+}
+
+/* Controls */
+.controls{ display:flex; gap:.75rem; align-items:center; flex-wrap:wrap; margin:.25rem 0 1rem 0; }
+.controls .modes{ display:flex; gap:.5rem; }
+.controls .venue select{
+  margin-left:.4rem; padding:.4rem .6rem;
+  border:1px solid var(--border, #c9c9c9); border-radius:8px;
+  background: var(--surface, #fff); color: var(--text, #111);
+}
+
+/* HIGH-CONTRAST CHIPS (so the By Distance button is visible in dark mode) */
+button.chip, .chip{
+  -webkit-appearance: none; appearance: none;
+  background: var(--chip-bg, #f4f4f5);
+  color: var(--chip-fg, #111);
+  border: 1px solid var(--chip-border, #c9c9c9);
+  padding: .4rem .75rem; border-radius: 999px;
+  cursor: pointer; text-decoration: none; line-height: 1;
+}
+button.chip:hover, .chip:hover{ filter: brightness(0.95); }
+button.chip.active, .chip.active{
+  background: var(--chip-active-bg, #e6f0ff);
+  border-color: var(--chip-active-border, #8ab4ff);
+}
+button.chip:focus-visible{
+  outline: 2px solid var(--chip-focus, #8ab4ff);
+  outline-offset: 2px;
+}
+
+/* Dark mode overrides for strong contrast */
+@media (prefers-color-scheme: dark){
+  :root{
+    --text: #e8e8e8;
+    --surface: #151515;
+    --border: rgba(255,255,255,.22);
+
+    --chip-bg: rgba(255,255,255,.10);
+    --chip-fg: #e8e8e8;
+    --chip-border: rgba(255,255,255,.32);
+    --chip-active-bg: rgba(59,130,246,.28);      /* visible blue-ish */
+    --chip-active-border: rgba(59,130,246,.65);
+    --chip-focus: #93c5fd;
+  }
+
+  .controls .venue select{
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+  }
+}
+
+/* Chart sizing */
+.chart-wrap{ width:100%; height:420px; margin:.5rem 0 1rem; }
+#hrChart{ display:block; width:100% !important; height:100% !important; max-width:none; }
+
+/* Table */
+.table-wrap{ overflow:auto; border:1px solid var(--border, #ddd); border-radius:8px; }
+table.compact{ width:100%; border-collapse: collapse; font-size:.95rem; color: var(--text, #111); }
+table.compact thead th{
+  position: sticky; top: 0;
+  background: var(--surface, #fff);
+  text-align:left; padding:.5rem .6rem; border-bottom:1px solid var(--border, #ddd);
+}
+table.compact tbody td{
+  padding:.45rem .6rem; border-bottom:1px solid var(--border, #eee); white-space:nowrap;
+}
+table.compact tbody tr:hover{ background: var(--surface-2, rgba(0,0,0,.06)); }
+
+.muted{ color: var(--muted, #777); }
+@media (prefers-color-scheme: dark){
+  .muted{ color:#aaa; }
+}
 </style>
+
