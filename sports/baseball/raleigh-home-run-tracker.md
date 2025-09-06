@@ -1,25 +1,34 @@
 ---
 layout: default
 title: Cal Raleigh Home Run Tracker
-description: Auto-updating record of Cal Raleigh home runs with venue filter and cumulative chart.
+description: Auto-updating record of Cal Raleigh home runs with mode toggle (Date vs Distance) and ballpark filter.
 permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 ---
 
 <h1>Cal Raleigh Home Run Tracker</h1>
 <p id="hrCountLine" class="subtitle bigcount" aria-live="polite">—</p>
 
-<label for="venueFilter" class="sr-only">Filter by ballpark</label>
-<select id="venueFilter" style="margin:0 0 1rem 0;">
-  <option value="all">All ballparks</option>
-</select>
+<!-- Controls: one chart, two modes; ballpark filter appears only in Distance mode -->
+<div class="controls">
+  <div class="modes">
+    <button id="mode-date" type="button" class="chip active" aria-pressed="true">By Date</button>
+    <button id="mode-dist" type="button" class="chip" aria-pressed="false">By Distance</button>
+  </div>
 
-<div style="margin: 0 0 1rem 0;">
+  <label id="venueWrap" for="venueFilter" class="venue" style="display:none;">
+    Ballpark:
+    <select id="venueFilter">
+      <option value="__ALL__">All ballparks</option>
+    </select>
+  </label>
+</div>
+
+<div class="downloads" style="margin:0 0 1rem 0;">
   <a class="chip" href="{{ '/assets/data/raleigh_hr.csv' | relative_url }}" download>⬇️ Download CSV</a>
 </div>
 
-<!-- Make the chart responsive by sizing its container; Chart.js fills it -->
 <div class="chart-wrap">
-  <canvas id="hrTimeline" aria-label="Cumulative home runs over time"></canvas>
+  <canvas id="hrChart" aria-label="Home runs chart"></canvas>
 </div>
 
 <h2 style="margin-top:1.25rem;">Home Runs (compact table)</h2>
@@ -41,13 +50,11 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 </div>
 <button id="showMore" type="button" style="margin-top:.75rem;">Show more</button>
 
-<!-- Chart.js + date adapter -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
 
 <script>
 (async function(){
-  // -------- Fetch JSON (cache-busted) --------
   const url = '{{ "/assets/data/raleigh_hr.json" | relative_url }}?v={{ site.github.build_revision }}';
   let data = [];
   try {
@@ -56,204 +63,126 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     data = await res.json();
   } catch (e) {
     console.error('Could not load JSON:', e);
-    document.getElementById('hrTimeline').insertAdjacentHTML(
-      'beforebegin',
-      '<p style="color:var(--muted)">No data available yet. Try again after the next update.</p>'
+    document.getElementById('hrChart').insertAdjacentHTML(
+      'beforebegin','<p style="color:var(--muted)">No data available yet.</p>'
     );
     document.getElementById('hrCountLine').textContent = '0 HR';
     return;
   }
 
   if (!Array.isArray(data) || data.length === 0) {
-    document.getElementById('hrTimeline').insertAdjacentHTML(
-      'beforebegin',
-      '<p style="color:var(--muted)">No regular-season home runs found.</p>'
+    document.getElementById('hrChart').insertAdjacentHTML(
+      'beforebegin','<p style="color:var(--muted)">No home runs found.</p>'
     );
     document.getElementById('hrCountLine').textContent = '0 HR';
     return;
   }
 
-  // -------- Normalize to rows[] we control --------
   const rows = data.map(d => {
     const gd = d.game_date ? new Date(d.game_date) : null;
+    const dist = (d.distance_ft != null ? Number(d.distance_ft)
+                : (d.hit_distance_sc != null ? Number(d.hit_distance_sc) : null));
+    const homeTeam = d.home_team || '—';
+    const awayTeam = d.away_team || '—';
+    const isHome   = (d.home === true) || (String(d.inning_topbot||'').toLowerCase()==='bot');
     return {
       game_date: gd && !isNaN(gd) ? gd : null,
       venue_name: d.venue_name || '—',
-      home: !!d.home,
-      home_team: d.home_team || '—',
-      away_team: d.away_team || '—',
-      opp: d.home ? (d.away_team || '—') : (d.home_team || '—'),
-      dist: (d.hit_distance_sc != null ? Number(d.hit_distance_sc) : null),
-      ev:   (d.launch_speed    != null ? Number(d.launch_speed)    : null),
-      la:   (d.launch_angle    != null ? Number(d.launch_angle)    : null),
+      home_team: homeTeam,
+      away_team: awayTeam,
+      opp: isHome ? awayTeam : homeTeam,
+      dist: dist,
+      ev: d.launch_speed != null ? Number(d.launch_speed) : null,
+      la: d.launch_angle != null ? Number(d.launch_angle) : null,
       pitcher: d.pitcher || '—'
     };
   }).filter(r => r.game_date instanceof Date && !isNaN(r.game_date));
 
-  // Big subtitle: just the count (season total)
-  const total = rows.length;
   const countEl = document.getElementById('hrCountLine');
-  if (countEl) countEl.textContent = `${total} HR`;
+  const seasonTotal = rows.length;
+  countEl.textContent = `${seasonTotal} HR`;
 
-  // -------- Populate ballpark filter --------
   const sel = document.getElementById('venueFilter');
-  const venues = Array.from(new Set(rows.map(r => r.venue_name).filter(Boolean))).sort();
+  const venueWrap = document.getElementById('venueWrap');
+  const venues = Array.from(new Set(rows.filter(r=>r.dist!=null).map(r=>r.venue_name))).sort();
   venues.forEach(v => sel.append(new Option(v, v)));
 
-  // Sorted views
   const ascAll  = rows.slice().sort((a,b)=> a.game_date - b.game_date);
   const descAll = rows.slice().sort((a,b)=> b.game_date - a.game_date);
 
-  // -------- Cumulative line chart (by date; stepped; daily spacing) --------
-  const ctx = document.getElementById('hrTimeline').getContext('2d');
+  const ctx = document.getElementById('hrChart').getContext('2d');
   let chart;
+  let mode = 'date';
+  let currentVenue = '__ALL__';
 
-  function toCumulative(dataset){
-    const sorted = dataset.slice().sort((a,b)=> a.game_date - b.game_date);
-    return sorted.map((r, i) => ({ x: r.game_date, y: i + 1, venue: r.venue_name, opp: r.opp }));
+  function seriesByDate() {
+    return ascAll.map((r,i)=>({x:r.game_date,y:i+1,venue:r.venue_name,opp:r.opp}));
+  }
+  function seriesByDistance(v) {
+    let arr = rows.filter(r=>r.dist!=null);
+    if (v && v!=='__ALL__') arr = arr.filter(r=>r.venue_name===v);
+    arr.sort((a,b)=> b.dist - a.dist);
+    return arr;
   }
 
-  function buildChart(dataset){
-    const pts = toCumulative(dataset);
-    const minDate = pts.length ? new Date(pts[0].x.getTime() - 3*24*3600*1000) : undefined;
-    const maxDate = pts.length ? new Date(pts[pts.length-1].x.getTime() + 3*24*3600*1000) : undefined;
-
+  function renderChart() {
     if (chart) chart.destroy();
-    chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        datasets: [{
-          label: 'Cumulative HR',
-          data: pts,
-          stepped: true,
-          tension: 0,
-          pointRadius: 1.5,
-          fill: false
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        parsing: false,
-        scales: {
-          x: {
-            type: 'time',
-            time: { unit: 'day', round: 'day' },
-            min: minDate,
-            max: maxDate,
-            offset: true,
-            ticks: { autoSkip: true, maxRotation: 0 },
-            title: { display:true, text:'Game date' }
-          },
-          y: {
-            title: { display:true, text:'Cumulative HR' },
-            beginAtZero: true,
-            ticks: { precision: 0 }
-          }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            intersect: false,
-            mode: 'nearest',
-            callbacks: {
-              label: c => {
-                const d = c.raw;
-                const n = c.parsed.y;
-                const date = new Date(d.x).toLocaleDateString();
-                return `#${n} on ${date} — ${d.venue || 'Unknown park'} vs ${d.opp || '?'}`;
-              }
-            }
-          }
-        },
-        elements: { line: { borderWidth: 2 } }
-      }
-    });
+    if (mode==='date') {
+      const pts=seriesByDate();
+      chart=new Chart(ctx,{type:'line',
+        data:{datasets:[{label:'Cumulative HR',data:pts,stepped:true,tension:0,pointRadius:1.5,fill:false}]},
+        options:{responsive:true,maintainAspectRatio:false,parsing:false,
+          scales:{x:{type:'time',time:{unit:'day'},title:{display:true,text:'Game date'}},
+                  y:{beginAtZero:true,title:{display:true,text:'Cumulative HR'},ticks:{precision:0}}},
+          plugins:{legend:{display:false},
+                   title:{display:true,text:'Home Runs Over Time'},
+                   tooltip:{callbacks:{label:c=>`#${c.parsed.y} on ${new Date(c.raw.x).toLocaleDateString()} — ${c.raw.venue} vs ${c.raw.opp}`}}}}});
+    } else {
+      const arr=seriesByDistance(currentVenue);
+      chart=new Chart(ctx,{type:'bar',
+        data:{labels:arr.map((r,i)=>`${i+1}. ${r.game_date.toLocaleDateString()} — ${r.venue_name}`),
+              datasets:[{data:arr.map(r=>r.dist)}]},
+        options:{responsive:true,maintainAspectRatio:false,
+          scales:{x:{display:false},y:{beginAtZero:true,title:{display:true,text:'Feet'}}},
+          plugins:{legend:{display:false},
+                   title:{display:true,text:`Home Runs by Distance (${currentVenue==='__ALL__'?'All Parks':currentVenue})`},
+                   tooltip:{callbacks:{title:items=>`${arr[items[0].dataIndex].game_date.toLocaleDateString()} — ${arr[items[0].dataIndex].venue_name}`,
+                                       label:item=>`${Math.round(item.raw)} ft`}}}}});
+    }
   }
 
-  // -------- Compact table --------
-  const tbody = document.querySelector('#hrTable tbody');
-  const BTN_BATCH = 10;
-  let shown = 0;
+  const tbody=document.querySelector('#hrTable tbody');
+  let shown=0;const BTN_BATCH=10;
+  function fmt(n,d=0){return(n==null||isNaN(n))?'—':Number(n).toFixed(d);}
+  function currentTableData(){if(currentVenue==='__ALL__')return descAll;return rows.filter(r=>r.venue_name===currentVenue).sort((a,b)=>b.game_date-a.game_date);}
+  function renderRows(dataset,reset=false){if(reset){tbody.innerHTML='';shown=0;}const slice=dataset.slice(shown,shown+BTN_BATCH);slice.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${r.game_date.toLocaleDateString()}</td><td>${r.opp}</td><td>${r.venue_name}</td><td>${fmt(r.dist,0)}</td><td>${fmt(r.ev,0)}</td><td>${fmt(r.la,0)}</td><td>${r.pitcher}</td>`;tbody.appendChild(tr);});shown+=slice.length;document.getElementById('showMore').disabled=shown>=dataset.length;}
 
-  function fmt(n, d=0){ return (n==null || isNaN(n)) ? '—' : Number(n).toFixed(d); }
+  const btnDate=document.getElementById('mode-date');
+  const btnDist=document.getElementById('mode-dist');
 
-  function renderRows(dataset, reset=false){
-    if (reset){ tbody.innerHTML = ''; shown = 0; }
-    const slice = dataset.slice(shown, shown + BTN_BATCH);
-    slice.forEach(r => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${r.game_date.toLocaleDateString()}</td>
-        <td>${r.opp}</td>
-        <td>${r.venue_name}</td>
-        <td>${fmt(r.dist,0)}</td>
-        <td>${fmt(r.ev,0)}</td>
-        <td>${fmt(r.la,0)}</td>
-        <td>${r.pitcher}</td>
-      `;
-      tbody.appendChild(tr);
-    });
-    shown += slice.length;
-    document.getElementById('showMore').disabled = shown >= dataset.length;
-  }
+  function updateBigNumber(){if(mode==='distance'&&currentVenue!=='__ALL__'){countEl.textContent=`${seriesByDistance(currentVenue).length} HR`;}else{countEl.textContent=`${seasonTotal} HR`;}}
+  function setMode(m){mode=m;const isDate=mode==='date';btnDate.classList.toggle('active',isDate);btnDist.classList.toggle('active',!isDate);btnDate.setAttribute('aria-pressed',isDate);btnDist.setAttribute('aria-pressed',!isDate);venueWrap.style.display=isDate?'none':'inline-flex';if(isDate){currentVenue='__ALL__';sel.value='__ALL__';}renderChart();renderRows(currentTableData(),true);updateBigNumber();}
+  btnDate.addEventListener('click',()=>setMode('date'));
+  btnDist.addEventListener('click',()=>setMode('distance'));
+  sel.addEventListener('change',e=>{currentVenue=e.target.value;if(mode==='distance')renderChart();renderRows(currentTableData(),true);updateBigNumber();});
+  document.getElementById('showMore').addEventListener('click',()=>renderRows(currentTableData(),false));
 
-  // -------- Filtering wiring --------
-  function filteredDesc(){
-    const v = sel.value;
-    return (v === 'all') ? descAll
-                         : rows.filter(r => r.venue_name === v).sort((a,b)=> b.game_date - a.game_date);
-  }
-  function filteredAsc(){
-    const v = sel.value;
-    return (v === 'all') ? ascAll
-                         : rows.filter(r => r.venue_name === v).sort((a,b)=> a.game_date - b.game_date);
-  }
-
-  // Initial render
-  buildChart(ascAll);
-  renderRows(descAll, true);
-
-  sel.addEventListener('change', () => {
-    buildChart(filteredAsc());
-    renderRows(filteredDesc(), true);
-  });
-
-  document.getElementById('showMore').addEventListener('click', () => {
-    renderRows(filteredDesc(), false);
-  });
+  setMode('date');
 })();
 </script>
 
 <style>
-/* Big, clean count in the subtitle line */
-.bigcount{
-  font-size: clamp(2.5rem, 7vw, 3.75rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: .35rem auto 1rem;
-}
-
-/* Chart container controls final height; canvas fills it */
-.chart-wrap{
-  width: 100%;
-  height: 420px;              /* tweak to taste */
-  margin: .5rem 0 1rem;
-}
-#hrTimeline{
-  display:block;
-  width:100% !important;
-  height:100% !important;     /* fill the 420px parent */
-  max-width:none;
-}
-
-/* compact table styling */
-.table-wrap{ overflow:auto; border:1px solid var(--border); border-radius:8px; }
-table.compact{ width:100%; border-collapse: collapse; font-size:.95rem; }
-table.compact thead th{
-  position: sticky; top: 0; background: var(--surface);
-  text-align:left; padding:.5rem .6rem; border-bottom:1px solid var(--border);
-}
-table.compact tbody td{ padding:.45rem .6rem; border-bottom:1px solid var(--border); white-space:nowrap; }
-table.compact tbody tr:hover{ background: rgba(0,0,0,.03); }
+.bigcount{font-size:clamp(2.5rem,7vw,3.75rem);font-weight:800;letter-spacing:-0.02em;margin:.35rem auto 1rem;}
+.controls{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin:.25rem 0 1rem 0;}
+.controls .modes{display:flex;gap:.5rem;}
+.controls .venue select{margin-left:.4rem;padding:.35rem .5rem;border:1px solid var(--border);border-radius:8px;}
+.chip{display:inline-block;padding:.35rem .75rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;}
+.chip.active{background:var(--surface-2,rgba(0,0,0,.05));}
+.chart-wrap{width:100%;height:420px;margin:.5rem 0 1rem;}
+#hrChart{display:block;width:100% !important;height:100% !important;max-width:none;}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:8px;}
+table.compact{width:100%;border-collapse:collapse;font-size:.95rem;}
+table.compact thead th{position:sticky;top:0;background:var(--surface);text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--border);}
+table.compact tbody td{padding:.45rem .6rem;border-bottom:1px solid var(--border);white-space:nowrap;}
+table.compact tbody tr:hover{background:rgba(0,0,0,.03);}
 </style>
