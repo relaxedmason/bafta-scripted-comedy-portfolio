@@ -1,46 +1,113 @@
 #!/usr/bin/env python3
-# get_raleigh_hr.py
+# scripts/get_raleigh_hr.py
 #
-# Build a complete Cal Raleigh HR dataset with reliable distances.
-# - Pulls Statcast (or reads your CSV)
-# - Filters to home runs
-# - Backfills missing hit_distance_sc using MLB feed/live totalDistance
-# - Writes a clean CSV with a fully-populated distance column
+# Purpose (matches your workflow exactly):
+# - Runs with NO CLI args from GitHub Actions.
+# - Defaults to Cal Raleigh's 2025 season window: 2025-03-27 → today.
+# - Writes BOTH:
+#       assets/data/raleigh_hr.csv
+#       assets/data/raleigh_hr.json
+# - If parameters.txt exists (same folder) AND you run with no CLI args locally,
+#   it will be read as CLI-style or KEY=VALUE / key: value (comments with '#').
+#   (We do NOT parse JSON in parameters.txt.)
+# - Backfills missing Statcast hit_distance_sc with MLB feed/live hitData.totalDistance.
+# - Enriches venue_name from feed/live for park filtering on the site.
 #
-# Usage examples:
-#   python get_raleigh_hr.py --out cal_raleigh_hr.csv
-#   python get_raleigh_hr.py --input my_existing_hr_rows.csv --out cal_raleigh_hr_filled.csv
-#   python get_raleigh_hr.py --start 2019-01-01 --end 2025-12-31 --out cal_raleigh_hr.csv
-#
-# Notes:
-# - Requires: pandas, requests (optional: pybaseball if you fetch fresh statcast)
-# - We match rows via (game_pk, at_bat_number) to the feed/live "allPlays[].about.atBatIndex".
-# - totalDistance is returned in feet (string/number). We cast to float.
-# - A small on-disk cache avoids re-hitting the API for the same game_pk multiple times.
+# Requirements (as in your requirement file):
+#   pandas>=2.0, requests>=2.31, pybaseball>=2.2 (only needed if not using --input)
 
-import argparse
-import json
-import time
+# --------------------------- parameters.txt loader (no JSON) ---------------------------
+import sys, shlex, re
 from pathlib import Path
-from typing import Dict, Optional, Any
+
+def _norm_key(k: str) -> str:
+    k = k.strip().lower()
+    if k in ("output","outfile","path"): k = "out"
+    if k in ("start_date","from","date_from"): k = "start"
+    if k in ("end_date","to","date_to"): k = "end"
+    if k in ("in","input_file","source"): k = "input"
+    if k in ("csv","out_csv_path","csv_path"): k = "out_csv"
+    if k in ("json","out_json_path","json_path"): k = "out_json"
+    return k
+
+def _kv_to_cli(d: dict) -> list[str]:
+    args = []
+    for k, v in d.items():
+        if v is None or str(v).strip() == "": continue
+        args.extend([f"--{_norm_key(k)}", str(v).strip()])
+    return args
+
+def _parse_params_file(p: Path) -> list[str]:
+    raw = p.read_text(encoding="utf-8", errors="ignore")
+    lines = [re.sub(r"#.*$", "", ln).strip() for ln in raw.splitlines()]
+    lines = [ln for ln in lines if ln]
+
+    joined = " ".join(lines)
+    if "--" in joined:
+        return shlex.split(joined)
+
+    kv = {}
+    for ln in lines:
+        if "=" in ln:
+            k, v = ln.split("=", 1); kv[_norm_key(k)] = v.strip()
+        elif ":" in ln:
+            k, v = ln.split(":", 1); kv[_norm_key(k)] = v.strip()
+
+    args = _kv_to_cli(kv)
+    return args or shlex.split(joined)
+
+# Only apply parameters.txt when user didn’t pass args
+if len(sys.argv) == 1:
+    _pf = Path(__file__).with_name("parameters.txt")
+    if _pf.exists():
+        try:
+            _extra = _parse_params_file(_pf)
+            if _extra: sys.argv.extend(_extra)
+        except Exception:
+            pass
+# ------------------------- end parameters.txt loader (no JSON) -------------------------
+
+import argparse, json, time, datetime as dt
+from typing import Dict, Any, Optional, Tuple, List
 
 import pandas as pd
 import requests
 
-# --- If you want to fetch fresh Statcast, keep this import. Otherwise, provide --input.
+# Optional Statcast fetch (only needed if you do NOT pass --input)
 try:
     from pybaseball import statcast_batter
     HAVE_PYBASEBALL = True
 except Exception:
     HAVE_PYBASEBALL = False
 
-CAL_RALEIGH_MLBAM_ID = 663728  # Cal Raleigh
+CAL_RALEIGH_MLBAM_ID = 663728
 FEED_LIVE_URL = "https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live"
 CACHE_PATH = Path(".feed_live_cache.json")
 REQUEST_TIMEOUT = 20
-REQUEST_SLEEP = 0.25  # polite pacing between new game fetches
+REQUEST_SLEEP = 0.25  # polite pacing
 
+# --------------------------------- default dates (2025 season only) ---------------------------------
+_today = dt.date.today()
+_season_start = dt.date(2025, 3, 27)      # Opening Day 2025
+_default_start = _season_start.isoformat()
+_default_end = _today.isoformat()
 
+# --------------------------------- argparse ---------------------------------
+ap = argparse.ArgumentParser(description="Cal Raleigh HRs (2025): complete distances + venue enrichment (+ JSON export)")
+ap.add_argument("--input", help="Existing CSV with Statcast rows (optional). If omitted, fetches Statcast.")
+ap.add_argument("--out_csv", default="assets/data/raleigh_hr.csv",
+                help="CSV output path (default: assets/data/raleigh_hr.csv)")
+ap.add_argument("--out_json", default="assets/data/raleigh_hr.json",
+                help="JSON output path (default: assets/data/raleigh_hr.json)")
+ap.add_argument("--start", default=_default_start, help=f"Start date YYYY-MM-DD (default: {_default_start})")
+ap.add_argument("--end",   default=_default_end,   help=f"End date   YYYY-MM-DD (default: {_default_end})")
+args = ap.parse_args()
+
+# Ensure output folders exist
+Path(args.out_csv).parent.mkdir(parents=True, exist_ok=True)
+Path(args.out_json).parent.mkdir(parents=True, exist_ok=True)
+
+# --------------------------------- caching ----------------------------------
 def load_cache() -> Dict[str, Any]:
     if CACHE_PATH.exists():
         try:
@@ -49,24 +116,21 @@ def load_cache() -> Dict[str, Any]:
             return {}
     return {}
 
-
 def save_cache(cache: Dict[str, Any]) -> None:
     try:
         CACHE_PATH.write_text(json.dumps(cache), encoding="utf-8")
     except Exception:
         pass
 
-
 def get_feed_live(game_pk: int, cache: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-    key = str(game_pk)
-    if key in cache:
-        return cache[key]
-    url = FEED_LIVE_URL.format(game_pk=game_pk)
+    k = str(game_pk)
+    if k in cache:
+        return cache[k]
     try:
-        resp = requests.get(url, timeout=REQUEST_TIMEOUT)
-        if resp.status_code == 200:
-            data = resp.json()
-            cache[key] = data
+        r = requests.get(FEED_LIVE_URL.format(game_pk=game_pk), timeout=REQUEST_TIMEOUT)
+        if r.status_code == 200:
+            data = r.json()
+            cache[k] = data
             save_cache(cache)
             time.sleep(REQUEST_SLEEP)
             return data
@@ -74,28 +138,24 @@ def get_feed_live(game_pk: int, cache: Dict[str, Any]) -> Optional[Dict[str, Any
         return None
     return None
 
-
-def extract_total_distance_from_feed(data: Dict[str, Any], at_bat_index: int) -> Optional[float]:
-    """
-    Look up the matching at-bat in allPlays using about.atBatIndex and return hitData.totalDistance (ft).
-    """
+# ------------------------------ feed parsing --------------------------------
+def extract_total_distance_and_venue(feed: Dict[str, Any], at_bat_index: int) -> Tuple[Optional[float], Optional[str]]:
+    """Return (totalDistance_ft, venue_name) for the given at-bat index."""
+    venue = None
     try:
-        plays = data["liveData"]["plays"]["allPlays"]
-    except (KeyError, TypeError):
-        return None
+        venue = feed["gameData"]["venue"]["name"]
+    except Exception:
+        pass
+
+    try:
+        plays = feed["liveData"]["plays"]["allPlays"]
+    except Exception:
+        return (None, venue)
 
     for play in plays:
         try:
             if int(play.get("about", {}).get("atBatIndex", -1)) != int(at_bat_index):
                 continue
-            # Ensure it's a HR play; sometimes multiple events exist in an AB
-            event_type = play.get("result", {}).get("eventType", "")
-            if event_type != "home_run":
-                # some feeds mark the AB as HR but eventType might be "home_run" only on final event
-                # continue scanning playEvents
-                pass
-
-            # Scan playEvents for a batted ball with hitData.totalDistance
             for ev in play.get("playEvents", []):
                 hd = ev.get("hitData")
                 if not hd:
@@ -103,166 +163,140 @@ def extract_total_distance_from_feed(data: Dict[str, Any], at_bat_index: int) ->
                 td = hd.get("totalDistance")
                 if td is None:
                     continue
-                # totalDistance can be str or number
                 try:
-                    return float(td)
+                    return (float(td), venue)
                 except Exception:
-                    # last resort: strip non-digits
-                    s = "".join(ch for ch in str(td) if (ch.isdigit() or ch == "." or ch == "-"))
-                    return float(s) if s else None
+                    s = "".join(ch for ch in str(td) if ch.isdigit() or ch in ".-")
+                    return (float(s), venue) if s else (None, venue)
         except Exception:
             continue
-    return None
+    return (None, venue)
 
+# ------------------------------- data ops -----------------------------------
+NEEDED_COLS: List[str] = [
+    "game_date", "game_pk", "at_bat_number", "events", "hit_distance_sc",
+    "player_name", "venue_name"
+]
 
 def ensure_columns(df: pd.DataFrame) -> pd.DataFrame:
-    needed = ["game_pk", "at_bat_number", "events", "hit_distance_sc", "player_name", "game_date"]
-    for col in needed:
+    for col in NEEDED_COLS:
         if col not in df.columns:
-            # create safe defaults
-            if col == "player_name":
-                df[col] = "Cal Raleigh"
-            elif col == "events":
-                df[col] = ""
-            else:
-                df[col] = pd.NA
-    return df
-
-
-def fetch_statcast_cal(start: str, end: str) -> pd.DataFrame:
-    if not HAVE_PYBASEBALL:
-        raise RuntimeError("pybaseball not installed. Provide --input or install pybaseball.")
-    df = statcast_batter(start_dt=start, end_dt=end, player_id=CAL_RALEIGH_MLBAM_ID)
-    # normalize types we rely on
+            df[col] = pd.NA
     if "game_pk" in df.columns:
-        df["game_pk"] = df["game_pk"].astype("Int64")
+        df["game_pk"] = pd.to_numeric(df["game_pk"], errors="coerce").astype("Int64")
     if "at_bat_number" in df.columns:
-        df["at_bat_number"] = df["at_bat_number"].astype("Int64")
+        df["at_bat_number"] = pd.to_numeric(df["at_bat_number"], errors="coerce").astype("Int64")
+    if "player_name" in df.columns:
+        df["player_name"] = df["player_name"].fillna("Cal Raleigh")
     return df
 
+def fetch_statcast(start: str, end: str) -> pd.DataFrame:
+    if not HAVE_PYBASEBALL:
+        raise RuntimeError("pybaseball not installed; pass --input or install pybaseball>=2.2")
+    df = statcast_batter(start_dt=start, end_dt=end, player_id=CAL_RALEIGH_MLBAM_ID)
+    return df
 
 def filter_home_runs(df: pd.DataFrame) -> pd.DataFrame:
-    # Statcast uses events == 'home_run' for HR balls in play
-    mask = (df.get("events", "") == "home_run")
-    hr = df.loc[mask].copy()
-    return hr
+    ev = df.get("events")
+    mask = (ev == "home_run") | (ev.astype(str).str.lower() == "home_run")
+    return df.loc[mask].copy()
 
-
-def backfill_distances(hr_df: pd.DataFrame) -> pd.DataFrame:
-    """
-    For rows where hit_distance_sc is NA, fetch from feed/live using (game_pk, at_bat_number).
-    Writes a new column: distance_ft (float), which prefers hit_distance_sc then falls back to totalDistance.
-    """
-    hr_df = ensure_columns(hr_df)
-    # base distance
+def backfill_distances_and_venue(hr_df: pd.DataFrame) -> pd.DataFrame:
+    """Create distance_ft from hit_distance_sc; backfill via feed/live; fill venue_name."""
     hr_df["distance_ft"] = pd.to_numeric(hr_df.get("hit_distance_sc"), errors="coerce")
-
     cache = load_cache()
 
-    needs_backfill = hr_df[hr_df["distance_ft"].isna()].copy()
-    if needs_backfill.empty:
-        return hr_df
+    if "venue_name" not in hr_df.columns:
+        hr_df["venue_name"] = pd.NA
 
-    # We’ll iterate unique (game_pk), fetch once, then map at_bat_number inside
-    for game_pk in sorted(needs_backfill["game_pk"].dropna().unique().tolist()):
-        try:
-            data = get_feed_live(int(game_pk), cache)
-            if not data:
-                continue
-        except Exception:
-            continue
+    unique_games = sorted([int(g) for g in hr_df["game_pk"].dropna().unique().tolist()])
+    feeds: Dict[int, Dict[str, Any]] = {}
+    for g in unique_games:
+        data = get_feed_live(g, cache)
+        if data:
+            feeds[g] = data
 
-        # apply to all rows for this game
-        rows = hr_df.index[hr_df["game_pk"] == game_pk].tolist()
-        for idx in rows:
-            if pd.notna(hr_df.at[idx, "distance_ft"]):
-                continue
-            ab = hr_df.at[idx, "at_bat_number"]
-            if pd.isna(ab):
-                continue
-            td = extract_total_distance_from_feed(data, int(ab))
+    for idx, row in hr_df.iterrows():
+        g = row.get("game_pk")
+        ab = row.get("at_bat_number")
+        feed = feeds.get(int(g)) if pd.notna(g) and int(g) in feeds else None
+
+        # Enrich venue whenever missing and feed is available
+        if pd.isna(row.get("venue_name")) and feed:
+            _, venue = extract_total_distance_and_venue(feed, int(ab) if pd.notna(ab) else -1)
+            if venue:
+                hr_df.at[idx, "venue_name"] = venue
+
+        # Distance backfill
+        if pd.isna(row["distance_ft"]) and feed and pd.notna(ab):
+            td, _ = extract_total_distance_and_venue(feed, int(ab))
             if td is not None:
                 hr_df.at[idx, "distance_ft"] = float(td)
 
     return hr_df
 
+KEEP_COLS: List[str] = [
+    "game_date","game_pk","at_bat_number","player_name","events",
+    "hit_distance_sc","distance_ft","venue_name",
+    "launch_speed","launch_angle","pitch_type","release_speed",
+    "home_team","away_team","inning","inning_topbot"
+]
 
-def tidy_output_columns(df: pd.DataFrame) -> pd.DataFrame:
-    # Keep a concise, analysis-friendly set. Add more as needed.
-    keep = [
-        "game_date",
-        "game_pk",
-        "at_bat_number",
-        "player_name",
-        "events",
-        "description",
-        "home_team",
-        "away_team",
-        "pitch_number",
-        "pitch_type",
-        "release_speed",
-        "launch_speed",
-        "launch_angle",
-        "hc_x",
-        "hc_y",
-        "bb_type",
-        "estimated_ba_using_speedangle",
-        "estimated_woba_using_speedangle",
-        "home_team_runs",
-        "away_team_runs",
-        "inning",
-        "inning_topbot",
-        "home_score",
-        "away_score",
-        "outs_when_up",
-        "stand",
-        "p_throws",
-        "pitcher",
-        "batter",
-        "hit_distance_sc",   # original statcast (may be NaN)
-        "distance_ft",       # filled value
-        "events"
-    ]
-    cols = [c for c in keep if c in df.columns]
+def tidy(df: pd.DataFrame) -> pd.DataFrame:
+    cols = [c for c in KEEP_COLS if c in df.columns]
     out = df[cols].copy()
-    # Sort by date just in case
     if "game_date" in out.columns:
-        out["game_date"] = pd.to_datetime(out["game_date"], errors="coerce")
-        out = out.sort_values(["game_date", "game_pk", "at_bat_number"]).reset_index(drop=True)
+        out["game_date"] = pd.to_datetime(out["game_date"], errors="coerce").dt.date
+        out = out.sort_values(["game_date","game_pk","at_bat_number"]).reset_index(drop=True)
     return out
 
+def to_json_records(df: pd.DataFrame) -> List[Dict[str, Any]]:
+    recs = df.to_dict(orient="records")
+    # Ensure date is ISO string
+    for r in recs:
+        gd = r.get("game_date")
+        if hasattr(gd, "isoformat"):
+            r["game_date"] = gd.isoformat()
+        elif gd is not None:
+            r["game_date"] = str(gd)
+    return recs
 
+# ----------------------------------- main -----------------------------------
 def main():
-    ap = argparse.ArgumentParser(description="Cal Raleigh HRs with complete distances (Statcast + feed/live backfill).")
-    ap.add_argument("--input", help="Path to an existing CSV with Statcast rows (optional). If omitted, pulls Statcast.")
-    ap.add_argument("--out", required=True, help="Output CSV path")
-    ap.add_argument("--start", default="2019-01-01", help="Start date (if fetching): YYYY-MM-DD")
-    ap.add_argument("--end", default="2025-12-31", help="End date (if fetching): YYYY-MM-DD")
-    args = ap.parse_args()
-
+    # Load input or fetch
     if args.input:
         df = pd.read_csv(args.input)
     else:
         if not HAVE_PYBASEBALL:
-            raise SystemExit("pybaseball not installed and no --input provided. Install pybaseball or pass --input.")
-        df = fetch_statcast_cal(args.start, args.end)
+            raise SystemExit("pybaseball not installed and no --input provided.")
+        df = fetch_statcast(args.start, args.end)
 
-    # Filter to HRs, then backfill
-    hr_df = filter_home_runs(df)
-    if hr_df.empty:
-        print("No home runs found in the provided data range/input.")
-        hr_df.to_csv(args.out, index=False)
+    df = ensure_columns(df)
+    hr = filter_home_runs(df)
+
+    if hr.empty:
+        # Write valid empty files with headers
+        pd.DataFrame(columns=KEEP_COLS).to_csv(args.out_csv, index=False)
+        Path(args.out_json).write_text("[]", encoding="utf-8")
+        print(f"Wrote empty files: {args.out_csv}, {args.out_json} — HR rows: 0")
         return
 
-    hr_df = backfill_distances(hr_df)
-    out = tidy_output_columns(hr_df)
-    out.to_csv(args.out, index=False)
+    hr = backfill_distances_and_venue(hr)
+    out = tidy(hr)
 
-    # Quick summary
+    # Write CSV + JSON
+    out.to_csv(args.out_csv, index=False)
+    recs = to_json_records(out)
+    Path(args.out_json).write_text(json.dumps(recs, ensure_ascii=False, indent=2), encoding="utf-8")
+
     total = len(out)
-    filled = out["distance_ft"].notna().sum()
-    print(f"Wrote {args.out} — HR rows: {total} | with distance_ft: {filled} | missing: {total - filled}")
+    have_dist = out["distance_ft"].notna().sum() if "distance_ft" in out.columns else 0
+    have_venue = out["venue_name"].notna().sum() if "venue_name" in out.columns else 0
 
+    print(
+        f"Wrote: {args.out_csv}, {args.out_json} — "
+        f"HR rows: {total} | with distance_ft: {have_dist} | missing: {total - have_dist} | venue filled: {have_venue}"
+    )
 
 if __name__ == "__main__":
     main()
