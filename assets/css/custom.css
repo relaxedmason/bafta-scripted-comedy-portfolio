@@ -386,3 +386,21 @@ h1#page-title {
   text-align: center !important;
   margin: 0 auto 0.5rem auto;
 }
+/* Make the chart use the full content width and a fixed height */
+.chart-wrap {
+  width: 100%;
+  margin: .5rem 0 1rem;
+}
+
+/* Force the canvas to size to its parent (Chart.js respects this when maintainAspectRatio=false) */
+#hrChart {
+  display: block;            /* removes inline gap */
+  width: 100% !important;    /* fill the content column */
+  height: 460px !important;  /* tweak height to taste */
+  max-width: none;           /* override any theme max-width on canvases/images */
+}
+
+/* Optional: on very small screens, trim height a bit */
+@media (max-width: 480px) {
+  #hrChart { height: 360px !important; }
+}
