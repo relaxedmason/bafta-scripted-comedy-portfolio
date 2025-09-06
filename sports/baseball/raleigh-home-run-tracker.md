@@ -55,6 +55,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
 <script>
 (async function(){
+  // -------- Fetch JSON (cache-busted) --------
   const url = '{{ "/assets/data/raleigh_hr.json" | relative_url }}?v={{ site.github.build_revision }}';
   let data = [];
   try {
@@ -64,7 +65,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   } catch (e) {
     console.error('Could not load JSON:', e);
     document.getElementById('hrChart').insertAdjacentHTML(
-      'beforebegin','<p style="color:var(--muted)">No data available yet.</p>'
+      'beforebegin','<p class="muted">No data available yet.</p>'
     );
     document.getElementById('hrCountLine').textContent = '0 HR';
     return;
@@ -72,12 +73,13 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
   if (!Array.isArray(data) || data.length === 0) {
     document.getElementById('hrChart').insertAdjacentHTML(
-      'beforebegin','<p style="color:var(--muted)">No home runs found.</p>'
+      'beforebegin','<p class="muted">No home runs found.</p>'
     );
     document.getElementById('hrCountLine').textContent = '0 HR';
     return;
   }
 
+  // -------- Normalize rows --------
   const rows = data.map(d => {
     const gd = d.game_date ? new Date(d.game_date) : null;
     const dist = (d.distance_ft != null ? Number(d.distance_ft)
@@ -98,10 +100,12 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     };
   }).filter(r => r.game_date instanceof Date && !isNaN(r.game_date));
 
+  // Subtitle count
   const countEl = document.getElementById('hrCountLine');
   const seasonTotal = rows.length;
   countEl.textContent = `${seasonTotal} HR`;
 
+  // Filters + sorted views
   const sel = document.getElementById('venueFilter');
   const venueWrap = document.getElementById('venueWrap');
   const venues = Array.from(new Set(rows.filter(r=>r.dist!=null).map(r=>r.venue_name))).sort();
@@ -110,14 +114,18 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   const ascAll  = rows.slice().sort((a,b)=> a.game_date - b.game_date);
   const descAll = rows.slice().sort((a,b)=> b.game_date - a.game_date);
 
+  // -------- Chart setup (one canvas, two modes) --------
   const ctx = document.getElementById('hrChart').getContext('2d');
   let chart;
   let mode = 'date';
   let currentVenue = '__ALL__';
 
+  // Build a clean cumulative series (By Date)
   function seriesByDate() {
     return ascAll.map((r,i)=>({x:r.game_date,y:i+1,venue:r.venue_name,opp:r.opp}));
   }
+
+  // Build a distance-sorted series (By Distance)
   function seriesByDistance(v) {
     let arr = rows.filter(r=>r.dist!=null);
     if (v && v!=='__ALL__') arr = arr.filter(r=>r.venue_name===v);
@@ -125,48 +133,190 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     return arr;
   }
 
+  // Force x-axis to show ALL months from season start → season end
+  function monthBoundsAndTicks(dataset) {
+    if (!dataset.length) return {};
+    // Use first/last HR to set a season window, then expand to whole months
+    const first = new Date(dataset[0].x);
+    const last  = new Date(dataset[dataset.length - 1].x);
+
+    // Start at the first day of the month of the first HR (or March if earlier)
+    const start = new Date(first.getFullYear(), first.getMonth(), 1);
+    // End at the last day of the month of the last HR
+    const end = new Date(last.getFullYear(), last.getMonth() + 1, 0);
+
+    // Generate monthly tick dates inclusive
+    const ticks = [];
+    const cur = new Date(start);
+    while (cur <= end) {
+      ticks.push(new Date(cur));
+      cur.setMonth(cur.getMonth() + 1);
+      cur.setDate(1);
+    }
+    return { start, end, ticks };
+  }
+
   function renderChart() {
     if (chart) chart.destroy();
-    if (mode==='date') {
-      const pts=seriesByDate();
-      chart=new Chart(ctx,{type:'line',
-        data:{datasets:[{label:'Cumulative HR',data:pts,stepped:true,tension:0,pointRadius:1.5,fill:false}]},
-        options:{responsive:true,maintainAspectRatio:false,parsing:false,
-          scales:{x:{type:'time',time:{unit:'day'},title:{display:true,text:'Game date'}},
-                  y:{beginAtZero:true,title:{display:true,text:'Cumulative HR'},ticks:{precision:0}}},
-          plugins:{legend:{display:false},
-                   title:{display:true,text:'Home Runs Over Time'},
-                   tooltip:{callbacks:{label:c=>`#${c.parsed.y} on ${new Date(c.raw.x).toLocaleDateString()} — ${c.raw.venue} vs ${c.raw.opp}`}}}}});
+
+    if (mode === 'date') {
+      const pts = seriesByDate();
+      const { start, end, ticks } = monthBoundsAndTicks(pts);
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          datasets: [{
+            label: 'Cumulative HR',
+            data: pts,
+            stepped: true,
+            tension: 0,
+            pointRadius: 1.5,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          parsing: false,
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'month',
+                displayFormats: { month: 'MMM' }
+              },
+              min: start,
+              max: end,
+              ticks: {
+                source: 'labels',        // we will provide monthly ticks explicitly
+                callback: (v, i, all) => {
+                  // Display the month short name
+                  const d = all[i].value;
+                  const dt = new Date(d);
+                  return dt.toLocaleString(undefined, { month: 'short' });
+                },
+                autoSkip: false,
+                maxRotation: 0
+              }
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0 },
+              title: { display: true, text: 'Cumulative HR' }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              intersect: false,
+              mode: 'nearest',
+              callbacks: {
+                label: c => {
+                  const d = c.raw;
+                  const n = c.parsed.y;
+                  const date = new Date(d.x).toLocaleDateString();
+                  return `#${n} on ${date} — ${d.venue || 'Unknown park'} vs ${d.opp || '?'}`;
+                }
+              }
+            }
+          },
+          elements: { line: { borderWidth: 2 } }
+        },
+        plugins: [{
+          // Plugin to inject explicit monthly ticks so all months show
+          id: 'monthTicks',
+          beforeInit: (ch) => {
+            const scale = ch.options.scales.x;
+            // Create labels array from ticks
+            if (ticks && ticks.length) {
+              ch.data.labels = ticks;
+            }
+          }
+        }]
+      });
     } else {
-      const arr=seriesByDistance(currentVenue);
-      chart=new Chart(ctx,{type:'bar',
-        data:{labels:arr.map((r,i)=>`${i+1}. ${r.game_date.toLocaleDateString()} — ${r.venue_name}`),
-              datasets:[{data:arr.map(r=>r.dist)}]},
-        options:{responsive:true,maintainAspectRatio:false,
-          scales:{x:{display:false},y:{beginAtZero:true,title:{display:true,text:'Feet'}}},
-          plugins:{legend:{display:false},
-                   title:{display:true,text:`Home Runs by Distance (${currentVenue==='__ALL__'?'All Parks':currentVenue})`},
-                   tooltip:{callbacks:{title:items=>`${arr[items[0].dataIndex].game_date.toLocaleDateString()} — ${arr[items[0].dataIndex].venue_name}`,
-                                       label:item=>`${Math.round(item.raw)} ft`}}}}});
+      const arr = seriesByDistance(currentVenue);
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: arr.map((r,i)=>`${i+1}. ${r.game_date.toLocaleDateString()} — ${r.venue_name}`),
+          datasets: [{ data: arr.map(r=>r.dist) }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { display: false },
+            y: { beginAtZero: true, title: { display: true, text: 'Feet' } }
+          },
+          plugins: {
+            legend: { display: false },
+            title: { display: true, text: `Home Runs by Distance (${currentVenue === '__ALL__' ? 'All Parks' : currentVenue})` },
+            tooltip: {
+              callbacks: {
+                title: (items) => {
+                  const i = items[0].dataIndex;
+                  const r = arr[i];
+                  return `${r.game_date.toLocaleDateString()} — ${r.venue_name}`;
+                },
+                label: (item) => `${Math.round(item.raw)} ft`
+              }
+            }
+          }
+        }
+      });
     }
   }
 
+  // -------- Table --------
   const tbody=document.querySelector('#hrTable tbody');
-  let shown=0;const BTN_BATCH=10;
+  let shown=0; const BTN_BATCH=10;
   function fmt(n,d=0){return(n==null||isNaN(n))?'—':Number(n).toFixed(d);}
   function currentTableData(){if(currentVenue==='__ALL__')return descAll;return rows.filter(r=>r.venue_name===currentVenue).sort((a,b)=>b.game_date-a.game_date);}
-  function renderRows(dataset,reset=false){if(reset){tbody.innerHTML='';shown=0;}const slice=dataset.slice(shown,shown+BTN_BATCH);slice.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${r.game_date.toLocaleDateString()}</td><td>${r.opp}</td><td>${r.venue_name}</td><td>${fmt(r.dist,0)}</td><td>${fmt(r.ev,0)}</td><td>${fmt(r.la,0)}</td><td>${r.pitcher}</td>`;tbody.appendChild(tr);});shown+=slice.length;document.getElementById('showMore').disabled=shown>=dataset.length;}
+  function renderRows(dataset,reset=false){
+    if(reset){tbody.innerHTML='';shown=0;}
+    const slice=dataset.slice(shown,shown+BTN_BATCH);
+    slice.forEach(r=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${r.game_date.toLocaleDateString()}</td><td>${r.opp}</td><td>${r.venue_name}</td><td>${fmt(r.dist,0)}</td><td>${fmt(r.ev,0)}</td><td>${fmt(r.la,0)}</td><td>${r.pitcher}</td>`;
+      tbody.appendChild(tr);
+    });
+    shown+=slice.length;
+    document.getElementById('showMore').disabled = shown >= dataset.length;
+  }
 
+  // -------- Controls --------
   const btnDate=document.getElementById('mode-date');
   const btnDist=document.getElementById('mode-dist');
 
-  function updateBigNumber(){if(mode==='distance'&&currentVenue!=='__ALL__'){countEl.textContent=`${seriesByDistance(currentVenue).length} HR`;}else{countEl.textContent=`${seasonTotal} HR`;}}
-  function setMode(m){mode=m;const isDate=mode==='date';btnDate.classList.toggle('active',isDate);btnDist.classList.toggle('active',!isDate);btnDate.setAttribute('aria-pressed',isDate);btnDist.setAttribute('aria-pressed',!isDate);venueWrap.style.display=isDate?'none':'inline-flex';if(isDate){currentVenue='__ALL__';sel.value='__ALL__';}renderChart();renderRows(currentTableData(),true);updateBigNumber();}
+  function updateBigNumber(){
+    if(mode==='distance'&&currentVenue!=='__ALL__'){countEl.textContent=`${seriesByDistance(currentVenue).length} HR`;}
+    else{countEl.textContent=`${seasonTotal} HR`;}
+  }
+  function setMode(m){
+    mode=m; const isDate=mode==='date';
+    btnDate.classList.toggle('active',isDate);
+    btnDist.classList.toggle('active',!isDate);
+    btnDate.setAttribute('aria-pressed',isDate);
+    btnDist.setAttribute('aria-pressed',!isDate);
+    venueWrap.style.display = isDate ? 'none' : 'inline-flex';
+    if(isDate){ currentVenue='__ALL__'; sel.value='__ALL__'; }
+    renderChart();
+    renderRows(currentTableData(), true);
+    updateBigNumber();
+  }
   btnDate.addEventListener('click',()=>setMode('date'));
   btnDist.addEventListener('click',()=>setMode('distance'));
-  sel.addEventListener('change',e=>{currentVenue=e.target.value;if(mode==='distance')renderChart();renderRows(currentTableData(),true);updateBigNumber();});
+  sel.addEventListener('change',e=>{
+    currentVenue=e.target.value;
+    if(mode==='distance') renderChart();
+    renderRows(currentTableData(), true);
+    updateBigNumber();
+  });
   document.getElementById('showMore').addEventListener('click',()=>renderRows(currentTableData(),false));
 
+  // Initial paint
   setMode('date');
 })();
 </script>
@@ -175,14 +325,14 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 .bigcount{font-size:clamp(2.5rem,7vw,3.75rem);font-weight:800;letter-spacing:-0.02em;margin:.35rem auto 1rem;}
 .controls{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin:.25rem 0 1rem 0;}
 .controls .modes{display:flex;gap:.5rem;}
-.controls .venue select{margin-left:.4rem;padding:.35rem .5rem;border:1px solid var(--border);border-radius:8px;}
-.chip{display:inline-block;padding:.35rem .75rem;border:1px solid var(--border);border-radius:999px;text-decoration:none;}
-.chip.active{background:var(--surface-2,rgba(0,0,0,.05));}
+.controls .venue select{margin-left:.4rem;padding:.35rem .5rem;border:1px solid var(--border, #ccc);border-radius:8px;}
+.chip{display:inline-block;padding:.35rem .75rem;border:1px solid var(--border, #ccc);border-radius:999px;text-decoration:none;}
+.chip.active{background:var(--surface-2, rgba(0,0,0,.05));}
 .chart-wrap{width:100%;height:420px;margin:.5rem 0 1rem;}
 #hrChart{display:block;width:100% !important;height:100% !important;max-width:none;}
-.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:8px;}
+.table-wrap{overflow:auto;border:1px solid var(--border, #ddd);border-radius:8px;}
 table.compact{width:100%;border-collapse:collapse;font-size:.95rem;}
-table.compact thead th{position:sticky;top:0;background:var(--surface);text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--border);}
-table.compact tbody td{padding:.45rem .6rem;border-bottom:1px solid var(--border);white-space:nowrap;}
-table.compact tbody tr:hover{background:rgba(0,0,0,.03);}
+table.compact thead th{position:sticky;top:0;text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--border, #ddd);}
+table.compact tbody td{padding:.45rem .6rem;border-bottom:1px solid var(--border, #eee);white-space:nowrap;}
+table.compact tbody tr:hover{background:var(--surface-2, rgba(0,0,0,.03));}
 </style>
