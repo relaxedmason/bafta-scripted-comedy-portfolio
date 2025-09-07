@@ -50,3 +50,4 @@ game_date,game_pk,at_bat_number,player_name,events,hit_distance_sc,distance_ft,v
 2025-08-24,776602,18,"Raleigh, Cal",home_run,412.0,412.0,T-Mobile Park,106.9,25.0,CH,83.6,SEA,ATH,2,Bot
 2025-08-25,776595,6,"Raleigh, Cal",home_run,419.0,419.0,T-Mobile Park,107.2,30.0,FF,92.9,SEA,SD,1,Bot
 2025-09-02,776485,26,"Raleigh, Cal",home_run,371.0,371.0,George M. Steinbrenner Field,102.9,26.0,FF,96.4,TB,SEA,4,Top
+2025-09-06,776447,80,"Raleigh, Cal",home_run,418.0,418.0,Truist Park,106.8,35.0,FF,91.5,ATL,SEA,9,Top
