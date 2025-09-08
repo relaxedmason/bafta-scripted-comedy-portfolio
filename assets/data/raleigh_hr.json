@@ -934,5 +934,23 @@
     "away_team": "SEA",
     "inning": 9,
     "inning_topbot": "Top"
+  },
+  {
+    "game_date": "2025-09-07",
+    "game_pk": 776428,
+    "at_bat_number": 77,
+    "player_name": "Raleigh, Cal",
+    "events": "home_run",
+    "hit_distance_sc": 426.0,
+    "distance_ft": 426.0,
+    "venue_name": "Truist Park",
+    "launch_speed": 109.7,
+    "launch_angle": 30.0,
+    "pitch_type": "SL",
+    "release_speed": 90.0,
+    "home_team": "ATL",
+    "away_team": "SEA",
+    "inning": 9,
+    "inning_topbot": "Top"
   }
 ]
