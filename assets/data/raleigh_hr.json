@@ -952,5 +952,23 @@
     "away_team": "SEA",
     "inning": 9,
     "inning_topbot": "Top"
+  },
+  {
+    "game_date": "2025-09-14",
+    "game_pk": 776317,
+    "at_bat_number": 5,
+    "player_name": "Raleigh, Cal",
+    "events": "home_run",
+    "hit_distance_sc": 409.0,
+    "distance_ft": 409.0,
+    "venue_name": "T-Mobile Park",
+    "launch_speed": 109.4,
+    "launch_angle": 20.0,
+    "pitch_type": "SI",
+    "release_speed": 84.6,
+    "home_team": "SEA",
+    "away_team": "LAA",
+    "inning": 1,
+    "inning_topbot": "Bot"
   }
 ]
