@@ -970,5 +970,41 @@
     "away_team": "LAA",
     "inning": 1,
     "inning_topbot": "Bot"
+  },
+  {
+    "game_date": "2025-09-16",
+    "game_pk": 776302,
+    "at_bat_number": 20,
+    "player_name": "Raleigh, Cal",
+    "events": "home_run",
+    "hit_distance_sc": 419.0,
+    "distance_ft": 419.0,
+    "venue_name": "Kauffman Stadium",
+    "launch_speed": 109.5,
+    "launch_angle": 36.0,
+    "pitch_type": "CU",
+    "release_speed": 76.3,
+    "home_team": "KC",
+    "away_team": "SEA",
+    "inning": 3,
+    "inning_topbot": "Top"
+  },
+  {
+    "game_date": "2025-09-16",
+    "game_pk": 776302,
+    "at_bat_number": 34,
+    "player_name": "Raleigh, Cal",
+    "events": "home_run",
+    "hit_distance_sc": 425.0,
+    "distance_ft": 425.0,
+    "venue_name": "Kauffman Stadium",
+    "launch_speed": 106.1,
+    "launch_angle": 23.0,
+    "pitch_type": "CH",
+    "release_speed": 85.8,
+    "home_team": "KC",
+    "away_team": "SEA",
+    "inning": 4,
+    "inning_topbot": "Top"
   }
 ]

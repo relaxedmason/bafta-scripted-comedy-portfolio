@@ -53,3 +53,5 @@ game_date,game_pk,at_bat_number,player_name,events,hit_distance_sc,distance_ft,v
 2025-09-06,776447,80,"Raleigh, Cal",home_run,418.0,418.0,Truist Park,106.8,35.0,FF,91.5,ATL,SEA,9,Top
 2025-09-07,776428,77,"Raleigh, Cal",home_run,426.0,426.0,Truist Park,109.7,30.0,SL,90.0,ATL,SEA,9,Top
 2025-09-14,776317,5,"Raleigh, Cal",home_run,409.0,409.0,T-Mobile Park,109.4,20.0,SI,84.6,SEA,LAA,1,Bot
+2025-09-16,776302,20,"Raleigh, Cal",home_run,419.0,419.0,Kauffman Stadium,109.5,36.0,CU,76.3,KC,SEA,3,Top
+2025-09-16,776302,34,"Raleigh, Cal",home_run,425.0,425.0,Kauffman Stadium,106.1,23.0,CH,85.8,KC,SEA,4,Top
