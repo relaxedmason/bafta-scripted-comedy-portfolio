@@ -73,8 +73,9 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   const url = '{{ "/assets/data/raleigh_hr.json" | relative_url }}?v={{ site.github.build_revision }}';
 
   // NEW: comparison datasets (best season per player; and catchers-only)
-  const urlCompAll  = '{{ "/assets/data/hr_compare_top_per_player.json" | relative_url }}?v={{ site.github.build_revision }}';
-  const urlCompCats = '{{ "/assets/data/hr_compare_catchers.json"    | relative_url }}?v={{ site.github.build_revision }}';
+  const urlCompAll  = '{{ "/assets/assets/data/hr_compare_top_per_player.json" | relative_url }}?v={{ site.github.build_revision }}';
+  const urlCompCats = '{{ "/assets/assets/data/hr_compare_catchers.json"    | relative_url }}?v={{ site.github.build_revision }}';
+
 
   let data = [];
   try {
