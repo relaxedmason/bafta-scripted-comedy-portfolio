@@ -508,7 +508,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
         },
         plugins: {
           legend: { display: false },
-          title: { display: true, text: `Home Runs by Distance (${currentVenue === '__ALL__' ? 'All Parks' : ${'`'} + currentVenue + ${'`'}})` },
+          title: { display: true, text: `Home Runs by Distance (${currentVenue === '__ALL__' ? 'All Parks' : currentVenue})` },
           tooltip: {
             callbacks: {
               title: (items) => {
@@ -672,7 +672,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     picker.style.display     = isPace ? 'inline-flex' : 'none';
 
     // Filters only for Game Log view
-    document.getElementById('tableFilters').style.display = (isPace ? 'block' : 'block'); // filters apply to Game Log; toggled by subtabs below
+    
 
     if (!isDist){ currentVenue='__ALL__'; sel.value='__ALL__'; }
 
