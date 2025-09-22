@@ -1024,5 +1024,23 @@
     "away_team": "SEA",
     "inning": 3,
     "inning_topbot": "Top"
+  },
+  {
+    "game_date": "2025-09-21",
+    "game_pk": 776228,
+    "at_bat_number": 15,
+    "player_name": "Raleigh, Cal",
+    "events": "home_run",
+    "hit_distance_sc": 351.0,
+    "distance_ft": 351.0,
+    "venue_name": "Daikin Park",
+    "launch_speed": 107.6,
+    "launch_angle": 27.0,
+    "pitch_type": "CH",
+    "release_speed": 78.7,
+    "home_team": "HOU",
+    "away_team": "SEA",
+    "inning": 2,
+    "inning_topbot": "Top"
   }
 ]
