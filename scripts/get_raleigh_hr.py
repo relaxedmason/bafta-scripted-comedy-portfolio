@@ -1,22 +1,6 @@
 #!/usr/bin/env python3
 # scripts/get_raleigh_hr.py
-#
-# Purpose (matches your workflow exactly):
-# - Runs with NO CLI args from GitHub Actions.
-# - Defaults to Cal Raleigh's 2025 season window: 2025-03-27 → today.
-# - Writes BOTH:
-#       assets/data/raleigh_hr.csv
-#       assets/data/raleigh_hr.json
-# - If parameters.txt exists (same folder) AND you run with no CLI args locally,
-#   it will be read as CLI-style or KEY=VALUE / key: value (comments with '#').
-#   (We do NOT parse JSON in parameters.txt.)
-# - Backfills missing Statcast hit_distance_sc with MLB feed/live hitData.totalDistance.
-# - Enriches venue_name from feed/live for park filtering on the site.
-#
-# Requirements (as in your requirement file):
-#   pandas>=2.0, requests>=2.31, pybaseball>=2.2 (only needed if not using --input)
 
-# --------------------------- parameters.txt loader (no JSON) ---------------------------
 import sys, shlex, re
 from pathlib import Path
 
@@ -65,7 +49,6 @@ if len(sys.argv) == 1:
             if _extra: sys.argv.extend(_extra)
         except Exception:
             pass
-# ------------------------- end parameters.txt loader (no JSON) -------------------------
 
 import argparse, json, time, datetime as dt
 from typing import Dict, Any, Optional, Tuple, List
@@ -81,7 +64,9 @@ except Exception:
     HAVE_PYBASEBALL = False
 
 CAL_RALEIGH_MLBAM_ID = 663728
+MARINERS_TEAM_ID = 136  # NEW: for schedule lookup
 FEED_LIVE_URL = "https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live"
+SCHEDULE_URL = "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId={team_id}&startDate={start}&endDate={end}"  # NEW
 CACHE_PATH = Path(".feed_live_cache.json")
 REQUEST_TIMEOUT = 20
 REQUEST_SLEEP = 0.25  # polite pacing
@@ -172,10 +157,43 @@ def extract_total_distance_and_venue(feed: Dict[str, Any], at_bat_index: int) ->
             continue
     return (None, venue)
 
+# ------------------------------- schedule → team_game_number (NEW) -------------------------------
+def build_team_game_number_map(start_iso: str, end_iso: str, team_id: int = MARINERS_TEAM_ID) -> Dict[int, int]:
+    """
+    Query MLB StatsAPI schedule for the given team/date range and return {gamePk: team_game_number},
+    where team_game_number is 1..N in chronological order (doubleheaders handled by gameDate then gamePk).
+    """
+    url = SCHEDULE_URL.format(team_id=team_id, start=start_iso, end=end_iso)
+    try:
+        r = requests.get(url, timeout=REQUEST_TIMEOUT)
+        r.raise_for_status()
+        data = r.json()
+    except Exception:
+        return {}
+
+    games = []
+    for date_blk in data.get("dates", []):
+        for g in date_blk.get("games", []):
+            try:
+                game_pk = int(g.get("gamePk"))
+                game_date = g.get("gameDate")  # ISO timestamp
+                games.append((game_date, game_pk))
+            except Exception:
+                continue
+
+    # sort by timestamp, then by gamePk for stability (doubleheaders)
+    games.sort(key=lambda t: (t[0] or "", t[1]))
+    mapping = {}
+    n = 0
+    for _, gpk in games:
+        n += 1
+        mapping[gpk] = n
+    return mapping
+
 # ------------------------------- data ops -----------------------------------
 NEEDED_COLS: List[str] = [
     "game_date", "game_pk", "at_bat_number", "events", "hit_distance_sc",
-    "player_name", "venue_name"
+    "player_name", "venue_name", "home_team", "away_team", "inning_topbot"
 ]
 
 def ensure_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -235,8 +253,9 @@ def backfill_distances_and_venue(hr_df: pd.DataFrame) -> pd.DataFrame:
 
     return hr_df
 
+# include team_game_number + (keep your existing columns)
 KEEP_COLS: List[str] = [
-    "game_date","game_pk","at_bat_number","player_name","events",
+    "game_date","game_pk","team_game_number","at_bat_number","player_name","events",
     "hit_distance_sc","distance_ft","venue_name",
     "launch_speed","launch_angle","pitch_type","release_speed",
     "home_team","away_team","inning","inning_topbot"
@@ -275,13 +294,22 @@ def main():
     hr = filter_home_runs(df)
 
     if hr.empty:
-        # Write valid empty files with headers
         pd.DataFrame(columns=KEEP_COLS).to_csv(args.out_csv, index=False)
         Path(args.out_json).write_text("[]", encoding="utf-8")
         print(f"Wrote empty files: {args.out_csv}, {args.out_json} — HR rows: 0")
         return
 
+    # Backfill distance + venue as before
     hr = backfill_distances_and_venue(hr)
+
+    # NEW: add team_game_number via schedule API (gamePk → 1..N for Mariners)
+    game_no_map = build_team_game_number_map(args.start, args.end, MARINERS_TEAM_ID)
+    if game_no_map:
+        # map by game_pk; if not found, leave NA (e.g., preseason or postponed)
+        hr["team_game_number"] = hr["game_pk"].map(lambda x: game_no_map.get(int(x)) if pd.notna(x) else pd.NA)
+    else:
+        hr["team_game_number"] = pd.NA  # graceful fallback
+
     out = tidy(hr)
 
     # Write CSV + JSON
@@ -292,10 +320,12 @@ def main():
     total = len(out)
     have_dist = out["distance_ft"].notna().sum() if "distance_ft" in out.columns else 0
     have_venue = out["venue_name"].notna().sum() if "venue_name" in out.columns else 0
+    have_gnum  = out["team_game_number"].notna().sum() if "team_game_number" in out.columns else 0
 
     print(
         f"Wrote: {args.out_csv}, {args.out_json} — "
-        f"HR rows: {total} | with distance_ft: {have_dist} | missing: {total - have_dist} | venue filled: {have_venue}"
+        f"HR rows: {total} | with distance_ft: {have_dist} | missing dist: {total - have_dist} | "
+        f"venue filled: {have_venue} | team_game_number set: {have_gnum}"
     )
 
 if __name__ == "__main__":
