@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Cal Raleigh Home Run Tracker
-description: Auto-updating record of Cal Raleigh home runs with Date, Distance, and Historical Pace (game #) comparison, Catchers tab, Pace Stats, and table filters.
+description: Auto-updating record of Cal Raleigh home runs with Date, Distance, and Historical Pace (game #) comparison, Catchers tab, Pace Stats, sorting, zoom, and table filters.
 permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 ---
 
@@ -61,7 +61,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   <button id="tblPaceBtn" type="button" class="chip" aria-pressed="false">Pace Stats</button>
 </div>
 
-<!-- Filters (now used by both Game Log and Pace Stats; for Pace Stats, Search filters player names) -->
+<!-- Filters (used by both Game Log and Pace Stats; for Pace Stats, Search filters player names) -->
 <div id="tableFilters" class="filters" aria-label="Filter tables">
   <input id="fText" type="search" placeholder="Search opponent / venue / pitcher / player" aria-label="Search text">
   <label>From <input id="fFrom" type="date" aria-label="From date"></label>
@@ -90,16 +90,21 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 </div>
 <button id="showMore" type="button" style="margin-top:.75rem;">Show more</button>
 
-<!-- Pace Stats table -->
+<!-- Pace Stats table (sortable headers) -->
 <div id="paceWrap" class="table-wrap" style="display:none; margin-top:.75rem;">
   <table id="paceTable" class="compact">
     <thead>
       <tr>
-        <th>Player</th>
-        <th>Through G</th>
-        <th>HR</th>
-        <th>Pace / 162</th>
-        <th>G10</th><th>G20</th><th>G50</th><th>G100</th><th>G150</th><th>G162</th>
+        <th class="sortable" data-sort="label">Player</th>
+        <th class="sortable" data-sort="g">Through G</th>
+        <th class="sortable" data-sort="hr">HR</th>
+        <th class="sortable" data-sort="pace">Pace / 162</th>
+        <th class="sortable" data-sort="g10">G10</th>
+        <th class="sortable" data-sort="g20">G20</th>
+        <th class="sortable" data-sort="g50">G50</th>
+        <th class="sortable" data-sort="g100">G100</th>
+        <th class="sortable" data-sort="g150">G150</th>
+        <th class="sortable" data-sort="g162">G162</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -108,7 +113,6 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
-<!-- Zoom/pan plugin (wheel zoom, pinch zoom, SHIFT-drag pan, drag-to-zoom box) -->
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2"></script>
 
 <script>
@@ -116,7 +120,6 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   // Try to register zoom plugin if exposed
   try{
     if (window['chartjs-plugin-zoom']) { Chart.register(window['chartjs-plugin-zoom']); }
-    // some builds expose as window.ChartZoom or window.chartjsPluginZoom — try these too
     if (window.ChartZoom) { Chart.register(window.ChartZoom); }
     if (window.chartjsPluginZoom) { Chart.register(window.chartjsPluginZoom); }
   }catch(e){ /* non-fatal */ }
@@ -259,6 +262,26 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   }
   await ensureTeamGameNumbers(rows);
 
+  // --- Cap Historical Pace at games already on the schedule (not 162) ---
+  let capG = 162;
+  async function computeCurrentSeasonGameCap(year){
+    try{
+      const r = await fetch(`https://statsapi.mlb.com/api/v1/schedule?teamId=136&season=${year}&sportId=1&gameType=R`, { cache:'no-store' });
+      if(!r.ok) return;
+      const j = await r.json();
+      const games = [];
+      (j.dates||[]).forEach(d=> (d.games||[]).forEach(g=> games.push(g)));
+      games.sort((a,b)=> new Date(a.gameDate)-new Date(b.gameDate));
+      const now = new Date();
+      let n = 0;
+      for (const g of games) if (new Date(g.gameDate) <= now) n += 1;
+      capG = Math.min(n, 162);
+      console.log('[pace] capG (games to date):', capG);
+    }catch(e){ console.warn('[pace] capG fetch failed', e); }
+  }
+  const year = rows[0]?.game_date?.getFullYear?.() ?? new Date().getFullYear();
+  await computeCurrentSeasonGameCap(year);
+
   // Subtitle count
   const countEl = document.getElementById('hrCountLine');
   const seasonTotal = rows.length;
@@ -319,27 +342,32 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     return arr;
   }
 
-  // Raleigh series (prefer dedicated JSON if present; else compute)
+  // Raleigh series capped to games-to-date
   function raleighSeriesByGame() {
+    const cap = Math.max(1, Math.min(capG || 162, 162));
+
+    // Prefer dedicated JSON; clip to capG
     if (Array.isArray(compRaleigh) && compRaleigh.length && compRaleigh[0].series?.length) {
-      return compRaleigh[0].series.slice().sort((a,b)=>a.g-b.g);
+      return compRaleigh[0].series
+        .map(d => ({ g: Number(d.g ?? d.x), cum: Number(d.cum ?? d.y) }))
+        .filter(pt => Number.isFinite(pt.g) && pt.g <= cap)
+        .sort((a,b)=>a.g-b.g);
     }
+
+    // Fallback: build from HR rows (carry cumulative through capG)
     const pts = rows
       .filter(r => Number.isFinite(r.team_game_number))
       .sort((a,b) => a.team_game_number - b.team_game_number);
-    if (!pts.length) return null;
 
     const byG = new Map();
     pts.forEach(r => byG.set(r.team_game_number, (byG.get(r.team_game_number) || 0) + 1));
 
     let cum = 0, series = [];
-    for (let g=1; g<=162; g++){
+    for (let g=1; g<=cap; g++){
       if (byG.has(g)) cum += byG.get(g);
       series.push({ g, cum });
     }
-    let last = series.length - 1;
-    while (last > 0 && series[last].cum === 0) last--;
-    return series.slice(0, last + 1);
+    return series;
   }
 
   // Month tick helper for Date mode
@@ -368,7 +396,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     input.checked = selectedPlayers.has('raleigh');
     input.addEventListener('change', e=>{
       if (e.target.checked) selectedPlayers.add('raleigh'); else selectedPlayers.delete('raleigh');
-      renderChart(); buildPaceTable();
+      renderChart(); buildPaceTable(); updatePaceHeaderSortClasses();
     });
     pickerDyn.appendChild(lab);
 
@@ -391,7 +419,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
       inp.checked = selectedPlayers.has(id);
       inp.addEventListener('change', e => {
         if (e.target.checked) selectedPlayers.add(id); else selectedPlayers.delete(id);
-        renderChart(); buildPaceTable();
+        renderChart(); buildPaceTable(); updatePaceHeaderSortClasses();
       });
       pickerDyn.appendChild(label);
     });
@@ -400,20 +428,9 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   // Zoom config (only effective if plugin loaded)
   function zoomOptions(){
     return {
-      zoom: {
-        wheel: { enabled: true },
-        pinch: { enabled: true },
-        drag: { enabled: true },
-        mode: 'x'
-      },
-      pan: {
-        enabled: true,
-        modifierKey: 'shift',
-        mode: 'xy'
-      },
-      limits: {
-        x: { min: 1, max: 162 }
-      }
+      zoom: { wheel: { enabled: true }, pinch: { enabled: true }, drag: { enabled: true }, mode: 'x' },
+      pan:  { enabled: true, modifierKey: 'shift', mode: 'xy' },
+      limits: { x: { min: 1, max: 162 } }
     };
   }
 
@@ -484,26 +501,14 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
       chart = new Chart(ctx, {
         type: 'line',
-        data: {
-          labels: ticks || [],
-          datasets: [{
-            label: 'Cumulative HR',
-            data: pts,
-            parsing: false,
-            stepped: true,
-            tension: 0,
-            pointRadius: 1.5,
-            fill: false,
-            borderWidth: 2.5
-          }]
-        },
+        data: { labels: ticks || [], datasets: [{
+          label: 'Cumulative HR',
+          data: pts, parsing: false, stepped: true, tension: 0, pointRadius: 1.5, fill: false, borderWidth: 2.5
+        }]},
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          parsing: false,
+          responsive: true, maintainAspectRatio: false, parsing: false,
           scales: {
-            x: { type: 'time',
-                 time: { unit: 'month', displayFormats: { month: 'MMM' } },
+            x: { type: 'time', time: { unit: 'month', displayFormats: { month: 'MMM' } },
                  min: start, max: end, ticks: { autoSkip: false, maxRotation: 0 } },
             y: { beginAtZero: true, ticks: { precision: 0 }, title: { display: true, text: 'Cumulative HR' } }
           },
@@ -513,9 +518,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
               intersect: false, mode: 'nearest',
               callbacks: {
                 label: c => {
-                  const d = c.raw;
-                  const n = c.parsed.y;
-                  const date = new Date(d.x).toLocaleDateString();
+                  const d = c.raw; const n = c.parsed.y; const date = new Date(d.x).toLocaleDateString();
                   return `#${n} on ${date} — ${d.venue || 'Unknown park'} vs ${d.opp || '?'}`;
                 }
               }
@@ -532,27 +535,17 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     const arr = seriesByDistance(currentVenue);
     chart = new Chart(ctx, {
       type: 'bar',
-      data: {
-        labels: arr.map((r,i)=>`${i+1}. ${r.game_date.toLocaleDateString()} — ${r.venue_name}`),
-        datasets: [{ data: arr.map(r=>r.dist) }]
-      },
+      data: { labels: arr.map((r,i)=>`${i+1}. ${r.game_date.toLocaleDateString()} — ${r.venue_name}`),
+              datasets: [{ data: arr.map(r=>r.dist) }] },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { display: false },
-          y: { beginAtZero: true, title: { display: true, text: 'Feet' } }
-        },
+        responsive: true, maintainAspectRatio: false,
+        scales: { x: { display: false }, y: { beginAtZero: true, title: { display: true, text: 'Feet' } } },
         plugins: {
           legend: { display: false },
           title: { display: true, text: `Home Runs by Distance (${currentVenue === '__ALL__' ? 'All Parks' : currentVenue})` },
           tooltip: {
             callbacks: {
-              title: (items) => {
-                const i = items[0].dataIndex;
-                const r = arr[i];
-                return `${r.game_date.toLocaleDateString()} — ${r.venue_name}`;
-              },
+              title: (items) => { const i = items[0].dataIndex; const r = arr[i]; return `${r.game_date.toLocaleDateString()} — ${r.venue_name}`; },
               label: (item) => `${Math.round(item.raw)} ft`
             }
           },
@@ -562,7 +555,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     });
   }
 
-  // -------- Tables --------
+  // -------- Game Log table --------
   const tbody=document.querySelector('#hrTable tbody');
   let shown=0; const BTN_BATCH=10;
   function fmt(n,d=0){return(n==null||isNaN(n))?'—':Number(n).toFixed(d);}
@@ -578,9 +571,44 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     document.getElementById('showMore').disabled = shown >= dataset.length;
   }
 
-  // Pace Stats table helpers
+  // -------- Pace Stats table (sortable) --------
   const checkpoints = [10,20,50,100,150,162];
   const paceBody = document.querySelector('#paceTable tbody');
+
+  // Sorting state (default: Pace desc)
+  let paceSort = { key: 'pace', dir: 'desc' };  // dir: 'desc' | 'asc'
+  function paceSortValue(row, key){
+    switch((key||'').toLowerCase()){
+      case 'label': return String(row.label || '').toLowerCase();
+      case 'g':     return Number(row.G)    || 0;
+      case 'hr':    return Number(row.HR)   || 0;
+      case 'pace':  return Number(row.pace) || 0;
+      case 'g10':   return Number(row.checks?.[0]) || 0;
+      case 'g20':   return Number(row.checks?.[1]) || 0;
+      case 'g50':   return Number(row.checks?.[2]) || 0;
+      case 'g100':  return Number(row.checks?.[3]) || 0;
+      case 'g150':  return Number(row.checks?.[4]) || 0;
+      case 'g162':  return Number(row.checks?.[5]) || 0;
+      default:      return 0;
+    }
+  }
+  function applyPaceSort(rowsArr){
+    const { key, dir } = paceSort;
+    if (!key) return rowsArr;
+    const f = (dir === 'asc') ? 1 : -1;
+    return rowsArr.slice().sort((a,b)=>{
+      const va = paceSortValue(a, key);
+      const vb = paceSortValue(b, key);
+      if (va < vb) return -1 * f;
+      if (va > vb) return  1 * f;
+      const la = String(a.label||'').toLowerCase();
+      const lb = String(b.label||'').toLowerCase();
+      if (la < lb) return -1;
+      if (la > lb) return  1;
+      return 0;
+    });
+  }
+
   function valueAt(series, G){
     let v=0;
     for (let i=0;i<series.length;i++){
@@ -600,9 +628,11 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     paceBody.innerHTML='';
     const rowsOut = [];
 
+    // Cal row uses capG for "Through G"
     const rSeries = raleighSeriesRaw();
     if (rSeries.length){
-      const G = rSeries[rSeries.length-1].g, HR = rSeries[rSeries.length-1].cum;
+      const HR = rSeries[rSeries.length-1].cum;
+      const G  = capG || rSeries[rSeries.length-1].g;
       const pace = G>0 ? (HR*162/G) : HR;
       rowsOut.push({ label: 'Cal Raleigh — current season', G, HR, pace, checks: checkpoints.map(cp=>valueAt(rSeries, cp)) });
     }
@@ -619,13 +649,44 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     const q = (document.getElementById('fText')?.value || '').trim().toLowerCase();
     const filtered = q ? rowsOut.filter(r => r.label.toLowerCase().includes(q)) : rowsOut;
 
-    filtered.forEach(r=>{
+    // Sort after filtering
+    const sorted = applyPaceSort(filtered);
+
+    // Render
+    sorted.forEach(r=>{
       const tr = document.createElement('tr');
       tr.innerHTML = `<td>${r.label}</td><td>${r.G}</td><td>${r.HR}</td><td>${fmt(r.pace,1)}</td>` +
         checkpoints.map((cp,i)=>`<td>${r.checks[i]}</td>`).join('');
       paceBody.appendChild(tr);
     });
   }
+
+  // Clickable header sorting for Pace Stats
+  const paceHead = document.querySelector('#paceTable thead');
+  const paceHeaderCells = paceHead ? paceHead.querySelectorAll('th.sortable') : [];
+  function updatePaceHeaderSortClasses(){
+    paceHeaderCells.forEach(th=>{
+      th.classList.remove('sort-asc','sort-desc');
+      if (th.dataset.sort && th.dataset.sort.toLowerCase() === paceSort.key){
+        th.classList.add(paceSort.dir === 'asc' ? 'sort-asc' : 'sort-desc');
+      }
+    });
+  }
+  paceHeaderCells.forEach(th=>{
+    th.addEventListener('click', ()=>{
+      const k = (th.dataset.sort || '').toLowerCase();
+      if (!k) return;
+      if (paceSort.key === k){
+        paceSort.dir = (paceSort.dir === 'desc') ? 'asc' : 'desc';
+      } else {
+        paceSort.key = k;
+        paceSort.dir = 'desc';
+      }
+      updatePaceHeaderSortClasses();
+      buildPaceTable();
+    });
+  });
+  updatePaceHeaderSortClasses();
 
   // -------- Table Filters --------
   const fText    = document.getElementById('fText');
@@ -671,6 +732,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
       // Update both tables if visible
       renderRows(currentTableData(), true);
       buildPaceTable();
+      updatePaceHeaderSortClasses();
     });
   });
   fClear?.addEventListener('click', ()=>{
@@ -681,6 +743,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     if (fMaxDist) fMaxDist.value = '';
     renderRows(currentTableData(), true);
     buildPaceTable();
+    updatePaceHeaderSortClasses();
   });
 
   // -------- Controls --------
@@ -696,6 +759,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     document.getElementById('showMore').style.display='none';
     filtersBar.style.display='flex';          // keep filters visible for Pace Stats (search filters players)
     buildPaceTable();
+    updatePaceHeaderSortClasses();
   }
 
   function setMode(m){
@@ -731,6 +795,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     renderChart();
     renderRows(currentTableData(), true);
     buildPaceTable();
+    updatePaceHeaderSortClasses();
     updateBigNumber();
   }
 
@@ -750,7 +815,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     const base = (group==='catchers' ? DEFAULT_COMPARE_CATS : DEFAULT_COMPARE_ALL).slice(0, MAX_COMPARE_DEFAULT);
     selectedPlayers = new Set(['raleigh', ...base]);
     buildPlayerPickerUI();
-    renderChart(); buildPaceTable();
+    renderChart(); buildPaceTable(); updatePaceHeaderSortClasses();
   });
 
   sel.addEventListener('change',e=>{
@@ -769,12 +834,10 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     document.getElementById('showMore').style.display='inline-block';
     filtersBar.style.display='flex';
   });
-  tblPaceBtn.addEventListener('click', ()=>{
-    activatePaceTable();
-  });
+  tblPaceBtn.addEventListener('click', ()=>{ activatePaceTable(); });
 
-  // Quick range buttons + reset zoom
-  rangeQuick.addEventListener('click', (e)=>{
+  // Quick range buttons + reset zoom (pace mode)
+  document.getElementById('rangeQuick').addEventListener('click', (e)=>{
     const b = e.target.closest('button.qr'); if (!b || !chart) return;
     const r = b.dataset.range;
     if (r === 'full') {
@@ -782,12 +845,13 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
       chart.options.scales.x.min = 1; chart.options.scales.x.max = 162; chart.update();
       return;
     }
-    const [a,bn] = r.split('-').map(n=>Number(n));
+    const parts = r.split('-').map(n=>Number(n));
+    const a = parts[0], bmax = parts[1];
     chart.options.scales.x.min = a;
-    chart.options.scales.x.max = bn;
+    chart.options.scales.x.max = bmax;
     chart.update();
   });
-  resetZoomBtn.addEventListener('click', ()=>{
+  document.getElementById('resetZoom').addEventListener('click', ()=>{
     if (!chart) return;
     if (typeof chart.resetZoom === 'function') chart.resetZoom();
     chart.options.scales.x.min = 1;
@@ -799,6 +863,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   setMode('date');                   // change to 'pace' if you want Historical Pace by default
   renderRows(currentTableData(),true);
   buildPaceTable();
+  updatePaceHeaderSortClasses();
 })();
 </script>
 
@@ -866,6 +931,11 @@ button.chip:focus-visible{
   outline-offset: 2px;
 }
 
+/* Sortable Pace Stats headers */
+#paceTable th.sortable{ cursor: pointer; user-select:none; white-space:nowrap; }
+#paceTable th.sortable.sort-desc::after{ content:" ▼"; opacity:.7; }
+#paceTable th.sortable.sort-asc::after{ content:" ▲"; opacity:.7; }
+
 /* Dark mode */
 @media (prefers-color-scheme: dark){
   :root{
@@ -909,3 +979,4 @@ table.compact tbody tr:hover{ background: var(--surface-2, rgba(0,0,0,.06)); }
   .muted{ color:#aaa; }
 }
 </style>
+
