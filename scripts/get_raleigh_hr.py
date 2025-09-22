@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 # scripts/get_raleigh_hr.py
+#
+# - Runs with NO CLI args from GitHub Actions (parameters.txt supported).
+# - Defaults to Cal Raleigh's 2025 season window.
+# - Writes:
+#     assets/data/raleigh_hr.csv
+#     assets/data/raleigh_hr.json
+#     assets/data/hr_compare_raleigh.json   <-- NEW (Historical Pace series {g,cum})
+#
+# Requires: pandas, requests, (optional) pybaseball if not using --input
 
 import sys, shlex, re
 from pathlib import Path
@@ -14,14 +23,14 @@ def _norm_key(k: str) -> str:
     if k in ("json","out_json_path","json_path"): k = "out_json"
     return k
 
-def _kv_to_cli(d: dict) -> list[str]:
+def _kv_to_cli(d: dict) -> list:
     args = []
     for k, v in d.items():
         if v is None or str(v).strip() == "": continue
         args.extend([f"--{_norm_key(k)}", str(v).strip()])
     return args
 
-def _parse_params_file(p: Path) -> list[str]:
+def _parse_params_file(p: Path) -> list:
     raw = p.read_text(encoding="utf-8", errors="ignore")
     lines = [re.sub(r"#.*$", "", ln).strip() for ln in raw.splitlines()]
     lines = [ln for ln in lines if ln]
@@ -40,7 +49,7 @@ def _parse_params_file(p: Path) -> list[str]:
     args = _kv_to_cli(kv)
     return args or shlex.split(joined)
 
-# Only apply parameters.txt when user didn’t pass args
+# Auto-extend argv from parameters.txt if no CLI args were passed
 if len(sys.argv) == 1:
     _pf = Path(__file__).with_name("parameters.txt")
     if _pf.exists():
@@ -64,21 +73,23 @@ except Exception:
     HAVE_PYBASEBALL = False
 
 CAL_RALEIGH_MLBAM_ID = 663728
-MARINERS_TEAM_ID = 136  # NEW: for schedule lookup
+MARINERS_TEAM_ID = 136
 FEED_LIVE_URL = "https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live"
-SCHEDULE_URL = "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId={team_id}&startDate={start}&endDate={end}"  # NEW
+# schedule supports startDate/endDate; sportId=1=MLB
+SCHEDULE_URL = "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId={team_id}&startDate={start}&endDate={end}"
+
 CACHE_PATH = Path(".feed_live_cache.json")
 REQUEST_TIMEOUT = 20
 REQUEST_SLEEP = 0.25  # polite pacing
 
-# --------------------------------- default dates (2025 season only) ---------------------------------
+# --------------------------------- default dates (2025 season) ---------------------------------
 _today = dt.date.today()
 _season_start = dt.date(2025, 3, 27)      # Opening Day 2025
 _default_start = _season_start.isoformat()
 _default_end = _today.isoformat()
 
 # --------------------------------- argparse ---------------------------------
-ap = argparse.ArgumentParser(description="Cal Raleigh HRs (2025): complete distances + venue enrichment (+ JSON export)")
+ap = argparse.ArgumentParser(description="Cal Raleigh HRs (2025): distances, venue enrichment, team_game_number, + compare JSON")
 ap.add_argument("--input", help="Existing CSV with Statcast rows (optional). If omitted, fetches Statcast.")
 ap.add_argument("--out_csv", default="assets/data/raleigh_hr.csv",
                 help="CSV output path (default: assets/data/raleigh_hr.csv)")
@@ -157,7 +168,7 @@ def extract_total_distance_and_venue(feed: Dict[str, Any], at_bat_index: int) ->
             continue
     return (None, venue)
 
-# ------------------------------- schedule → team_game_number (NEW) -------------------------------
+# --------------------- schedule → team_game_number mapping -------------------
 def build_team_game_number_map(start_iso: str, end_iso: str, team_id: int = MARINERS_TEAM_ID) -> Dict[int, int]:
     """
     Query MLB StatsAPI schedule for the given team/date range and return {gamePk: team_game_number},
@@ -171,7 +182,7 @@ def build_team_game_number_map(start_iso: str, end_iso: str, team_id: int = MARI
     except Exception:
         return {}
 
-    games = []
+    games: List[Tuple[str, int]] = []
     for date_blk in data.get("dates", []):
         for g in date_blk.get("games", []):
             try:
@@ -183,7 +194,7 @@ def build_team_game_number_map(start_iso: str, end_iso: str, team_id: int = MARI
 
     # sort by timestamp, then by gamePk for stability (doubleheaders)
     games.sort(key=lambda t: (t[0] or "", t[1]))
-    mapping = {}
+    mapping: Dict[int, int] = {}
     n = 0
     for _, gpk in games:
         n += 1
@@ -253,7 +264,7 @@ def backfill_distances_and_venue(hr_df: pd.DataFrame) -> pd.DataFrame:
 
     return hr_df
 
-# include team_game_number + (keep your existing columns)
+# Include team_game_number in the saved CSV/JSON
 KEEP_COLS: List[str] = [
     "game_date","game_pk","team_game_number","at_bat_number","player_name","events",
     "hit_distance_sc","distance_ft","venue_name",
@@ -280,6 +291,41 @@ def to_json_records(df: pd.DataFrame) -> List[Dict[str, Any]]:
             r["game_date"] = str(gd)
     return recs
 
+# --------- NEW: build and write Historical Pace compare JSON for Cal ----------
+def make_compare_series_162(hr_df: pd.DataFrame) -> List[Dict[str, int]]:
+    """
+    Build cumulative HR series by team game number (1..162).
+    Returns list of {"g": int, "cum": int}, trimmed to last nonzero.
+    """
+    if "team_game_number" not in hr_df.columns:
+        return []
+    s = pd.to_numeric(hr_df["team_game_number"], errors="coerce").dropna().astype(int)
+    if s.empty:
+        return []
+    counts = s.value_counts().to_dict()  # {game#: hr count that game}
+    cum = 0
+    out: List[Dict[str, int]] = []
+    for g in range(1, 163):
+        if g in counts:
+            cum += int(counts[g])
+        out.append({"g": g, "cum": int(cum)})
+    # trim trailing zeros if any
+    last = len(out) - 1
+    while last > 0 and out[last]["cum"] == 0:
+        last -= 1
+    return out[: last + 1]
+
+def write_raleigh_compare_json(hr_df: pd.DataFrame, path: str = "assets/data/hr_compare_raleigh.json") -> None:
+    series = make_compare_series_162(hr_df)
+    payload = [{
+        "id": "raleigh",
+        "label": "Cal Raleigh — current season",
+        "series": series
+    }]
+    p = Path(path)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
 # ----------------------------------- main -----------------------------------
 def main():
     # Load input or fetch
@@ -296,16 +342,17 @@ def main():
     if hr.empty:
         pd.DataFrame(columns=KEEP_COLS).to_csv(args.out_csv, index=False)
         Path(args.out_json).write_text("[]", encoding="utf-8")
-        print(f"Wrote empty files: {args.out_csv}, {args.out_json} — HR rows: 0")
+        # still write an empty compare file for consistency
+        write_raleigh_compare_json(pd.DataFrame(columns=["team_game_number"]))
+        print(f"Wrote empty files: {args.out_csv}, {args.out_json}, assets/data/hr_compare_raleigh.json — HR rows: 0")
         return
 
-    # Backfill distance + venue as before
+    # Backfill distance + venue
     hr = backfill_distances_and_venue(hr)
 
-    # NEW: add team_game_number via schedule API (gamePk → 1..N for Mariners)
+    # Add team_game_number via schedule API (gamePk → 1..N for Mariners)
     game_no_map = build_team_game_number_map(args.start, args.end, MARINERS_TEAM_ID)
     if game_no_map:
-        # map by game_pk; if not found, leave NA (e.g., preseason or postponed)
         hr["team_game_number"] = hr["game_pk"].map(lambda x: game_no_map.get(int(x)) if pd.notna(x) else pd.NA)
     else:
         hr["team_game_number"] = pd.NA  # graceful fallback
@@ -317,13 +364,16 @@ def main():
     recs = to_json_records(out)
     Path(args.out_json).write_text(json.dumps(recs, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    # NEW: also write compare JSON for Historical Pace
+    write_raleigh_compare_json(out)
+
     total = len(out)
     have_dist = out["distance_ft"].notna().sum() if "distance_ft" in out.columns else 0
     have_venue = out["venue_name"].notna().sum() if "venue_name" in out.columns else 0
     have_gnum  = out["team_game_number"].notna().sum() if "team_game_number" in out.columns else 0
 
     print(
-        f"Wrote: {args.out_csv}, {args.out_json} — "
+        f"Wrote: {args.out_csv}, {args.out_json}, assets/data/hr_compare_raleigh.json — "
         f"HR rows: {total} | with distance_ft: {have_dist} | missing dist: {total - have_dist} | "
         f"venue filled: {have_venue} | team_game_number set: {have_gnum}"
     )
