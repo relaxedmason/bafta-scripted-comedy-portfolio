@@ -1,19 +1,19 @@
 ---
 layout: default
 title: Cal Raleigh Home Run Tracker
-description: Auto-updating record of Cal Raleigh home runs with Date, Distance, and Historical Pace (game #) comparison, Catchers tab, Pace Stats, sorting, zoom, and table filters.
+description: Auto-updating record of Cal Raleigh home runs with Date, Distance, and Historical Pace (game #) comparison, Catchers tab, Pace Stats, sorting, zoom, and quick ranges.
 permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 ---
 
 <h1>Cal Raleigh Home Run Tracker</h1>
 <p id="hrCountLine" class="subtitle bigcount" aria-live="polite">—</p>
 
-<!-- Controls: Historical Pace, Date, Distance; venue filter appears only in Distance mode -->
+<!-- Controls: Historical Pace (default), Last 10 shortcut, Date, Distance -->
 <div class="controls">
   <div class="modes">
-    <!-- Historical Pace first -->
-    <button id="mode-pace" type="button" class="chip" aria-pressed="false">Historical Pace</button>
-    <button id="mode-date" type="button" class="chip active" aria-pressed="true">By Date</button>
+    <button id="mode-pace" type="button" class="chip active" aria-pressed="true">Historical Pace</button>
+    <button id="mode-last10" type="button" class="chip" aria-pressed="false">Last 10 Games</button>
+    <button id="mode-date" type="button" class="chip" aria-pressed="false">By Date</button>
     <button id="mode-dist" type="button" class="chip" aria-pressed="false">By Distance</button>
 
     <!-- Tabs for Historical Pace mode -->
@@ -32,6 +32,8 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
       <button class="chip qr" data-range="1-50">G 1–50</button>
       <button class="chip qr" data-range="51-100">G 51–100</button>
       <button class="chip qr" data-range="101-162">G 101–162</button>
+      <button class="chip qr" data-range="152-162">G 152–162</button>
+      <button class="chip qr" data-range="last10">Last 10 (to date)</button>
       <button class="chip qr" data-range="full">Full</button>
       <button id="resetZoom" class="chip">Reset zoom</button>
     </div>
@@ -57,13 +59,13 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
 <!-- Table subtabs -->
 <div class="subtabs">
-  <button id="tblLogBtn"  type="button" class="chip active" aria-pressed="true">Game Log</button>
-  <button id="tblPaceBtn" type="button" class="chip" aria-pressed="false">Pace Stats</button>
+  <button id="tblLogBtn"  type="button" class="chip" aria-pressed="false">Game Log</button>
+  <button id="tblPaceBtn" type="button" class="chip active" aria-pressed="true">Pace Stats</button>
 </div>
 
-<!-- Filters (used by both Game Log and Pace Stats; for Pace Stats, Search filters player names) -->
-<div id="tableFilters" class="filters" aria-label="Filter tables">
-  <input id="fText" type="search" placeholder="Search opponent / venue / pitcher / player" aria-label="Search text">
+<!-- Filters (for Game Log ONLY; hidden in Pace Stats) -->
+<div id="tableFilters" class="filters" aria-label="Filter tables" style="display:none;">
+  <input id="fText" type="search" placeholder="Search opponent / venue / pitcher" aria-label="Search text">
   <label>From <input id="fFrom" type="date" aria-label="From date"></label>
   <label>To <input id="fTo" type="date" aria-label="To date"></label>
   <label>Min dist <input id="fMinDist" type="number" inputmode="numeric" step="1" min="0" aria-label="Min distance (ft)"></label>
@@ -72,7 +74,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 </div>
 
 <!-- Game Log table -->
-<div id="logWrap" class="table-wrap">
+<div id="logWrap" class="table-wrap" style="display:none;">
   <table id="hrTable" class="compact">
     <thead>
       <tr>
@@ -88,10 +90,10 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     <tbody></tbody>
   </table>
 </div>
-<button id="showMore" type="button" style="margin-top:.75rem;">Show more</button>
+<button id="showMore" type="button" style="margin-top:.75rem; display:none;">Show more</button>
 
 <!-- Pace Stats table (sortable headers) -->
-<div id="paceWrap" class="table-wrap" style="display:none; margin-top:.75rem;">
+<div id="paceWrap" class="table-wrap" style="margin-top:.75rem;">
   <table id="paceTable" class="compact">
     <thead>
       <tr>
@@ -117,12 +119,12 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
 <script>
 (async function(){
-  // Try to register zoom plugin if exposed
+  // Register zoom plugin if present
   try{
     if (window['chartjs-plugin-zoom']) { Chart.register(window['chartjs-plugin-zoom']); }
     if (window.ChartZoom) { Chart.register(window.ChartZoom); }
     if (window.chartjsPluginZoom) { Chart.register(window.chartjsPluginZoom); }
-  }catch(e){ /* non-fatal */ }
+  }catch(e){}
 
   // -------- Fetch Raleigh JSON --------
   const url = '{{ "/assets/data/raleigh_hr.json" | relative_url }}?v={{ site.github.build_revision }}';
@@ -299,11 +301,12 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   // -------- Chart setup (Historical Pace, Date, Distance) --------
   const ctx = document.getElementById('hrChart').getContext('2d');
   let chart;
-  let mode = 'date'; // default
+  let mode = 'pace'; // default = Historical Pace
   let currentVenue = '__ALL__';
 
   // Elements & state
   const btnPace = document.getElementById('mode-pace');
+  const btnLast10 = document.getElementById('mode-last10');
   const btnDate = document.getElementById('mode-date');
   const btnDist = document.getElementById('mode-dist');
   const groupTabs = document.getElementById('groupTabs');
@@ -354,7 +357,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
         .sort((a,b)=>a.g-b.g);
     }
 
-    // Fallback: build from HR rows (carry cumulative through capG)
+    // Fallback: build from HR rows
     const pts = rows
       .filter(r => Number.isFinite(r.team_game_number))
       .sort((a,b) => a.team_game_number - b.team_game_number);
@@ -402,7 +405,6 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
     // Then the rest
     const arr = currentGroupPlayers().slice();
-    // prefer the first few defaults in order
     const pref = new Map((group==='catchers' ? DEFAULT_COMPARE_CATS : DEFAULT_COMPARE_ALL).map((id,i)=>[id,i]));
     arr.sort((a,b)=>{
       const ai = pref.has(a.id) ? pref.get(a.id) : 1e9;
@@ -542,7 +544,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
         scales: { x: { display: false }, y: { beginAtZero: true, title: { display: true, text: 'Feet' } } },
         plugins: {
           legend: { display: false },
-          title: { display: true, text: `Home Runs by Distance (${currentVenue === '__ALL__' ? 'All Parks' : currentVenue})` },
+          title: { display: true, text: `Home Runs by Distance (${currentVenue === '__ALL__' ? 'All Parks' : ${'`'}${'`'}})` },
           tooltip: {
             callbacks: {
               title: (items) => { const i = items[0].dataIndex; const r = arr[i]; return `${r.game_date.toLocaleDateString()} — ${r.venue_name}`; },
@@ -645,12 +647,10 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
       rowsOut.push({ label: p.label, G, HR, pace, checks: checkpoints.map(cp=>valueAt(s, cp)) });
     });
 
-    // Apply Search filter to Pace Stats (by player label)
-    const q = (document.getElementById('fText')?.value || '').trim().toLowerCase();
-    const filtered = q ? rowsOut.filter(r => r.label.toLowerCase().includes(q)) : rowsOut;
+    // NO search filtering in Pace Stats (per your request)
 
-    // Sort after filtering
-    const sorted = applyPaceSort(filtered);
+    // Sort after (non-)filtering
+    const sorted = applyPaceSort(rowsOut);
 
     // Render
     sorted.forEach(r=>{
@@ -688,7 +688,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
   });
   updatePaceHeaderSortClasses();
 
-  // -------- Table Filters --------
+  // -------- Table Filters (Game Log ONLY) --------
   const fText    = document.getElementById('fText');
   const fFrom    = document.getElementById('fFrom');
   const fTo      = document.getElementById('fTo');
@@ -729,10 +729,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 
   [fText, fFrom, fTo, fMinDist, fMaxDist].forEach(el=>{
     el?.addEventListener('input', ()=>{
-      // Update both tables if visible
       renderRows(currentTableData(), true);
-      buildPaceTable();
-      updatePaceHeaderSortClasses();
     });
   });
   fClear?.addEventListener('click', ()=>{
@@ -742,8 +739,6 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     if (fMinDist) fMinDist.value = '';
     if (fMaxDist) fMaxDist.value = '';
     renderRows(currentTableData(), true);
-    buildPaceTable();
-    updatePaceHeaderSortClasses();
   });
 
   // -------- Controls --------
@@ -757,9 +752,18 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     tblLogBtn.classList.remove('active'); tblLogBtn.setAttribute('aria-pressed','false');
     logWrap.style.display='none'; paceWrap.style.display='block';
     document.getElementById('showMore').style.display='none';
-    filtersBar.style.display='flex';          // keep filters visible for Pace Stats (search filters players)
+    filtersBar.style.display='none';          // HIDE filters in Pace Stats
     buildPaceTable();
     updatePaceHeaderSortClasses();
+  }
+
+  function activateLogTable(){
+    tblLogBtn.classList.add('active'); tblLogBtn.setAttribute('aria-pressed','true');
+    tblPaceBtn.classList.remove('active'); tblPaceBtn.setAttribute('aria-pressed','false');
+    logWrap.style.display='block'; paceWrap.style.display='none';
+    document.getElementById('showMore').style.display='inline-block';
+    filtersBar.style.display='flex';          // SHOW filters in Game Log
+    renderRows(currentTableData(), true);
   }
 
   function setMode(m){
@@ -789,19 +793,31 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
       const base = (group==='catchers' ? DEFAULT_COMPARE_CATS : DEFAULT_COMPARE_ALL).slice(0, MAX_COMPARE_DEFAULT);
       selectedPlayers = new Set(['raleigh', ...base]);
       buildPlayerPickerUI();
-      activatePaceTable(); // flip on Pace Stats automatically
+      activatePaceTable(); // Pace Stats on by default in pace mode
+    } else {
+      // If leaving pace, switch to Game Log by default
+      activateLogTable();
     }
 
     renderChart();
-    renderRows(currentTableData(), true);
-    buildPaceTable();
-    updatePaceHeaderSortClasses();
     updateBigNumber();
   }
 
   btnPace.addEventListener('click',()=>setMode('pace'));
   btnDate.addEventListener('click',()=>setMode('date'));
   btnDist.addEventListener('click',()=>setMode('distance'));
+
+  // Last 10 Games shortcut → enter pace mode and zoom to last 10 team games
+  btnLast10.addEventListener('click', ()=>{
+    setMode('pace');
+    const end = Math.min(capG || 162, 162);
+    const start = Math.max(1, end - 9);
+    if (chart) {
+      chart.options.scales.x.min = start;
+      chart.options.scales.x.max = end;
+      chart.update();
+    }
+  });
 
   groupTabs.addEventListener('click', (e) => {
     const b = e.target.closest('button.tab'); if (!b) return;
@@ -811,7 +827,6 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
       btn.classList.toggle('active', on);
       btn.setAttribute('aria-pressed', on);
     });
-    // Reset to 4 hitters + Raleigh when switching groups
     const base = (group==='catchers' ? DEFAULT_COMPARE_CATS : DEFAULT_COMPARE_ALL).slice(0, MAX_COMPARE_DEFAULT);
     selectedPlayers = new Set(['raleigh', ...base]);
     buildPlayerPickerUI();
@@ -824,33 +839,45 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     renderRows(currentTableData(), true);
     updateBigNumber();
   });
-  document.getElementById('showMore').addEventListener('click',()=>renderRows(currentTableData(),false));
 
   // Table subtabs
-  tblLogBtn.addEventListener('click', ()=>{
-    tblLogBtn.classList.add('active'); tblLogBtn.setAttribute('aria-pressed','true');
-    tblPaceBtn.classList.remove('active'); tblPaceBtn.setAttribute('aria-pressed','false');
-    logWrap.style.display='block'; paceWrap.style.display='none';
-    document.getElementById('showMore').style.display='inline-block';
-    filtersBar.style.display='flex';
-  });
+  tblLogBtn.addEventListener('click', ()=>{ activateLogTable(); });
   tblPaceBtn.addEventListener('click', ()=>{ activatePaceTable(); });
 
   // Quick range buttons + reset zoom (pace mode)
   document.getElementById('rangeQuick').addEventListener('click', (e)=>{
     const b = e.target.closest('button.qr'); if (!b || !chart) return;
     const r = b.dataset.range;
-    if (r === 'full') {
-      if (typeof chart.resetZoom === 'function') chart.resetZoom();
-      chart.options.scales.x.min = 1; chart.options.scales.x.max = 162; chart.update();
+
+    if (r === 'last10') {
+      const end = Math.min(capG || 162, 162);
+      const start = Math.max(1, end - 9);
+      chart.options.scales.x.min = start;
+      chart.options.scales.x.max = end;
+      chart.update();
       return;
     }
+
+    if (r === 'full') {
+      if (typeof chart.resetZoom === 'function') chart.resetZoom();
+      chart.options.scales.x.min = 1;
+      chart.options.scales.x.max = 162;
+      chart.update();
+      return;
+    }
+
     const parts = r.split('-').map(n=>Number(n));
-    const a = parts[0], bmax = parts[1];
-    chart.options.scales.x.min = a;
-    chart.options.scales.x.max = bmax;
-    chart.update();
+    if (parts.length === 2 && Number.isFinite(parts[0]) && Number.isFinite(parts[1])) {
+      const reqMin = Math.max(1, parts[0]);
+      const reqMax = Math.min(parts[1], 162);
+      const end = Math.min(reqMax, capG || 162);
+      const start = Math.min(Math.max(reqMin, 1), end);
+      chart.options.scales.x.min = start;
+      chart.options.scales.x.max = end;
+      chart.update();
+    }
   });
+
   document.getElementById('resetZoom').addEventListener('click', ()=>{
     if (!chart) return;
     if (typeof chart.resetZoom === 'function') chart.resetZoom();
@@ -859,11 +886,8 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
     chart.update();
   });
 
-  // Initial paint
-  setMode('date');                   // change to 'pace' if you want Historical Pace by default
-  renderRows(currentTableData(),true);
-  buildPaceTable();
-  updatePaceHeaderSortClasses();
+  // Initial paint: Historical Pace + Pace Stats (filters hidden)
+  setMode('pace');
 })();
 </script>
 
@@ -897,7 +921,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
 /* Table subtabs */
 .subtabs{ display:flex; gap:.5rem; align-items:center; margin:.5rem 0; }
 
-/* Filters */
+/* Filters (Game Log only) */
 .filters{
   display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;
   margin:.5rem 0 .5rem;
@@ -979,4 +1003,3 @@ table.compact tbody tr:hover{ background: var(--surface-2, rgba(0,0,0,.06)); }
   .muted{ color:#aaa; }
 }
 </style>
-
