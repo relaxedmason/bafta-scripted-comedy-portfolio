@@ -544,7 +544,7 @@ permalink: /sports/baseball/mariners/raleigh-home-run-tracker/
         scales: { x: { display: false }, y: { beginAtZero: true, title: { display: true, text: 'Feet' } } },
         plugins: {
           legend: { display: false },
-          title: { display: true, text: `Home Runs by Distance (${currentVenue === '__ALL__' ? 'All Parks' : ${'`'}${'`'}})` },
+          title: { display: true, text: `Home Runs by Distance (${currentVenue === '__ALL__' ? 'All Parks' : currentVenue})` },
           tooltip: {
             callbacks: {
               title: (items) => { const i = items[0].dataIndex; const r = arr[i]; return `${r.game_date.toLocaleDateString()} — ${r.venue_name}`; },
