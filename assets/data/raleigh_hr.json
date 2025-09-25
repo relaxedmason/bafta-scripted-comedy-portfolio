@@ -1100,5 +1100,43 @@
     "away_team": "SEA",
     "inning": 2,
     "inning_topbot": "Top"
+  },
+  {
+    "game_date": "2025-09-24",
+    "game_pk": 776194,
+    "team_game_number": 158,
+    "at_bat_number": 5,
+    "player_name": "Raleigh, Cal",
+    "events": "home_run",
+    "hit_distance_sc": 438.0,
+    "distance_ft": 438.0,
+    "venue_name": "T-Mobile Park",
+    "launch_speed": 110.9,
+    "launch_angle": 33.0,
+    "pitch_type": "FF",
+    "release_speed": 93.1,
+    "home_team": "SEA",
+    "away_team": "COL",
+    "inning": 1,
+    "inning_topbot": "Bot"
+  },
+  {
+    "game_date": "2025-09-24",
+    "game_pk": 776194,
+    "team_game_number": 158,
+    "at_bat_number": 63,
+    "player_name": "Raleigh, Cal",
+    "events": "home_run",
+    "hit_distance_sc": 389.0,
+    "distance_ft": 389.0,
+    "venue_name": "T-Mobile Park",
+    "launch_speed": 108.7,
+    "launch_angle": 24.0,
+    "pitch_type": "FF",
+    "release_speed": 98.3,
+    "home_team": "SEA",
+    "away_team": "COL",
+    "inning": 8,
+    "inning_topbot": "Bot"
   }
 ]
