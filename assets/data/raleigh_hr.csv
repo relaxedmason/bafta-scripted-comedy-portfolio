@@ -19,7 +19,7 @@ game_date,game_pk,team_game_number,at_bat_number,player_name,events,hit_distance
 2025-05-27,777743,53,6,"Raleigh, Cal",home_run,389.0,389.0,T-Mobile Park,112.1,40.0,FF,93.1,SEA,WSH,1,Bot
 2025-05-27,777743,53,37,"Raleigh, Cal",home_run,365.0,365.0,T-Mobile Park,107.3,22.0,FS,87.2,SEA,WSH,5,Bot
 2025-05-30,777713,56,8,"Raleigh, Cal",home_run,356.0,356.0,T-Mobile Park,102.9,26.0,FC,92.5,SEA,MIN,1,Bot
-2025-05-30,777713,56,63,"Raleigh, Cal",home_run,380.0,380.0,T-Mobile Park,113.2,25.0,FF,94.8,SEA,MIN,8,Bot
+2025-05-30,777713,56,63,"Raleigh, Cal",home_run,383.0,383.0,T-Mobile Park,113.2,25.0,FF,94.8,SEA,MIN,8,Bot
 2025-05-31,777695,57,26,"Raleigh, Cal",home_run,383.0,383.0,T-Mobile Park,99.2,34.0,FF,89.4,SEA,MIN,3,Bot
 2025-06-01,777680,58,49,"Raleigh, Cal",home_run,362.0,362.0,T-Mobile Park,106.9,28.0,CU,78.6,SEA,MIN,7,Bot
 2025-06-05,777628,61,40,"Raleigh, Cal",home_run,337.0,337.0,T-Mobile Park,99.9,42.0,FC,88.4,SEA,BAL,5,Bot
