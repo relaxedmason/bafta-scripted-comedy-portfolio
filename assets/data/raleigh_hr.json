@@ -1138,5 +1138,24 @@
     "away_team": "COL",
     "inning": 8,
     "inning_topbot": "Bot"
+  },
+  {
+    "game_date": "2025-10-07",
+    "game_pk": 813056,
+    "team_game_number": 165,
+    "at_bat_number": 68,
+    "player_name": "Raleigh, Cal",
+    "events": "home_run",
+    "hit_distance_sc": 391.0,
+    "distance_ft": 391.0,
+    "venue_name": "Comerica Park",
+    "launch_speed": 105.9,
+    "launch_angle": 24.0,
+    "pitch_type": "SI",
+    "release_speed": 94.1,
+    "home_team": "DET",
+    "away_team": "SEA",
+    "inning": 9,
+    "inning_topbot": "Top"
   }
 ]
