@@ -61,3 +61,4 @@ game_date,game_pk,team_game_number,at_bat_number,player_name,events,hit_distance
 2025-09-24,776194,158,63,"Raleigh, Cal",home_run,389.0,389.0,T-Mobile Park,108.7,24.0,FF,98.3,SEA,COL,8,Bot
 2025-10-07,813056,165,68,"Raleigh, Cal",home_run,391.0,391.0,Comerica Park,105.9,24.0,SI,94.1,DET,SEA,9,Top
 2025-10-12,813040,168,39,"Raleigh, Cal",home_run,420.0,420.0,Rogers Centre,108.0,28.0,FS,86.2,TOR,SEA,6,Top
+2025-10-15,813043,170,71,"Raleigh, Cal",home_run,337.0,337.0,T-Mobile Park,92.5,33.0,FF,95.6,SEA,TOR,8,Bot
