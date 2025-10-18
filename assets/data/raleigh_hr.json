@@ -1195,5 +1195,24 @@
     "away_team": "TOR",
     "inning": 8,
     "inning_topbot": "Bot"
+  },
+  {
+    "game_date": "2025-10-17",
+    "game_pk": 813039,
+    "team_game_number": 172,
+    "at_bat_number": 63,
+    "player_name": "Raleigh, Cal",
+    "events": "home_run",
+    "hit_distance_sc": 348.0,
+    "distance_ft": 348.0,
+    "venue_name": "T-Mobile Park",
+    "launch_speed": 108.6,
+    "launch_angle": 43.0,
+    "pitch_type": "SI",
+    "release_speed": 93.5,
+    "home_team": "SEA",
+    "away_team": "TOR",
+    "inning": 8,
+    "inning_topbot": "Bot"
   }
 ]
